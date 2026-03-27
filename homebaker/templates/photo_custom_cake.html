@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Order with Photo - HomeBaker{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-5"
+    style="background: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('/media/branding/photo_upload_banner.jpg'); background-size: cover; background-attachment: fixed; min-height: 100vh;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="text-center mb-5 pt-4">
+                    <span class="badge bg-secondary px-3 py-2 mb-3 rounded-pill text-uppercase">Direct
+                        Customization</span>
+                    <h1 class="fw-bold text-primary mb-3 display-4">Order with Your Photo</h1>
+                    <p class="lead text-muted">Have a reference image? Upload it here, and our bakers will bring it to
+                        life!</p>
+                </div>
+
+                {% if photo_request %}
+                <!-- Upload Result & Baker Selection -->
+                <div class="card border-0 shadow-lg mb-5 overflow-hidden">
+                    <div class="row g-0">
+                        <div class="col-md-6">
+                            <img src="{{ photo_request.reference_image.url }}" class="img-fluid h-100 w-100"
+                                style="object-fit: cover; min-height: 300px;" alt="Your Reference Cake">
+                        </div>
+                        <div class="col-md-6 text-center p-4 d-flex flex-column justify-content-center">
+                            <h4 class="fw-bold text-success mb-3"><i class="fas fa-check-circle me-2"></i>Image Set!
+                            </h4>
+                            <p class="text-muted">Your reference image and details have been saved. Now, select a baker
+                                below to request a quote.</p>
+                            <button class="btn btn-primary btn-lg mt-3" data-bs-toggle="modal"
+                                data-bs-target="#bakerModal">
+                                <i class="fas fa-shopping-cart me-2"></i> Choose Baker & Order
+                            </button>
+                            <a href="{% url 'photo_custom_cake' %}" class="btn btn-link mt-2 text-muted">Upload
+                                Another</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Baker Modal -->
+                <div class="modal fade" id="bakerModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title fw-bold">Select a Baker</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <h6 class="fw-bold text-primary mb-3">Available Bakers for Custom Orders</h6>
+
+                                <!-- Baker Search Input -->
+                                <div class="mb-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-end-0">
+                                            <i class="fas fa-search text-muted"></i>
+                                        </span>
+                                        <input type="text" id="bakerSearch" class="form-control border-start-0 ps-0"
+                                            placeholder="Search bakers by name or location...">
+                                    </div>
+                                </div>
+
+                                <div class="list-group" id="bakerList">
+                                    {% for baker in bakers %}
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-0 fw-bold text-dark">{{ baker.shop_name }}</h6>
+                                            <div class="text-secondary small d-flex align-items-center">
+                                                <i class="fas fa-star text-warning me-1"></i>
+                                                <b>{{ baker.average_rating|floatformat:1 }}</b>
+                                                <span class="ms-2">({{ baker.total_reviews }} Reviews)</span>
+                                            </div>
+                                        </div>
+                                        <form action="{% url 'submit_custom_request' %}" method="POST" class="d-inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="baker_id" value="{{ baker.id }}">
+                                            <input type="hidden" name="request_type" value="PHOTO">
+                                            <input type="hidden" name="photo_req_id" value="{{ photo_request.id }}">
+                                            <input type="hidden" name="description"
+                                                value="{{ photo_request.description }}">
+                                            <input type="hidden" name="flavor" value="{{ photo_request.flavor }}">
+                                            <input type="hidden" name="size" value="{{ photo_request.size }}">
+                                            <button type="submit" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-paper-plane me-1"></i> Send Request
+                                            </button>
+                                        </form>
+                                    </div>
+                                    {% empty %}
+                                    <div class="alert alert-info">
+                                        No bakers are currently accepting custom orders.
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Upload Form -->
+                {% if not photo_request %}
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4 p-md-5">
+                        <h4 class="fw-bold mb-4">Tell us what you want</h4>
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="row g-3">
+                                <div class="col-12 mb-3">
+                                    <label class="form-label fw-bold small text-uppercase">Reference Image</label>
+                                    {{ form.reference_image }}
+                                    <div class="form-text">Choose a clear photo of the cake design you'd like.</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small text-uppercase">Flavor</label>
+                                    {{ form.flavor }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small text-uppercase">Size / Weight</label>
+                                    {{ form.size }}
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label fw-bold small text-uppercase">Expected Delivery
+                                        Date</label>
+                                    {{ form.delivery_date }}
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-bold small text-uppercase">Design Description &
+                                        Notes</label>
+                                    {{ form.description }}
+                                </div>
+                                <div class="col-12 mt-4 text-center">
+                                    <button type="submit" class="btn btn-primary btn-lg px-5 py-3 fw-bold shadow-sm">
+                                        <i class="fas fa-upload me-2"></i> Upload & Proceed
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="text-center mt-4">
+                    <a href="{% url 'cakes' %}" class="btn btn-link text-muted"><i
+                            class="fas fa-arrow-left me-2"></i>Back to Cakes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const bakerSearch = document.getElementById('bakerSearch');
+        const bakerList = document.getElementById('bakerList');
+
+        if (bakerSearch && bakerList) {
+            bakerSearch.addEventListener('keyup', function () {
+                const query = this.value.toLowerCase();
+                const bakers = bakerList.getElementsByClassName('list-group-item');
+
+                Array.from(bakers).forEach(function (baker) {
+                    const text = baker.textContent.toLowerCase();
+                    if (text.includes(query)) {
+                        baker.classList.add('d-flex');
+                        baker.classList.remove('d-none');
+                    } else {
+                        baker.classList.remove('d-flex');
+                        baker.classList.add('d-none');
+                    }
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

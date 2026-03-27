@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Wallet{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Wallet Balance & Recharge Section -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="fas fa-wallet fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="text-muted mb-2">Current Balance</h5>
+                    <h2 class="display-4 fw-bold text-body mb-4">₹{{ wallet_balance }}</h2>
+
+                    <hr class="my-4">
+
+                    <!-- Withdraw Form (Available to all) -->
+                    <h5 class="mb-3">Withdraw Funds</h5>
+                    <form method="post" class="needs-validation mb-4" novalidate>
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="withdraw">
+                        <div class="mb-3 text-start">
+                            {{ withdraw_form.amount.label_tag }}
+                            {{ withdraw_form.amount }}
+                            {% if withdraw_form.amount.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ withdraw_form.amount.errors|join:", " }}
+                            </div>
+                            {% endif %}
+                            <div class="form-text">Amount will be deducted from your wallet balance.</div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-outline-danger">
+                                <i class="fas fa-hand-holding-usd me-2"></i>Withdraw
+                            </button>
+                        </div>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <!-- Recharge Form (Available to all) -->
+                    <h5 class="mb-3">Recharge Wallet</h5>
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="recharge">
+                        <div class="mb-3 text-start">
+                            {{ recharge_form.amount.label_tag }}
+                            {{ recharge_form.amount }}
+                            {% if recharge_form.amount.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ recharge_form.amount.errors|join:", " }}
+                            </div>
+                            {% endif %}
+                            <div class="form-text">Enter amount to add to your wallet</div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                Add Funds
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction History Section -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 fw-bold">Transaction History</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Date</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Type</th>
+                                <th scope="col" class="text-end">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transaction in transactions %}
+                            <tr>
+                                <td class="text-muted small">
+                                    {{ transaction.created_at|date:"M d, Y H:i" }}
+                                </td>
+                                <td>
+                                    <div class="fw-medium">{{ transaction.description }}</div>
+                                    <div class="small text-muted">Source: {{ transaction.source|title }}</div>
+                                </td>
+                                <td>
+                                    {% if transaction.transaction_type == 'credit' %}
+                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">
+                                        Credit
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3">
+                                        Debit
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td
+                                    class="text-end fw-bold {% if transaction.transaction_type == 'credit' %}text-success{% else %}text-danger{% endif %}">
+                                    {% if transaction.transaction_type == 'credit' %}
+                                    +₹{{ transaction.amount }}
+                                    {% else %}
+                                    -₹{{ transaction.amount }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-5 text-muted">
+                                    <i class="fas fa-history fa-2x mb-3 d-block"></i>
+                                    No transactions found
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

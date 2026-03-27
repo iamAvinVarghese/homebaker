@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% block title %}Services{% endblock %}
+
+{% block content %}
+<style>
+    .star-rating {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    .star-rating input {
+        display: none;
+    }
+    .star-rating label {
+        font-size: 3rem;
+        cursor: pointer;
+        color: #e4e5e9;
+        transition: color 0.2s ease-in-out, transform 0.2s;
+    }
+    .star-rating label:hover,
+    .star-rating label:hover ~ label,
+    .star-rating input:checked ~ label {
+        color: #ffc107;
+    }
+    .star-rating label:active {
+        transform: scale(0.9);
+    }
+    .services-header {
+        background: linear-gradient(135deg, rgba(108,92,231,0.05) 0%, rgba(162,155,254,0.15) 100%);
+        border-radius: 20px;
+        padding: 4rem 2rem;
+        margin-bottom: 3rem;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="services-header text-center shadow-sm">
+        <h1 class="fw-bold display-5 mb-3" style="color: var(--text-primary);">HomeBaker Services Hub</h1>
+        <p class="text-muted lead mx-auto" style="max-width: 600px;">We're dedicated to providing you with the best experience. Report any issues or tell us how we're doing!</p>
+    </div>
+
+    <div class="row g-5">
+        <!-- Report a Problem -->
+        <div class="col-lg-6">
+            <div class="card h-100 shadow-sm border-0" style="background-color: var(--bg-card); border-radius: 20px;">
+                <div class="card-body p-4 p-md-5 d-flex flex-column">
+                    <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-primary text-white rounded-circle rounded-3 me-4" style="width: 70px; height: 70px;">
+                            <i class="fas fa-headset fa-2x"></i>
+                        </div>
+                        <div>
+                            <h3 class="fw-bold mb-1" style="color: var(--text-primary);">Report a Problem</h3>
+                            <p class="text-muted mb-0 small">Our support team is on standby.</p>
+                        </div>
+                    </div>
+
+                    <form method="POST" class="d-flex flex-column flex-grow-1">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="submit_ticket">
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold" style="color: var(--text-secondary);">Issue Summary</label>
+                            {{ ticket_form.subject }}
+                        </div>
+                        <div class="mb-5 flex-grow-1">
+                            <label class="form-label fw-bold" style="color: var(--text-secondary);">Detailed Description</label>
+                            {{ ticket_form.description }}
+                        </div>
+                        
+                        <div class="d-grid mt-auto">
+                            <button type="submit" class="btn btn-primary btn-lg shadow-sm rounded-pill fw-bold">Submit Ticket</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rate Website -->
+        <div class="col-lg-6">
+            <div class="card h-100 shadow-sm border-0" style="background-color: var(--bg-card); border-radius: 20px;">
+                <div class="card-body p-4 p-md-5 d-flex flex-column">
+                    <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-warning text-white rounded-circle rounded-3 me-4" style="width: 70px; height: 70px;">
+                            <i class="fas fa-star fa-2x"></i>
+                        </div>
+                        <div>
+                            <h3 class="fw-bold mb-1" style="color: var(--text-primary);">Review our Platform</h3>
+                            <p class="text-muted mb-0 small">Your feedback helps us grow.</p>
+                        </div>
+                    </div>
+
+                    <form method="POST" id="reviewForm" class="d-flex flex-column flex-grow-1">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="submit_review">
+                        
+                        <!-- Hidden Actual Django Form Field -->
+                        <div class="d-none">
+                            {{ review_form.rating }}
+                        </div>
+
+                        <div class="mb-4 text-center">
+                            <label class="form-label fw-bold w-100 mb-2" style="color: var(--text-secondary); font-size: 1.1rem;">Tap to Rate</label>
+                            <div class="star-rating px-3">
+                                <input type="radio" id="star5" name="custom_rating" value="5" {% if review_form.rating.value|add:"0" == 5 %}checked{% endif %} />
+                                <label for="star5" title="5 stars"><i class="fas fa-star"></i></label>
+                                <input type="radio" id="star4" name="custom_rating" value="4" {% if review_form.rating.value|add:"0" == 4 %}checked{% endif %} />
+                                <label for="star4" title="4 stars"><i class="fas fa-star"></i></label>
+                                <input type="radio" id="star3" name="custom_rating" value="3" {% if review_form.rating.value|add:"0" == 3 %}checked{% endif %} />
+                                <label for="star3" title="3 stars"><i class="fas fa-star"></i></label>
+                                <input type="radio" id="star2" name="custom_rating" value="2" {% if review_form.rating.value|add:"0" == 2 %}checked{% endif %} />
+                                <label for="star2" title="2 stars"><i class="fas fa-star"></i></label>
+                                <input type="radio" id="star1" name="custom_rating" value="1" {% if not review_form.rating.value or review_form.rating.value|add:"0" == 1 %}checked{% endif %} />
+                                <label for="star1" title="1 star"><i class="fas fa-star"></i></label>
+                            </div>
+                        </div>
+
+                        <div class="mb-5 flex-grow-1">
+                            <label class="form-label fw-bold" style="color: var(--text-secondary);">Your Feedback</label>
+                            {{ review_form.review_text }}
+                        </div>
+                        
+                        <div class="d-grid mt-auto">
+                            <button type="submit" class="btn btn-warning text-dark btn-lg shadow-sm rounded-pill fw-bold">{% if has_existing_review %}Update Review{% else %}Post Review{% endif %}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Sync custom star rating with the hidden django form rating field
+    document.addEventListener('DOMContentLoaded', function() {
+        const customStars = document.querySelectorAll('input[name="custom_rating"]');
+        const djangoRatingInput = document.querySelector('input[name="rating"]'); // This is generated by {{ review_form.rating }}
+
+        // Sync initial state from checked radio button
+        const checkedStar = document.querySelector('input[name="custom_rating"]:checked');
+        if (checkedStar && djangoRatingInput) {
+            djangoRatingInput.value = checkedStar.value;
+        } else if (djangoRatingInput && !djangoRatingInput.value) {
+            // Set default if empty
+            djangoRatingInput.value = "1";
+        }
+
+        customStars.forEach(star => {
+            star.addEventListener('change', function() {
+                if (djangoRatingInput) {
+                    djangoRatingInput.value = this.value;
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

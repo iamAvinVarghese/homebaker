@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block title %}Help Desk – Admin{% endblock %}
+{% block content %}
+<style>
+    .ticket-card {
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        background-color: var(--bg-card);
+        transition: box-shadow 0.2s ease;
+    }
+    .ticket-card:hover { box-shadow: 0 4px 16px rgba(108,92,231,0.10); }
+    .status-badge-open { background-color: rgba(253,126,20,0.15); color: #fd7e14; }
+    .status-badge-resolved { background-color: rgba(25,135,84,0.15); color: #198754; }
+</style>
+
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h2 class="fw-bold mb-0" style="color: var(--text-primary);">🎧 Help Desk</h2>
+            <p class="text-muted mb-0 small">Review and manage user-submitted support tickets.</p>
+        </div>
+        <div class="d-flex gap-3">
+            <div class="text-center px-3 py-2 rounded-3 border" style="background-color: var(--bg-secondary);">
+                <div class="fw-bold fs-5" style="color: #fd7e14;">{{ open_tickets }}</div>
+                <div class="text-muted small">Open</div>
+            </div>
+            <div class="text-center px-3 py-2 rounded-3 border" style="background-color: var(--bg-secondary);">
+                <div class="fw-bold fs-5 text-success">{{ resolved_tickets }}</div>
+                <div class="text-muted small">Resolved</div>
+            </div>
+            <div class="text-center px-3 py-2 rounded-3 border" style="background-color: var(--bg-secondary);">
+                <div class="fw-bold fs-5" style="color: var(--text-primary);">{{ total_tickets }}</div>
+                <div class="text-muted small">Total</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <form method="GET" class="row g-2 mb-4">
+        <div class="col-md-6">
+            <input type="text" name="search" value="{{ search_query }}" class="form-control" placeholder="Search by username or subject...">
+        </div>
+        <div class="col-md-3">
+            <select name="status" class="form-select">
+                <option value="">All Statuses</option>
+                <option value="open" {% if status_filter == 'open' %}selected{% endif %}>Open</option>
+                <option value="resolved" {% if status_filter == 'resolved' %}selected{% endif %}>Resolved</option>
+            </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary w-100">Filter</button>
+            <a href="{% url 'admin_helpdesk' %}" class="btn btn-outline-secondary w-100">Reset</a>
+        </div>
+    </form>
+
+    <!-- Ticket List -->
+    {% if tickets %}
+    <div class="d-flex flex-column gap-3">
+        {% for ticket in tickets %}
+        <div class="ticket-card p-4">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                <div class="flex-grow-1">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <span class="badge rounded-pill fw-semibold px-3 py-1 {% if ticket.status == 'open' %}status-badge-open{% else %}status-badge-resolved{% endif %}">
+                            {{ ticket.get_status_display }}
+                        </span>
+                        <small class="text-muted">Ticket #{{ ticket.id }} · {{ ticket.created_at|date:"M d, Y" }}</small>
+                    </div>
+                    <h5 class="fw-bold mb-1" style="color: var(--text-primary);">{{ ticket.subject }}</h5>
+                    <p class="text-muted mb-2">{{ ticket.description }}</p>
+                    <small class="text-muted">
+                        <i class="fas fa-user me-1"></i>
+                        {{ ticket.user.get_full_name|default:ticket.user.username }}
+                        ({{ ticket.user.email }}) — {{ ticket.user.profile.get_role_display }}
+                    </small>
+                </div>
+                <!-- Change Status -->
+                <form method="POST" class="d-flex flex-column align-items-end gap-2">
+                    {% csrf_token %}
+                    <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
+                    <div class="d-flex align-items-center gap-2">
+                        <select name="new_status" class="form-select form-select-sm" style="width: 140px;">
+                            <option value="open" {% if ticket.status == 'open' %}selected{% endif %}>Open</option>
+                            <option value="resolved" {% if ticket.status == 'resolved' %}selected{% endif %}>Resolved</option>
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
+                    </div>
+                    <textarea name="resolution_message" class="form-control form-control-sm mt-1" rows="2" placeholder="Optional resolution message..." style="width: 250px; font-size: 0.8rem;">{{ ticket.resolution_message|default:'' }}</textarea>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5 my-4">
+        <i class="fas fa-headset fa-3x text-muted mb-3"></i>
+        <h5 class="text-muted fw-semibold">No tickets found.</h5>
+        <p class="text-muted small">All quiet! No support tickets match your current filter.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

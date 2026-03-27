@@ -1,0 +1,323 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Design Your Dream Cake{% endblock %}
+
+{% block content %}
+<style>
+    [data-theme="dark"] .list-group-item {
+        background-color: var(--bg-card);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
+</style>
+<div class="container-fluid py-5"
+    style="background: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('/media/branding/ai_designer_banner.jpg'); background-size: cover; background-attachment: fixed; min-height: 100vh;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="text-center mb-5 pt-4">
+                    <span class="badge bg-primary px-3 py-2 mb-3 rounded-pill">AI POWERED</span>
+                    <h1 class="fw-bold text-primary mb-3 display-4">AI Cake Designer</h1>
+                    <p class="lead text-muted">Bring your imagination to life. Our AI will design the perfect cake for
+                        your special moment.</p>
+                </div>
+
+                {% if result %}
+                <!-- AI Result Section -->
+                <div class="card border-0 shadow-lg mb-5 overflow-hidden">
+                    <div class="row g-0">
+                        <div class="col-md-6">
+                            <!-- Image Selection Grid -->
+                            <div class="p-2">
+                                <h6 class="fw-bold text-muted mb-2">Select your favorite design:</h6>
+                                <div class="row g-2">
+                                    {% for img_url in result.image_urls %}
+                                    <div class="col-6">
+                                        <div class="ratio ratio-4x3 position-relative">
+                                            <input type="radio" name="selected_design" id="design_{{ forloop.counter }}"
+                                                class="btn-check design-selector" value="{{ img_url|safe }}"
+                                                onchange="updateSelectedImage(this.value)">
+
+                                            <label
+                                                class="btn btn-outline-primary p-0 w-100 h-100 overflow-hidden border-2"
+                                                for="design_{{ forloop.counter }}">
+                                                <img src="{{ img_url|safe }}" class="w-100 h-100"
+                                                    style="object-fit: cover;" alt="Design Option {{ forloop.counter }}"
+                                                    id="img_preview_{{ forloop.counter0 }}"
+                                                    onerror="handleImageError(this, {{ forloop.counter0 }})">
+
+                                                <div class="position-absolute top-0 end-0 m-1">
+                                                    <i class="fas fa-check-circle text-primary bg-white rounded-circle fs-5 shadow-sm check-icon"
+                                                        style="display: none;"></i>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card-body p-4 h-100 d-flex flex-column">
+                                <div class="mb-auto">
+                                    <h3 class="fw-bold mb-3">Your Design</h3>
+                                    <p class="text-muted small mb-4">{{ result.summary }}</p>
+
+                                    <h5 class="fw-bold text-primary">₹{{ result.estimated_price }} <small
+                                            class="text-muted fw-normal">(approx)</small></h5>
+
+                                    <div class="mt-4">
+                                        <h6 class="fw-bold">Description:</h6>
+                                        <p class="small text-muted">{{ result.image_description|truncatewords:30 }}</p>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4 d-grid gap-2">
+                                    <button class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#fullDetailsModal">
+                                        <i class="fas fa-shopping-cart me-2"></i> Order Selected Design
+                                    </button>
+                                    <a href="{% url 'custom_cake' %}" class="btn btn-outline-secondary">
+                                        <i class="fas fa-redo me-2"></i> Design Another
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{ result.fallback_image_urls|json_script:"fallback-urls-data" }}
+                <script>
+                    function handleImageError(img, index) {
+                        img.onerror = null;
+
+                        // Robustly parse fallback URLs passed from Django
+                        let fallbackUrls = [];
+                        try {
+                            const dataElement = document.getElementById('fallback-urls-data');
+                            if (dataElement) {
+                                fallbackUrls = JSON.parse(dataElement.textContent);
+                            }
+                        } catch (e) {
+                            console.error("Error parsing fallback URLs:", e);
+                            fallbackUrls = ['/media/cakes/dreamcake.jpg'];
+                        }
+
+                        if (fallbackUrls && fallbackUrls.length > index && fallbackUrls[index]) {
+                            img.src = fallbackUrls[index];
+                        } else {
+                            img.src = '/media/cakes/dreamcake.jpg';
+                        }
+                    }
+
+                    function updateSelectedImage(url) {
+                        // Update hidden input in form
+                        document.getElementById('selectedImageInput').value = url;
+
+                        // Update visual selection state
+                        document.querySelectorAll('.check-icon').forEach(icon => icon.style.display = 'none');
+                        const checkedRadio = document.querySelector('input[name="selected_design"]:checked');
+                        if (checkedRadio) {
+                            const label = document.querySelector(`label[for="${checkedRadio.id}"]`);
+                            const icon = label.querySelector('.check-icon');
+                            if (icon) icon.style.display = 'block';
+                        }
+                    }
+
+                    // Initialize on load
+                    document.addEventListener('DOMContentLoaded', function () {
+                        let checkedRadio = document.querySelector('input[name="selected_design"]:checked');
+
+                        // If none checked (because we removed template logic), check the first one
+                        if (!checkedRadio) {
+                            const firstRadio = document.querySelector('input[name="selected_design"]');
+                            if (firstRadio) {
+                                firstRadio.checked = true;
+                                checkedRadio = firstRadio;
+                            }
+                        }
+
+                        if (checkedRadio) {
+                            updateSelectedImage(checkedRadio.value);
+                        }
+                    });
+                </script>
+
+                <!-- Full Details Modal -->
+                <div class="modal fade" id="fullDetailsModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title fw-bold">Design Specifications</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <h6 class="fw-bold text-primary mb-3">Select a Baker to Order</h6>
+
+                                <!-- Baker Search Input -->
+                                <div class="mb-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-end-0">
+                                            <i class="fas fa-search text-muted"></i>
+                                        </span>
+                                        <input type="text" id="bakerSearch" class="form-control border-start-0 ps-0"
+                                            placeholder="Search bakers by name or location...">
+                                    </div>
+                                </div>
+
+                                <div class="list-group" id="bakerList">
+                                    {% for baker in bakers %}
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-0 fw-bold text-dark">{{ baker.shop_name }}</h6>
+                                            <div class="text-secondary small d-flex align-items-center">
+                                                <i class="fas fa-star text-warning me-1"></i>
+                                                <b class="me-2">{{ baker.average_rating|floatformat:1 }}</b>
+                                                <span>({{ baker.total_reviews }} Reviews)</span>
+                                            </div>
+                                        </div>
+                                        <form action="{% url 'submit_custom_request' %}" method="POST" class="d-inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="baker_id" value="{{ baker.id }}">
+                                            <input type="hidden" name="request_type" value="AI">
+                                            <input type="hidden" name="description"
+                                                value="{{ result.summary }} - {{ result.description }}">
+                                            <input type="hidden" name="image_url" id="selectedImageInput"
+                                                value="{{ result.image_url }}">
+                                            <input type="hidden" name="flavor" value="{{ result.requirements.flavor }}">
+                                            <input type="hidden" name="size" value="{{ result.requirements.size }}">
+                                            <input type="hidden" name="shape" value="{{ result.requirements.shape }}">
+                                            <input type="hidden" name="occasion" value="{{ result.requirements.occasion }}">
+                                            <input type="hidden" name="design_style" value="{{ result.requirements.design_style }}">
+                                            <input type="hidden" name="message_on_cake" value="{{ result.requirements.message_on_cake }}">
+                                            <input type="hidden" name="extra_instructions" value="{{ result.requirements.extra_instructions }}">
+                                            <button type="submit" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-paper-plane me-1"></i> Send Request
+                                            </button>
+                                        </form>
+                                    </div>
+                                    {% empty %}
+                                    <div class="alert alert-info">
+                                        No bakers are currently accepting custom orders.
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Input Form -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4 p-md-5">
+                        {% if result %}
+                        <h4 class="fw-bold mb-4 text-muted">Modify Requirements</h4>
+                        {% else %}
+                        <h4 class="fw-bold mb-4">Cake Requirements</h4>
+                        {% endif %}
+
+                        <form method="POST">
+                            {% csrf_token %}
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small text-uppercase">Size</label>
+                                    {{ form.size }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small text-uppercase">Shape</label>
+                                    {{ form.shape }}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small text-uppercase">Flavor</label>
+                                    {{ form.flavor }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold small text-uppercase">Occasion</label>
+                                    {{ form.occasion }}
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label fw-bold small text-uppercase">Primary Colors</label>
+                                    {{ form.primary_colors }}
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label fw-bold small text-uppercase">Design Style</label>
+                                    {{ form.design_style }}
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label fw-bold small text-uppercase">Message on Cake</label>
+                                    {{ form.message_on_cake }}
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label fw-bold small text-uppercase">Extra Instructions</label>
+                                    {{ form.extra_instructions }}
+                                </div>
+
+                                <div class="col-12 mt-4">
+                                    <button type="submit" id="generateBtn" class="btn btn-primary w-100 py-3 fw-bold">
+                                        <span id="generateBtnText">
+                                            <i class="fas fa-magic me-2"></i> Generate Design
+                                        </span>
+                                        <span id="generateBtnSpinner" class="d-none">
+                                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                            Generating...
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const bakerSearch = document.getElementById('bakerSearch');
+        const bakerList = document.getElementById('bakerList');
+
+        if (bakerSearch && bakerList) {
+            bakerSearch.addEventListener('keyup', function () {
+                const query = this.value.toLowerCase();
+                const bakers = bakerList.getElementsByClassName('list-group-item');
+
+                Array.from(bakers).forEach(function (baker) {
+                    const text = baker.textContent.toLowerCase();
+                    if (text.includes(query)) {
+                        baker.classList.add('d-flex');
+                        baker.classList.remove('d-none');
+                    } else {
+                        baker.classList.remove('d-flex');
+                        baker.classList.add('d-none');
+                    }
+                });
+            });
+        }
+
+        // Processing state for Generate Design button
+        const generateBtn = document.getElementById('generateBtn');
+        if (generateBtn) {
+            generateBtn.closest('form').addEventListener('submit', function () {
+                generateBtn.disabled = true;
+                document.getElementById('generateBtnText').classList.add('d-none');
+                document.getElementById('generateBtnSpinner').classList.remove('d-none');
+            });
+        }
+    });
+</script>
+{% endblock %}

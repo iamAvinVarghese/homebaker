@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Custom Requests - HomeBaker{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">My Custom Requests</h2>
+            <p class="text-muted">Track quotes and responses for your custom designs.</p>
+        </div>
+        <a href="{% url 'cakes' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i> New Custom Request
+        </a>
+    </div>
+
+    <div class="row g-4">
+        {% for req in custom_requests %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="position-relative">
+                    {% if req.request_type == 'AI' %}
+                    <img src="{{ req.specs.image_url|default:'https://via.placeholder.com/400x300?text=AI+Design' }}"
+                        class="card-img-top" alt="AI Generated Design" style="height: 250px; object-fit: cover;">
+                    <span class="badge bg-primary position-absolute top-0 end-0 m-3 shadow-sm">AI DESIGNED</span>
+                    {% else %}
+                    <img src="{{ req.reference_image.url }}" class="card-img-top" alt="Photo Reference"
+                        style="height: 250px; object-fit: cover;">
+                    <span class="badge bg-secondary position-absolute top-0 end-0 m-3 shadow-sm">PHOTO UPLOAD</span>
+                    {% endif %}
+                </div>
+
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="fw-bold mb-0 text-primary">To: {{ req.baker.shop_name }}</h6>
+                        <span
+                            class="badge {% if req.status == 'PENDING' %}bg-warning{% elif req.status == 'ACCEPTED' %}bg-success{% elif req.status == 'COMPLETED' %}bg-info{% else %}bg-danger{% endif %} text-uppercase">
+                            {{ req.status }}
+                        </span>
+                    </div>
+
+                    <p class="text-muted small mb-3">
+                        <i class="far fa-calendar-alt me-1"></i> Submitted: {{ req.created_at|date:"M d, Y" }}
+                    </p>
+
+                    <div class="mb-3">
+                        <p class="small mb-2 text-truncate-3">{{ req.description }}</p>
+                        {% if req.flavor or req.size %}
+                        <div class="d-flex flex-wrap gap-1">
+                            {% if req.flavor %}
+                            <span class="badge bg-secondary text-white small">
+                                <i class="fas fa-utensils me-1 opacity-75"></i> {{ req.flavor }}
+                            </span>
+                            {% endif %}
+                            {% if req.size %}
+                            <span class="badge bg-secondary text-white small">
+                                <i class="fas fa-weight-hanging me-1 opacity-75"></i> {{ req.size }}
+                            </span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {% if req.status == 'ACCEPTED' %}
+                    <div class="bg-success text-white p-3 rounded mb-3 shadow-sm">
+                        <h6 class="fw-bold mb-1">Baker's Quote: ₹{{ req.price_quote|default:"0" }}</h6>
+                        {% if req.baker_message %}
+                        <p class="small mb-0 opacity-75 italic">"{{ req.baker_message }}"</p>
+                        {% endif %}
+                    </div>
+                    {% elif req.status == 'COMPLETED' %}
+                    <div class="alert alert-success py-2 px-3 mb-3 small d-flex align-items-center">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <div>
+                            <strong>Order Successful!</strong><br>
+                            Your custom cake is being prepared.
+                        </div>
+                    </div>
+                    {% elif req.status == 'REJECTED' %}
+                    <div class="bg-danger text-white p-3 rounded mb-3 shadow-sm">
+                        <h6 class="fw-bold mb-1">Unable to fulfill</h6>
+                        {% if req.baker_message %}
+                        <p class="small mb-0 opacity-75">Reason: {{ req.baker_message }}</p>
+                        {% endif %}
+                    </div>
+                    {% elif req.status == 'PENDING' %}
+                    <div class="alert alert-info py-2 px-3 mb-3 small">
+                        <i class="fas fa-clock me-1"></i> Waiting for baker's response...
+                    </div>
+                    {% else %}
+                    <div class="alert alert-secondary py-2 px-3 mb-3 small">
+                        Status: {{ req.get_status_display }}
+                    </div>
+                    {% endif %}
+
+                    {% if req.status == 'ACCEPTED' %}
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'finalize_custom_request' req.id %}" class="btn btn-success">
+                            <i class="fas fa-shopping-cart me-2"></i> Proceed to Payment
+                        </a>
+                    </div>
+                    {% elif req.status == 'PENDING' %}
+                    <div class="d-grid">
+                        <a href="{% url 'cancel_custom_request' req.id %}" class="btn btn-outline-danger btn-sm"
+                            onclick="return confirm('Are you sure you want to cancel this request?');">
+                            <i class="fas fa-times me-2"></i> Cancel Request
+                        </a>
+                    </div>
+                    {% elif req.status == 'COMPLETED' %}
+                    <div class="d-grid">
+                        <a href="{% url 'my_orders' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-list me-2"></i> View in My Orders
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="mb-3">
+                <i class="fas fa-magic fa-4x text-light"></i>
+            </div>
+            <h4 class="text-muted">No custom requests found</h4>
+            <p class="text-muted">Start creating your dream cake using AI or by uploading your own images!</p>
+            <a href="{% url 'cakes' %}" class="btn btn-primary mt-2">Browse Custom Studio</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .italic {
+        font-style: italic;
+    }
+
+    .text-truncate-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>
+{% endblock %}

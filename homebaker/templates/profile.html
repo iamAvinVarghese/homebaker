@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold" style="color: var(--text-primary);">My Profile</h2>
+            <span class="badge bg-{{ is_baker|yesno:'primary,success' }} fs-6">
+                {{ user.profile.get_role_display }}
+            </span>
+        </div>
+
+        <div class="card border-0 shadow-sm p-4">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% if user_form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {% for error in user_form.non_field_errors %}
+                    {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Profile Picture -->
+                <div class="text-center mb-4">
+                    <div class="position-relative d-inline-block">
+                        {% if user.profile.profile_picture %}
+                        <img src="{{ user.profile.profile_picture.url }}" class="rounded-circle shadow-sm"
+                            style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #fff;"
+                            alt="Profile Picture">
+                        {% else %}
+                        <div class="rounded-circle bg-light d-flex justify-content-center align-items-center shadow-sm"
+                            style="width: 120px; height: 120px; border: 3px solid #fff;">
+                            <i class="fas fa-user fa-3x text-secondary"></i>
+                        </div>
+                        {% endif %}
+                        <label for="{{ user_form.profile_picture.id_for_label }}"
+                            class="position-absolute bottom-0 end-0 bg-primary text-white p-2 rounded-circle shadow-sm"
+                            style="cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-camera fa-xs"></i>
+                        </label>
+                        {% if user.profile.profile_picture %}
+                        <a href="{% url 'remove_profile_picture' %}"
+                            class="position-absolute top-0 start-100 translate-middle bg-danger text-white p-2 rounded-circle shadow-sm text-decoration-none"
+                            style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;"
+                            onclick="return confirm('Are you sure you want to remove your profile picture?')">
+                            <i class="fas fa-trash fa-xs"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                    <div class="mt-2 text-center">
+                        <small class="text-muted d-block mb-2">Upload Profile Picture</small>
+                        <div class="d-none">
+                            {{ user_form.profile_picture }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Details -->
+                <h5 class="mb-3 text-secondary border-bottom pb-2">Personal Details</h5>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">First Name</label>
+                        {{ user_form.first_name }}
+                        {% if user_form.first_name.errors %}
+                        <div class="text-danger small">{{ user_form.first_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Last Name</label>
+                        {{ user_form.last_name }}
+                        {% if user_form.last_name.errors %}
+                        <div class="text-danger small">{{ user_form.last_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Email Address</label>
+                    {{ user_form.email }}
+                    {% if user_form.email.errors %}
+                    <div class="text-danger small">{{ user_form.email.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Phone Number</label>
+                    <input type="text" class="form-control" value="{{ user.profile.phone_number }}" readonly>
+                    <div class="form-text">Phone number cannot be changed.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Default Delivery Address</label>
+                    {{ user_form.default_address }}
+                    <div class="form-text">This address will be pre-filled during checkout.</div>
+                    {% if user_form.default_address.errors %}
+                    <div class="text-danger small">{{ user_form.default_address.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Baker Details -->
+                {% if is_baker and baker_form %}
+                <h5 class="mb-3 text-secondary border-bottom pb-2 mt-4">Bakery Details</h5>
+
+                {% if baker_form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {% for error in baker_form.non_field_errors %}
+                    {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Shop Name</label>
+                    {{ baker_form.shop_name }}
+                    {% if baker_form.shop_name.errors %}
+                    <div class="text-danger small">{{ baker_form.shop_name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Address</label>
+                    {{ baker_form.address }}
+                    {% if baker_form.address.errors %}
+                    <div class="text-danger small">{{ baker_form.address.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">City</label>
+                        {{ baker_form.city }}
+                        {% if baker_form.city.errors %}
+                        <div class="text-danger small">{{ baker_form.city.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Pincode</label>
+                        {{ baker_form.pincode }}
+                        {% if baker_form.pincode.errors %}
+                        <div class="text-danger small">{{ baker_form.pincode.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">FSSAI License Number</label>
+                    {{ baker_form.license_number }}
+                    {% if baker_form.license_number.help_text %}
+                    <div class="form-text">{{ baker_form.license_number.help_text }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">FSSAI Certificate</label>
+                    {% if baker_profile.fssai_certificate %}
+                    <div class="mb-2">
+                        <a href="{{ baker_profile.fssai_certificate.url }}" target="_blank"
+                            class="text-decoration-none">
+                            <i class="fas fa-file-alt me-1"></i> View Current Certificate
+                        </a>
+                    </div>
+                    {% endif %}
+                    {{ baker_form.fssai_certificate }}
+                    <div class="form-text">Upload new certificate to replace the current one.</div>
+                    {% if baker_form.fssai_certificate.errors %}
+                    <div class="text-danger small">{{ baker_form.fssai_certificate.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Read-only Stats -->
+                <div class="mb-4 pt-2 border-top">
+                    <div
+                        class="form-check form-switch p-0 d-flex align-items-center justify-content-between bg-light p-3 rounded">
+                        <label class="form-check-label fw-semibold mb-0"
+                            for="{{ baker_form.accepts_custom_orders.id_for_label }}">
+                            <i class="fas fa-birthday-cake me-2 text-primary"></i> I accept custom cake orders
+                        </label>
+                        {{ baker_form.accepts_custom_orders }}
+                    </div>
+                    <div class="form-text mt-1 ms-1">Enable this to let customers know you accept personalized cake
+                        requests.</div>
+                </div>
+
+                <div class="row mt-3 bg-light p-3 rounded mx-0">
+                    <div class="col-4 text-center border-end">
+                        <small class="text-muted d-block">Status</small>
+                        <span
+                            class="fw-bold {% if baker_profile.status == 'approved' %}text-success{% elif baker_profile.status == 'rejected' %}text-danger{% else %}text-warning{% endif %}">
+                            {{ baker_profile.get_status_display }}
+                        </span>
+                    </div>
+                    <div class="col-4 text-center border-end">
+                        <small class="text-muted d-block">Commission</small>
+                        <span class="fw-bold">{{ baker_profile.commission_rate }}%</span>
+                    </div>
+                    <div class="col-4 text-center">
+                        <small class="text-muted d-block">Total Revenue</small>
+                        <span class="fw-bold">₹{{ total_revenue|floatformat:2 }}</span>
+                    </div>
+                </div>
+
+                {% if baker_profile.status == 'pending' %}
+                <div class="alert alert-warning mt-4 border-0 shadow-sm d-flex align-items-center">
+                    <i class="fas fa-info-circle fs-4 me-3"></i>
+                    <div>
+                        <h6 class="fw-bold mb-1">Application Under Review</h6>
+                        <p class="small mb-0">Our admin team is currently reviewing your certificates. You'll receive an email once your account is activated.</p>
+                    </div>
+                </div>
+                {% elif baker_profile.status == 'rejected' %}
+                <div class="alert alert-danger mt-4 border-0 shadow-sm d-flex align-items-center">
+                    <i class="fas fa-exclamation-circle fs-4 me-3"></i>
+                    <div>
+                        <h6 class="fw-bold mb-1">Application Rejected</h6>
+                        <p class="small mb-0">Your application was not approved. Please ensure your FSSAI certificate is valid and clear before reapplying.</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% endif %}
+
+                <div class="mt-4 d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <a href="{% url 'change_password' %}" class="btn btn-outline-primary btn-sm me-2">
+                            <i class="fas fa-key me-2"></i> Change Password
+                        </a>
+                        {% if user.profile.role != 'admin' and user.profile.role != 'delivery_assistant' %}
+                        <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#deleteAccountModal">
+                            <i class="fas fa-trash-alt me-2"></i> Delete Account
+                        </button>
+                        {% endif %}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="fas fa-save me-2"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% if user.profile.role != 'admin' and user.profile.role != 'delivery_assistant' %}
+<!-- Delete Account Confirmation Modal -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-danger text-white border-0">
+                <h5 class="modal-title fw-bold" id="deleteAccountModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i> Delete Account?
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <div class="mb-3">
+                    <i class="fas fa-user-slash fa-4x text-danger opacity-25"></i>
+                </div>
+                <h5 class="fw-bold mb-3">Are you sure you want to leave us?</h5>
+                <p class="text-muted">This action is permanent and cannot be undone. All your data, orders, and history will be permanently deleted.</p>
+            </div>
+            <div class="modal-footer border-0 p-4 pt-0">
+                <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancel</button>
+                <form action="{% url 'delete_account' %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger px-4">
+                        <i class="fas fa-trash-alt me-2"></i> Yes, Delete My Account
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

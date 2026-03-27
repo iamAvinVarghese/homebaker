@@ -1,0 +1,22 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+<h2 class="text-violet">Order Delivered!</h2>
+
+<p>Hi <strong>{{ baker_shop_name }}</strong>,</p>
+<p>We are happy to inform you that order <strong>{{ order_id }}</strong> has been successfully delivered by our delivery assistant.</p>
+
+<div class="detail-card">
+    <div class="detail-row">
+        <span class="detail-label">Order ID:</span> <span>{{ order_id }}</span>
+    </div>
+    <div class="detail-row">
+        <span class="detail-label">Payout Status:</span> <span class="text-success">₹{{ payout_amount }} credited to your wallet</span>
+    </div>
+</div>
+
+<p>The payment has been automatically processed and updated in your wallet balance. Keep up the great work!</p>
+
+<br>
+<p>Sweet regards,<br>The Home Baker Team</p>
+{% endblock %}

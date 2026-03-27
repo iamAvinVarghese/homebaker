@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+
+{% block title %}Edit Cake - HomeBaker{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h4 class="mb-0">Edit Cake: {{ cake.name }}</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Cake Name</label>
+                                {{ form.name }}
+                                {% if form.name.errors %}
+                                <div class="text-danger small">{{ form.name.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Flavor</label>
+                                {{ form.flavor }}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Occasion</label>
+                                {{ form.occasion }}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Price (₹/kg)</label>
+                                {{ form.price }}
+                                {% if form.price.errors %}
+                                <div class="text-danger small">{{ form.price.errors }}</div>
+                                {% endif %}
+                            </div>
+
+
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Description</label>
+                                {{ form.description }}
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Current Image</label>
+                                {% if cake.image %}
+                                <div class="mb-2">
+                                    <img src="{{ cake.image.url }}" alt="{{ cake.name }}" class="img-thumbnail"
+                                        style="height: 100px;">
+                                </div>
+                                {% elif cake.image_url %}
+                                <div class="mb-2">
+                                    <img src="{{ cake.image_url }}" alt="{{ cake.name }}" class="img-thumbnail"
+                                        style="height: 100px;">
+                                </div>
+                                {% endif %}
+                                {{ form.image }}
+                                <div class="form-text mt-1">Or provide an image URL if you prefer</div>
+                                {{ form.image_url }}
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-check form-switch">
+                                    {{ form.is_available }}
+                                    <label class="form-check-label" for="{{ form.is_available.id_for_label }}">Available
+                                        for ordering</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a href="{% url 'baker_cakes' %}" class="btn btn-outline-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Update Cake
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

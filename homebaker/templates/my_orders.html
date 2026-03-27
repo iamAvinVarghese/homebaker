@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block title %}My Orders{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0" style="color: var(--text-primary);">My Orders</h2>
+</div>
+
+{% if orders %}
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="px-4 py-3 fw-semibold">Order ID</th>
+                        <th class="px-4 py-3 fw-semibold">Items</th>
+                        <th class="px-4 py-3 fw-semibold text-center">Delivery Date</th>
+                        <th class="px-4 py-3 fw-semibold text-end">Total Price</th>
+                        <th class="px-4 py-3 fw-semibold text-center">Status</th>
+                        <th class="px-4 py-3 fw-semibold text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td class="px-4 py-3 fw-bold">{{ order.order_id }}</td>
+                        <td class="px-4 py-3" style="min-width: 250px;">
+                            {% for item in order.items.all %}
+                            <div class="mb-2 pb-2 {% if not forloop.last %}border-bottom border-light{% endif %}">
+                                <div class="fw-semibold text-dark">{{ item.cake.name }}</div>
+                                <div class="small text-muted d-flex flex-wrap gap-2 mt-1">
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-utensils me-1 text-primary"></i> {{ item.cake.flavor|title }}</span>
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-weight-hanging me-1 text-primary"></i> {{ item.quantity }} kg</span>
+                                    <span class="badge bg-light text-dark border"><i class="fas fa-tag me-1 text-primary"></i> ₹{{ item.unit_price }}</span>
+                                </div>
+                                {% if item.message_on_cake %}
+                                <div class="small text-primary mt-1">
+                                    <i class="fas fa-quote-left me-1 opacity-50"></i> {{ item.message_on_cake }}
+                                </div>
+                                {% endif %}
+                                {% if item.cake.name|slice:":21" == "Custom Cake Request #" %}
+                                <div class="small text-secondary mt-1" style="font-style: italic;">
+                                    <i class="fas fa-info-circle me-1"></i> {{ item.cake.description|truncatechars:100 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% empty %}
+                            <span class="text-muted italic small">No items found</span>
+                            {% endfor %}
+                        </td>
+                        <td class="px-4 py-3 text-center">{{ order.delivery_date|date:"d M Y" }}</td>
+                        <td class="px-4 py-3 fw-bold text-end">₹{{ order.total_amount }}</td>
+                        <td class="px-4 py-3 text-center">
+                            {% if order.status == 'pending' %}
+                            <span class="badge bg-secondary">Pending</span>
+                            {% elif order.status == 'confirmed' or order.status == 'awaiting_confirmation' %}
+                            <span class="badge bg-success">Confirmed</span>
+                            {% elif order.status == 'baking' %}
+                            <span class="badge bg-warning text-dark">Baking</span>
+                            {% elif order.status == 'out_for_delivery' %}
+                            <span class="badge bg-warning text-dark">Out for Delivery</span>
+                            {% elif order.status == 'ready' or order.status == 'packing' %}
+                            <span class="badge bg-info">Processing</span>
+                            {% elif order.status == 'delivered' %}
+                            <span class="badge bg-success">Delivered</span>
+                            {% elif order.status == 'cancelled' %}
+                            <span class="badge bg-danger">Cancelled</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3 text-end">
+                            <div class="btn-group">
+                                {% if order.status == 'pending' %}
+                                <form action="{% url 'cancel_order' order.order_id %}" method="post" class="d-inline"
+                                    onsubmit="return confirm('Are you sure you want to cancel this order?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger me-1">Cancel</button>
+                                </form>
+                                {% endif %}
+                                <a href="{% url 'order_tracking' order.order_id %}"
+                                    class="btn btn-sm btn-outline-primary me-1">Track</a>
+                                {% if order.status == 'delivered' and not order.review %}
+                                <a href="{% url 'add_review' order.order_id %}"
+                                    class="btn btn-sm btn-warning text-dark">Rate</a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info text-center">
+    <p class="mb-0">You haven't placed any orders yet. <a href="{% url 'cakes' %}" class="text-decoration-none">Browse
+            cakes</a> to get started!</p>
+</div>
+{% endif %}
+
+{% endblock %}

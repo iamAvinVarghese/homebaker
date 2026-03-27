@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Audit Logs - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="fw-bold">Audit Logs</h2>
+        <p class="text-muted">Track system activity and user actions.</p>
+    </div>
+    <div class="col-auto">
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label">Action Filter</label>
+                <select name="action" class="form-select" onchange="this.form.submit()">
+                    <option value="" {% if not action_filter %}selected{% endif %}>
+                        All Actions
+                    </option>
+                    <option value="login" {% if action_filter == 'login' %}selected{% endif %}>
+                        Login
+                    </option>
+                    <option value="logout" {% if action_filter == 'logout' %}selected{% endif %}>
+                        Logout
+                    </option>
+                    <option value="register" {% if action_filter == 'register' %}selected{% endif %}>
+                        Register
+                    </option>
+                    <option value="update" {% if action_filter == 'update' %}selected{% endif %}>
+                        Updates
+                    </option>
+                    <option value="delete" {% if action_filter == 'delete' %}selected{% endif %}>
+                        Deletions
+                    </option>
+                    <option value="approve" {% if action_filter == 'approve' %}selected{% endif %}>
+                        Approvals
+                    </option>
+                    <option value="reject" {% if action_filter == 'reject' %}selected{% endif %}>
+                        Rejections
+                    </option>
+                </select>
+            </div>
+            <div class="col-md-8 text-end">
+                <a href="{% url 'admin_audit_logs' %}" class="btn btn-outline-secondary btn-sm">Clear Filters</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Logs Table -->
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Timestamp</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>IP Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td class="ps-4 text-nowrap text-muted small">
+                            {{ log.created_at|date:"M d, Y H:i:s" }}
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                {% if log.user.profile.profile_picture %}
+                                <img src="{{ log.user.profile.profile_picture.url }}" class="rounded-circle me-2"
+                                    width="24" height="24" style="object-fit: cover;">
+                                {% else %}
+                                <i class="fas fa-user-circle text-secondary me-2"></i>
+                                {% endif %}
+                                <span class="fw-bold small">{{ log.user.username }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary border">{{ log.get_action_display }}</span>
+                        </td>
+                        <td class="text-muted small font-monospace">
+                            {{ log.ip_address|default:"-" }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="fas fa-history fa-3x mb-3 opacity-50"></i>
+                                <p>No audit logs found.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

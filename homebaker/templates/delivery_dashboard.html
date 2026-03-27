@@ -1,0 +1,289 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delivery Dashboard{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2 class="fw-bold mb-3">Delivery Assistant Dashboard</h2>
+        <p class="text-muted">Welcome, {{ request.user.get_full_name|default:request.user.username }}. Manage your deliveries below.</p>
+    </div>
+</div>
+
+<div class="mb-5">
+    <h4 class="fw-bold mb-3"><i class="fas fa-truck me-2 text-primary"></i>Active Deliveries</h4>
+    <div class="card border-0 shadow-sm overflow-hidden mb-4">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4 py-3">Order ID</th>
+                            <th>Customer</th>
+                            <th>Address</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in active_orders %}
+                        <tr>
+                            <td class="ps-4 py-3">
+                                <span class="fw-bold">{{ order.order_id }}</span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if order.customer.profile.profile_picture %}
+                                    <img src="{{ order.customer.profile.profile_picture.url }}" class="rounded-circle me-2"
+                                        width="32" height="32" style="object-fit: cover; border: 1px solid #0d6efd;">
+                                    {% else %}
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-2"
+                                        style="width: 32px; height: 32px; background-color: #0d6efd; color: white; font-weight: bold; font-size: 0.85rem;">
+                                        {{ order.customer.get_full_name|default:order.customer.username|make_list|first|upper }}
+                                    </div>
+                                    {% endif %}
+                                    <span>{{ order.customer.get_full_name|default:order.customer.username }}</span>
+                                </div>
+                            </td>
+                            <td class="text-truncate" style="max-width: 250px;">{{ order.delivery_address }}</td>
+                            <td>
+                                <span class="badge {% if order.status == 'out_for_delivery' %}bg-primary{% else %}bg-secondary{% endif %}">
+                                    {{ order.get_status_display }}
+                                </span>
+                            </td>
+                            <td class="pe-4">
+                                <button class="btn btn-sm btn-success verify-btn" 
+                                        data-order-id="{{ order.order_id }}"
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#otpModal">
+                                    <i class="fas fa-check-circle me-1"></i> Verify Delivery
+                                </button>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="py-5 text-center text-muted">
+                                No active orders to deliver.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-5">
+    <h4 class="fw-bold mb-3"><i class="fas fa-history me-2 text-success"></i>Recent Deliveries</h4>
+    <div class="card border-0 shadow-sm overflow-hidden">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4 py-3">Order ID</th>
+                            <th>Customer</th>
+                            <th>Address</th>
+                            <th>Delivered At</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in delivered_orders %}
+                        <tr class="table-light opacity-75">
+                            <td class="ps-4 py-3">
+                                <span class="fw-bold text-muted">{{ order.order_id }}</span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if order.customer.profile.profile_picture %}
+                                    <img src="{{ order.customer.profile.profile_picture.url }}" class="rounded-circle me-2"
+                                        width="32" height="32" style="object-fit: cover; border: 1px solid #6c757d; opacity: 0.8;">
+                                    {% else %}
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-2"
+                                        style="width: 32px; height: 32px; background-color: #6c757d; color: white; font-weight: bold; font-size: 0.85rem;">
+                                        {{ order.customer.get_full_name|default:order.customer.username|make_list|first|upper }}
+                                    </div>
+                                    {% endif %}
+                                    <span class="text-muted">{{ order.customer.get_full_name|default:order.customer.username }}</span>
+                                </div>
+                            </td>
+                            <td class="text-truncate text-muted" style="max-width: 250px;">{{ order.delivery_address }}</td>
+                            <td class="text-muted small">
+                                {{ order.delivered_at|date:"M d, Y H:i" }}
+                            </td>
+                            <td>
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check me-1"></i> {{ order.get_status_display }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="py-5 text-center text-muted">
+                                No past deliveries found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- OTP Modal -->
+<div class="modal fade" id="otpModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-card">
+            <div id="otpFormView">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">Enter Delivery OTP</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-3 pb-4">
+                    <p class="text-muted small mb-4">Ask the customer for the OTP generated by the baker after accepting the order.</p>
+                    
+                    <div id="otpErrorAlert" class="alert alert-danger py-2 mb-3 d-none">
+                        <small id="otpErrorMessage"></small>
+                    </div>
+
+                    <form id="otpForm">
+                        {% csrf_token %}
+                        <input type="hidden" id="modalOrderId" name="order_id">
+                        <div class="mb-4">
+                             <input type="text" class="form-control form-control-lg text-center fw-bold" 
+                                    id="otpInput" name="otp" placeholder="XXXX" maxlength="4" autofocus>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                <span id="btnText">Complete Delivery</span>
+                                <span id="btnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Success View -->
+            <div id="otpSuccessView" class="d-none">
+                <div class="modal-body text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle text-success" style="font-size: 5rem;"></i>
+                    </div>
+                    <h3 class="fw-bold mb-2">Verification Completed!</h3>
+                    <p class="text-muted mb-4">The order has been marked as delivered successfully.</p>
+                    <button type="button" class="btn btn-success px-5" onclick="window.location.reload()">Great!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const otpModal = document.getElementById('otpModal');
+    const otpForm = document.getElementById('otpForm');
+    const modalOrderIdInput = document.getElementById('modalOrderId');
+    const otpInput = document.getElementById('otpInput');
+    const otpFormView = document.getElementById('otpFormView');
+    const otpSuccessView = document.getElementById('otpSuccessView');
+    const otpErrorAlert = document.getElementById('otpErrorAlert');
+    const otpErrorMessage = document.getElementById('otpErrorMessage');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const btnSpinner = document.getElementById('btnSpinner');
+    
+    // When verify button is clicked, set the order ID in the hidden input
+    document.querySelectorAll('.verify-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            modalOrderIdInput.value = this.dataset.orderId;
+            otpInput.value = '';
+            otpErrorAlert.classList.add('d-none');
+            otpFormView.classList.remove('d-none');
+            otpSuccessView.classList.add('d-none');
+            setTimeout(() => otpInput.focus(), 500);
+        });
+    });
+    
+    // Handle OTP form submission
+    otpForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const orderId = modalOrderIdInput.value;
+        const otp = otpInput.value;
+        
+        if (!otp || otp.length < 4) {
+            showError('Please enter a valid 4-digit OTP.');
+            return;
+        }
+        
+        setLoading(true);
+        
+        const formData = new FormData();
+        formData.append('order_id', orderId);
+        formData.append('otp', otp);
+        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+        
+        fetch("{% url 'verify_delivery_otp' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            setLoading(false);
+            if (data.status === 'success') {
+                otpFormView.classList.add('d-none');
+                otpSuccessView.classList.remove('d-none');
+                // Auto reload after 2 seconds if they don't click
+                setTimeout(() => window.location.reload(), 3000);
+            } else {
+                showError(data.message || 'Invalid OTP. Please try again.');
+                otpInput.value = '';
+                otpInput.focus();
+            }
+        })
+        .catch(error => {
+            setLoading(false);
+            console.error('Error:', error);
+            showError('An error occurred. Please try again.');
+        });
+    });
+
+    function showError(message) {
+        otpErrorMessage.textContent = message;
+        otpErrorAlert.classList.remove('d-none');
+    }
+
+    function setLoading(isLoading) {
+        submitBtn.disabled = isLoading;
+        if (isLoading) {
+            btnText.classList.add('d-none');
+            btnSpinner.classList.remove('d-none');
+        } else {
+            btnText.classList.remove('d-none');
+            btnSpinner.classList.add('d-none');
+        }
+    }
+});
+</script>
+
+<style>
+.glass-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+.form-control-lg {
+    font-size: 2rem;
+    letter-spacing: 0.5rem;
+}
+</style>
+
+{% endblock %}

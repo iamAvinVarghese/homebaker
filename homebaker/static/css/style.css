@@ -1,0 +1,181 @@
+/* ================================
+   GLOBAL
+================================ */
+body {
+    background-color: #0f0f14;   /* premium black */
+    color: #eaeaf0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ================================
+   NAVBAR
+================================ */
+.navbar {
+    background-color: #14141c;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    color: #b084ff !important;   /* purple brand */
+}
+
+.navbar .nav-link {
+    color: #d6d6e0 !important;
+}
+
+.navbar .nav-link:hover {
+    color: #b084ff !important;
+}
+
+/* ================================
+   MAIN CONTAINER
+================================ */
+main.container {
+    margin-top: 3rem;
+}
+
+/* ================================
+   HEADINGS
+================================ */
+h1, h2, h3, h4, h5 {
+    color: #c7a6ff;
+}
+
+/* ================================
+   CARDS
+================================ */
+.card {
+    background-color: #181824;
+    border: 1px solid #2a2a3d;
+    border-radius: 14px;
+    color: #eaeaf0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(176, 132, 255, 0.25);
+}
+
+/* ================================
+   CAKE IMAGES
+================================ */
+.cake-img {
+    height: 220px;
+    object-fit: cover;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+}
+
+/* ================================
+   BUTTONS
+================================ */
+.btn-primary {
+    background: linear-gradient(135deg, #7b3fe4, #b084ff);
+    border: none;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #6930c3, #9b6cff);
+}
+
+/* Outline buttons */
+.btn-outline-secondary {
+    border-color: #b084ff;
+    color: #b084ff;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #b084ff;
+    color: #0f0f14;
+}
+
+/* ================================
+   FORMS
+================================ */
+.form-control,
+.form-select,
+textarea {
+    background-color: #12121a;
+    border: 1px solid #2a2a3d;
+    color: #eaeaf0;
+}
+
+.form-control:focus,
+.form-select:focus,
+textarea:focus {
+    border-color: #b084ff;
+    box-shadow: none;
+}
+
+.form-control::placeholder {
+    color: #9a9ab0;
+}
+
+/* ================================
+   TABLES
+================================ */
+.table {
+    color: #eaeaf0;
+}
+
+.table th {
+    background-color: #1f1f2e;
+    color: #c7a6ff;
+}
+
+.table td {
+    border-color: #2a2a3d;
+}
+
+/* ================================
+   BADGES
+================================ */
+.badge.bg-success {
+    background-color: #6fdb9f !important;
+}
+
+.badge.bg-warning {
+    background-color: #f0ad4e !important;
+}
+
+.badge.bg-info {
+    background-color: #8ab4f8 !important;
+}
+
+/* ================================
+   LOGIN TABS
+================================ */
+.nav-tabs {
+    border-bottom: 2px solid #2a2a3d;
+}
+
+.nav-tabs .nav-link {
+    color: #9a9ab0;
+    border: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.nav-tabs .nav-link:hover {
+    color: #eaeaf0;
+    border-color: transparent;
+    background-color: transparent;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: transparent !important;
+    color: #b084ff !important;
+    border: none;
+    border-bottom: 2px solid #b084ff !important;
+    font-weight: bold;
+}
+
+/* ================================
+   FOOTER
+================================ */
+footer {
+    background-color: #14141c;
+    color: #9a9ab0;
+}

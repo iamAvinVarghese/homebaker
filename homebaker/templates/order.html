@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% block title %}Place Order{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold mb-2" style="color: var(--text-primary);">Place Your Order</h2>
+            <p class="text-muted">Fill in the details to complete your order</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Order Form -->
+            <div class="col-md-7">
+                <div class="card border-0 shadow-sm p-4">
+                    <form method="POST" id="orderForm">
+                        {% csrf_token %}
+                        
+                        <!-- Cake Selection -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold mb-2">Cake Name</label>
+                            {{ form.cake }}
+                            {% if form.cake.errors %}
+                                <div class="text-danger small">{{ form.cake.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Delivery Date -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold mb-2">Delivery Date</label>
+                            {{ form.delivery_date }}
+                            {% if form.delivery_date.errors %}
+                                <div class="text-danger small">{{ form.delivery_date.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Quantity -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold mb-2">Quantity</label>
+                            {{ form.quantity }}
+                            {% if form.quantity.errors %}
+                                <div class="text-danger small">{{ form.quantity.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Message -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold mb-2">Message on Cake</label>
+                            {{ form.message_on_cake }}
+                            {% if form.message_on_cake.errors %}
+                                <div class="text-danger small">{{ form.message_on_cake.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Address -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold mb-2">Delivery Address</label>
+                            {{ form.delivery_address }}
+                            {% if form.delivery_address.errors %}
+                                <div class="text-danger small">{{ form.delivery_address.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Price Summary -->
+            <div class="col-md-5">
+                <div class="card border-0 shadow-sm p-4 sticky-top" style="top: 100px;">
+                    <h5 class="fw-bold mb-4">Order Summary</h5>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Base Price</span>
+                            <span class="fw-semibold" id="basePrice">₹0</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Delivery Charge</span>
+                            <span class="fw-semibold">₹50</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="fw-bold h5 mb-0">Total Amount</span>
+                        <span class="fw-bold h5 mb-0 text-primary" id="totalAmount">₹50</span>
+                    </div>
+                    <button type="submit" form="orderForm" class="btn btn-primary w-100 btn-lg">
+                        Confirm Order
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Update price when cake or quantity changes
+    document.addEventListener('DOMContentLoaded', function() {
+        const cakeSelect = document.getElementById('id_cake');
+        const quantityInput = document.getElementById('id_quantity');
+        const basePriceSpan = document.getElementById('basePrice');
+        const totalAmountSpan = document.getElementById('totalAmount');
+        
+        const cakePrices = {
+            {% for cake in cakes %}
+            '{{ cake.id }}': {{ cake.price }},
+            {% endfor %}
+        };
+        
+        function updatePrice() {
+            const cakeId = cakeSelect.value;
+            const quantity = parseInt(quantityInput.value) || 1;
+            const basePrice = cakePrices[cakeId] * quantity || 0;
+            const deliveryCharge = 50;
+            const total = basePrice + deliveryCharge;
+            
+            basePriceSpan.textContent = '₹' + basePrice.toFixed(2);
+            totalAmountSpan.textContent = '₹' + total.toFixed(2);
+        }
+        
+        if (cakeSelect) {
+            cakeSelect.addEventListener('change', updatePrice);
+            quantityInput.addEventListener('input', updatePrice);
+            
+            // Set initial price if cake is pre-selected
+            {% if selected_cake %}
+            cakeSelect.value = '{{ selected_cake.id }}';
+            updatePrice();
+            {% endif %}
+        }
+    });
+</script>
+
+{% endblock %}

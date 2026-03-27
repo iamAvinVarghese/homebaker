@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Rate Your Order{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <div class="mb-3">
+                            <span class="fa-stack fa-2x text-warning">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-star fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </div>
+                        <h2 class="fw-bold">How was your order?</h2>
+                        <p class="text-muted">Order #{{ order.order_id }}</p>
+                    </div>
+
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="mb-4 text-center">
+                            <label class="form-label fw-bold mb-2">Rate your experience</label>
+                            <div class="rating-input d-flex justify-content-center gap-2">
+                                {{ form.rating }}
+                            </div>
+                            <small class="text-muted">Rate from 1 to 5 (e.g., 4.5)</small>
+                            {% if form.rating.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.rating.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Review (Optional)</label>
+                            {{ form.comment }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Add Photo</label>
+                            {{ form.photo }}
+                        </div>
+
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                Submit Review
+                            </button>
+                            <a href="{% url 'my_orders' %}" class="btn btn-outline-secondary">
+                                Skip
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Manage Expenses{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2 class="fw-bold">Expense Management</h2>
+        <p class="text-muted">Track and manage your bakery expenses.</p>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card bg-primary text-white border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h6 class="card-title opacity-75">Total Expenses</h6>
+                <h3 class="fw-bold mb-0">₹{{ total_expenses }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card bg-info text-white border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h6 class="card-title opacity-75">This Month</h6>
+                <h3 class="fw-bold mb-0">₹{{ monthly_expenses }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Add Expense Form -->
+    <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="fw-bold mb-0">Add Expense</h5>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                        <div class="form-text">{{ field.help_text }}</div>
+                        {% endif %}
+                        {% for error in field.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+
+                    <button type="submit" class="btn btn-primary w-100">Add Expense</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Expenses List -->
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="fw-bold mb-0">Recent Expenses</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4">Date</th>
+                                <th>Category</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Receipt</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for expense in expenses %}
+                            <tr>
+                                <td class="ps-4">{{ expense.expense_date|date:"M d, Y" }}</td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">
+                                        {{ expense.get_category_display }}
+                                    </span>
+                                </td>
+                                <td>{{ expense.description|truncatechars:30 }}</td>
+                                <td class="fw-bold text-danger">-₹{{ expense.amount }}</td>
+                                <td>
+                                    {% if expense.receipt %}
+                                    <a href="{{ expense.receipt.url }}" target="_blank"
+                                        class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-file-invoice"></i> View
+                                    </a>
+                                    {% else %}
+                                    <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="fas fa-receipt fa-3x mb-3"></i>
+                                        <p>No expenses recorded yet.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

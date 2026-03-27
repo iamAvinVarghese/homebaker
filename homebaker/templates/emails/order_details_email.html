@@ -1,0 +1,42 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+<h2 class="text-violet">{{ title }}</h2>
+
+<p>Hi <strong>{{ customer_name }}</strong>,</p>
+<p>{{ intro_text }}</p>
+
+<div class="detail-card">
+    <div class="detail-row">
+        <span class="detail-label">Order ID:</span> <span>{{ order_id }}</span>
+    </div>
+    {% if amount %}
+    <div class="detail-row">
+        <span class="detail-label">Total Amount:</span> <span>₹{{ amount }}</span>
+    </div>
+    {% endif %}
+    {% if delivery_date %}
+    <div class="detail-row">
+        <span class="detail-label">Delivery Date:</span> <span>{{ delivery_date }}</span>
+    </div>
+    {% endif %}
+    {% if address %}
+    <div class="detail-row">
+        <span class="detail-label">Address:</span> <span>{{ address }}</span>
+    </div>
+    {% endif %}
+</div>
+
+<p>{{ footer_text }}</p>
+
+{% if action_url %}
+<div style="text-align: center;">
+    <a href="{{ action_url }}" class="btn">
+        {{ action_text }}
+    </a>
+</div>
+{% endif %}
+
+<br>
+<p>Sweet regards,<br>The Home Baker Team</p>
+{% endblock %}

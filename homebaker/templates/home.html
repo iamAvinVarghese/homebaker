@@ -1,0 +1,376 @@
+{% extends 'base.html' %}
+{% block title %}Premium Home Bakers{% endblock %}
+
+{% block content %}
+<style>
+    /* Custom Homepage Styles that respect base.html dark mode */
+    .hero-section {
+        padding: 0 0 4rem 0;
+        margin-top: -3.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-bg-blob {
+        position: absolute;
+        top: -10%;
+        right: -5%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(108,92,231,0.15) 0%, rgba(255,255,255,0) 70%);
+        border-radius: 50%;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    [data-theme="dark"] .hero-bg-blob {
+        background: radial-gradient(circle, rgba(108,92,231,0.2) 0%, rgba(26,26,26,0) 70%);
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .text-gradient {
+        background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(108,92,231,0.15);
+        border-color: #6c5ce7;
+    }
+
+    .stat-icon-wrapper {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: rgba(108,92,231,0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: #6c5ce7;
+        margin-bottom: 1rem;
+    }
+
+    .feature-card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+        border-color: #6c5ce7;
+    }
+
+    [data-theme="dark"] .feature-card:hover {
+        box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+    }
+    
+    .cake-card {
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+        background-color: var(--bg-card);
+        transition: all 0.3s ease;
+    }
+    
+    .cake-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+    }
+    
+    .cake-card img {
+        height: 200px;
+        object-fit: cover;
+        width: 100%;
+        transition: transform 0.5s ease;
+    }
+    
+    .cake-card:hover img {
+        transform: scale(1.05);
+    }
+
+    .cta-section {
+        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+        border-radius: 20px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .cta-section * {
+        color: white;
+    }
+    
+    .cta-btn-outline {
+        border: 2px solid white;
+        color: white;
+        background: transparent;
+        transition: all 0.3s ease;
+    }
+    
+    .cta-btn-outline:hover {
+        background: white;
+        color: #6c5ce7;
+    }
+
+    @keyframes slideUpFadeOutFloat {
+        0% { transform: translateY(0px) rotate(5deg); }
+        50% { transform: translateY(-10px) rotate(4deg); }
+        100% { transform: translateY(0px) rotate(5deg); }
+    }
+</style>
+
+<!-- HERO SECTION -->
+<div class="hero-section">
+    <div class="hero-bg-blob"></div>
+    <div class="container hero-content">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0 pe-lg-5">
+
+                <h1 class="fw-bold display-4 mb-4 lh-base" style="color: var(--text-primary);">
+                    Exquisite Cakes from <br>
+                    <span class="text-gradient">Trusted Home Bakers</span>
+                </h1>
+                <p class="lead text-muted mb-4" style="line-height: 1.8; font-size: 1.15rem;">
+                    Discover handcrafted, delicious cakes made with love and fresh ingredients. Simple ordering, custom designs, and a delightful experience for every celebration.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{% url 'cakes' %}" class="btn btn-primary btn-lg px-4 shadow">
+                        <i class="fas fa-birthday-cake me-2"></i> Browse Cakes
+                    </a>
+                    <a href="{% url 'register' %}" class="btn btn-outline-primary btn-lg px-4 bg-transparent border-2">
+                        Become a Baker <i class="fas fa-arrow-right ms-2 fs-6"></i>
+                    </a>
+                </div>
+                
+                <div class="mt-5 d-flex flex-wrap align-items-center gap-4 text-muted small fw-medium">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-check-circle text-success me-2 fs-5"></i> 100% Quality
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-truck text-primary me-2 fs-5"></i> Safe Delivery
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-shield-alt text-info me-2 fs-5"></i> Secure Payments
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center position-relative">
+                <div class="position-absolute top-0 end-0 translate-middle-y mt-5 me-5 z-index-2 d-none d-md-block" style="animation: slideUpFadeOutFloat 3s infinite ease-in-out;">
+                    <div class="bg-white rounded-3 shadow-lg p-3 d-flex align-items-center border border-light" style="transform: rotate(5deg);">
+                        <div class="bg-warning text-white rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                            <i class="fas fa-star border-0"></i>
+                        </div>
+                        <div class="text-start">
+                            <div class="fw-bold text-dark mb-0 lh-1">4.9/5</div>
+                            <small class="text-muted text-dark opacity-75">Avg. Rating</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=1000&auto=format&fit=crop"
+                    class="img-fluid rounded-4 shadow-lg"
+                    alt="Artisan stunning chocolate cake"
+                    style="max-height: 550px; width: 100%; object-fit: cover; display: block; filter: contrast(1.05) brightness(1.02);">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PLATFORM STATISTICS SECTION -->
+<div class="container mb-5 pb-4">
+    <div class="row g-4 justify-content-center text-center">
+        <div class="col-md-4 col-sm-6">
+            <div class="stat-card p-4 h-100">
+                <div class="stat-icon-wrapper mx-auto text-primary">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3 class="fw-bold display-6 mb-1 text-gradient">{{ total_customers|default:"1000" }}+</h3>
+                <p class="text-muted mb-0 fw-medium">Happy Customers</p>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6">
+            <div class="stat-card p-4 h-100">
+                <div class="stat-icon-wrapper mx-auto text-success" style="background-color: rgba(40,167,69,0.1); color: #28a745;">
+                    <i class="fas fa-mitten" style="color: #28a745;"></i>
+                </div>
+                <h3 class="fw-bold display-6 mb-1" style="color: #28a745;">{{ total_bakers|default:"50" }}+</h3>
+                <p class="text-muted mb-0 fw-medium">Trusted Bakers</p>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6">
+            <div class="stat-card p-4 h-100">
+                <div class="stat-icon-wrapper mx-auto text-warning" style="background-color: rgba(255,193,7,0.1); color: #f39c12;">
+                    <i class="fas fa-gift" style="color: #f39c12;"></i>
+                </div>
+                <h3 class="fw-bold display-6 mb-1" style="color: #f39c12;">{{ cakes_delivered|default:"5000" }}+</h3>
+                <p class="text-muted mb-0 fw-medium">Cakes Delivered</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- HOW IT WORKS SECTION -->
+<div class="container py-5 my-3 border-top border-opacity-10">
+    <div class="text-center mb-5">
+        <span class="text-primary fw-bold text-uppercase tracking-wide" style="letter-spacing: 2px; font-size: 0.85rem;">Simple Process</span>
+        <h2 class="fw-bold mt-2 mb-3">How HomeBaker Works</h2>
+        <p class="text-muted mx-auto" style="max-width: 600px;">Experience the easiest way to order high-quality, customized cakes baked by passionate local artisans.</p>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="feature-card p-4 text-center">
+                <div class="mb-4 text-primary" style="font-size: 2.5rem;">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h5 class="fw-bold mb-3">1. Browse &amp; Explore</h5>
+                <p class="text-muted mb-0 small" style="line-height: 1.6;">Discover thousands of delightful cakes across various flavors, occasions, and dietary needs.</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="feature-card p-4 text-center">
+                <div class="mb-4 text-primary" style="font-size: 2.5rem;">
+                    <i class="fas fa-magic"></i>
+                </div>
+                <h5 class="fw-bold mb-3">2. Customize</h5>
+                <p class="text-muted mb-0 small" style="line-height: 1.6;">Personalize your cake with custom messages, sizes, and specific requirements.</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="feature-card p-4 text-center">
+                <div class="mb-4 text-primary" style="font-size: 2.5rem;">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <h5 class="fw-bold mb-3">3. Secure Payment</h5>
+                <p class="text-muted mb-0 small" style="line-height: 1.6;">Pay seamlessly through our secure payment gateway or use your built-in wallet.</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="feature-card p-4 text-center">
+                <div class="mb-4 text-primary" style="font-size: 2.5rem;">
+                    <i class="fas fa-shipping-fast"></i>
+                </div>
+                <h5 class="fw-bold mb-3">4. Fast Delivery</h5>
+                <p class="text-muted mb-0 small" style="line-height: 1.6;">Receive your fresh, handcrafted cake safely delivered to your doorstep right on time.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FEATURED CAKES SECTION -->
+{% if featured_cakes %}
+<div class="container py-5 my-4 bg-light rounded-4 px-4 border shadow-sm">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <span class="text-primary fw-bold text-uppercase tracking-wide" style="letter-spacing: 2px; font-size: 0.85rem;">Top Picks</span>
+            <h2 class="fw-bold mt-2 mb-0">Featured Cakes</h2>
+        </div>
+        <a href="{% url 'cakes' %}" class="btn d-none d-sm-inline-block btn-sm btn-outline-primary shadow-sm px-3">View All <i class="fas fa-arrow-right ms-1"></i></a>
+    </div>
+    
+    <div class="row g-4">
+        {% for cake in featured_cakes|slice:":4" %}
+        <div class="col-lg-3 col-md-6 border-0">
+            <div class="cake-card h-100 shadow-sm border-0">
+                <div class="position-relative overflow-hidden">
+                    {% if cake.image %}
+                    <img src="{{ cake.image.url }}" alt="{{ cake.name }}" style="height: 200px; width: 100%; object-fit: cover;" class="img-fluid w-100">
+                    {% elif cake.image_url %}
+                    <img src="{{ cake.image_url }}" alt="{{ cake.name }}" style="height: 200px; width: 100%; object-fit: cover;" class="img-fluid w-100">
+                    {% else %}
+                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center w-100" style="height: 200px;">
+                        <i class="fas fa-birthday-cake fa-3x opacity-50"></i>
+                    </div>
+                    {% endif %}
+                    <div class="position-absolute top-0 end-0 m-2">
+                        <span class="badge bg-warning text-dark shadow-sm px-2 py-1"><i class="fas fa-star me-1 text-white"></i>{{ cake.average_rating|default:"0.0" }}</span>
+                    </div>
+                </div>
+                <div class="p-3">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h6 class="fw-bold mb-0 text-truncate me-2">{{ cake.name }}</h6>
+                        <span class="fw-bold text-primary">₹{{ cake.price|floatformat:0 }}</span>
+                    </div>
+                    <p class="text-muted small mb-3 text-truncate">{{ cake.description|default:"Delicious homemade cake." }}</p>
+                    <a href="{% url 'cakes' %}" class="btn btn-sm btn-outline-secondary w-100 border text-decoration-none">Order Now</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="text-center mt-4 d-block d-sm-none">
+        <a href="{% url 'cakes' %}" class="btn w-100 btn-outline-primary shadow-sm px-3">View All Cakes</a>
+    </div>
+</div>
+{% endif %}
+
+<!-- TESTIMONIALS / REVIEWS SECTION -->
+{% if website_reviews %}
+<div class="container py-5 my-4">
+    <div class="text-center mb-5">
+        <span class="text-primary fw-bold text-uppercase tracking-wide" style="letter-spacing: 2px; font-size: 0.85rem;">Testimonials</span>
+        <h2 class="fw-bold mt-2 mb-0">What Our Users Say</h2>
+    </div>
+    <div class="row g-4 justify-content-center">
+        {% for review in website_reviews %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 shadow-sm border-0" style="background-color: var(--bg-card); border-radius: 16px;">
+                <div class="card-body p-4 text-center">
+                    <div class="mb-3 text-warning">
+                        {% for i in "12345"|make_list %}
+                            {% if forloop.counter <= review.rating %}
+                                <i class="fas fa-star"></i>
+                            {% else %}
+                                <i class="far fa-star text-muted"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <p class="fst-italic text-muted mb-4">"{{ review.review_text }}"</p>
+                    <h6 class="fw-bold text-truncate mb-0" style="color: var(--text-primary);">{{ review.user.get_full_name|default:review.user.username }}</h6>
+                    <small class="text-muted text-uppercase" style="letter-spacing: 1px; font-size: 0.70rem;">{{ review.user.profile.get_role_display|default:"User" }} • {{ review.created_at|date:"M d, Y" }}</small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- BOTTOM CTA SECTION -->
+<div class="container my-5 py-4">
+    <div class="cta-section p-5 shadow-lg text-center text-md-start">
+        <div class="row align-items-center">
+            <div class="col-md-8 mb-4 mb-md-0">
+                <h2 class="fw-bold mb-3 display-6">Are you a talented home baker?</h2>
+                <p class="lead mb-0 opacity-75" style="max-width: 600px;">Join our community of thousands of passionate bakers. Manage your orders, reach more customers, and grow your business today.</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="{% url 'register' %}" class="btn cta-btn-outline btn-lg px-5 py-3 fw-bold shadow">
+                    Start Baking
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

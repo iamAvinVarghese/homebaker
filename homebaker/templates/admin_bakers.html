@@ -1,0 +1,344 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Manage Bakers - HomeBaker Admin{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --glass-bg: rgba(255, 255, 255, 0.95);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+        --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    .glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 1.5rem;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .glass-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.12);
+    }
+
+    .stat-card {
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 150px;
+        height: 150px;
+        background: currentColor;
+        opacity: 0.05;
+        border-radius: 50%;
+        z-index: -1;
+    }
+
+    .table-container {
+        border-radius: 1.5rem;
+        overflow: hidden;
+        background: white;
+    }
+
+    .baker-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        object-fit: cover;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        transition: all 0.2s;
+    }
+
+    .action-btn:hover {
+        transform: scale(1.1);
+    }
+
+    .filter-pill {
+        padding: 0.5rem 1.25rem;
+        border-radius: 2rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid #e2e8f0;
+        background: white;
+        color: #64748b;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    .filter-pill.active {
+        background: var(--primary-gradient);
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+
+    .page-header {
+        background: var(--primary-gradient);
+        padding: 3rem 2rem;
+        border-radius: 2rem;
+        color: white;
+        margin-bottom: -4rem;
+        position: relative;
+        z-index: 0;
+    }
+</style>
+
+<div class="container py-4">
+    <!-- Header Section -->
+    <div class="page-header shadow-lg mb-5">
+        <div class="row align-items-center">
+            <div class="col">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-2">
+                        <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}"
+                                class="text-white text-opacity-75 text-decoration-none">Dashboard</a></li>
+                        <li class="breadcrumb-item active text-white fw-bold" aria-current="page">Bakers</li>
+                    </ol>
+                </nav>
+                <h1 class="display-5 fw-bold mb-0">Manage Bakers</h1>
+                <p class="text-white text-opacity-75">Curate and maintain the heart of HomeBaker's ecosystem.</p>
+            </div>
+            <div class="col-auto">
+                <div class="dropdown">
+                    <button class="btn btn-white bg-white text-primary fw-bold rounded-pill px-4 py-2 shadow-sm"
+                        type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-filter me-2"></i>Filter Status
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 p-2 mt-2">
+                        <li><a class="dropdown-item rounded-3 py-2 {% if not status_filter %}bg-primary text-white{% endif %}"
+                                href="{% url 'admin_bakers' %}">All Statuses</a></li>
+                        <li><a class="dropdown-item rounded-3 py-2 {% if status_filter == 'pending' %}bg-warning text-white{% endif %}"
+                                href="?status=pending">Pending Approval</a></li>
+                        <li><a class="dropdown-item rounded-3 py-2 {% if status_filter == 'approved' %}bg-success text-white{% endif %}"
+                                href="?status=approved">Approved Bakers</a></li>
+                        <li><a class="dropdown-item rounded-3 py-2 {% if status_filter == 'rejected' %}bg-danger text-white{% endif %}"
+                                href="?status=rejected">Rejected/Suspended</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="row g-4 mb-5" style="position: relative; z-index: 1;">
+        <div class="col-md-4">
+            <div class="glass-card stat-card text-primary h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted small fw-bold text-uppercase mb-1">Total Network</p>
+                        <h2 class="display-6 fw-bold mb-0">{{ total_bakers }}</h2>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle">
+                        <i class="fas fa-store fs-3"></i>
+                    </div>
+                </div>
+                <div class="mt-3 small text-muted">
+                    <i class="fas fa-arrow-up text-success me-1"></i> Lifetime registrations
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-card stat-card text-warning h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted small fw-bold text-uppercase mb-1">Pending Review</p>
+                        <h2 class="display-6 fw-bold mb-0">{{ pending_bakers }}</h2>
+                    </div>
+                    <div class="bg-warning bg-opacity-10 p-3 rounded-circle">
+                        <i class="fas fa-clock fs-3"></i>
+                    </div>
+                </div>
+                <div class="mt-3 small text-muted">
+                    Waiting for your approval
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="glass-card stat-card text-success h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted small fw-bold text-uppercase mb-1">Active Partners</p>
+                        <h2 class="display-6 fw-bold mb-0">{{ approved_bakers }}</h2>
+                    </div>
+                    <div class="bg-success bg-opacity-10 p-3 rounded-circle">
+                        <i class="fas fa-check-circle fs-3"></i>
+                    </div>
+                </div>
+                <div class="mt-3 small text-muted">
+                    Currently servicing orders
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bakers Table Section -->
+    <div class="glass-card mb-4 overflow-hidden border-0">
+        <div
+            class="card-header bg-transparent border-0 px-4 py-4 d-flex justify-content-between align-items-center border-bottom">
+            <h4 class="fw-bold mb-0">Partners Directory</h4>
+            <div class="input-group w-auto">
+                <span class="input-group-text bg-light border-0"><i class="fas fa-search"></i></span>
+                <input type="text" id="bakerSearch" class="form-control bg-light border-0 px-3"
+                    placeholder="Search bakers...">
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-borderless align-middle mb-0" id="bakersTable">
+                <thead class="bg-light bg-opacity-50">
+                    <tr class="text-muted small text-uppercase fw-bold">
+                        <th class="ps-4 py-3">Baker Identity</th>
+                        <th class="py-3">Engagement Context</th>
+                        <th class="py-3">Regional Hub</th>
+                        <th class="py-3">Status</th>
+                        <th class="text-end pe-4 py-3">Management Controls</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for baker in bakers %}
+                    <tr class="border-bottom" style="transition: background 0.2s;">
+                        <td class="ps-4 py-4">
+                            <a href="{% url 'admin_user_detail' baker.user_profile.user.id %}" class="d-flex align-items-center text-decoration-none">
+                                {% if baker.user_profile.profile_picture %}
+                                <img src="{{ baker.user_profile.profile_picture.url }}" class="baker-avatar me-3">
+                                {% else %}
+                                <div
+                                    class="baker-avatar bg-primary bg-opacity-10 d-flex align-items-center justify-content-center me-3">
+                                    <i class="fas fa-store text-primary"></i>
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <h6 class="mb-0 fw-bold text-dark">{{ baker.shop_name }}</h6>
+                                    <div class="small text-muted">{{ baker.user_profile.user.get_full_name|default:baker.user_profile.user.username }}</div>
+                                </div>
+                            </a>
+                        </td>
+                        <td>
+                            <div class="small">
+                                <div class="mb-1"><i class="fas fa-envelope text-muted me-2" style="width: 15px;"></i>{{ baker.user_profile.user.email }}</div>
+                                <div><i class="fas fa-phone text-muted me-2" style="width: 15px;"></i>{{ baker.user_profile.phone_number }}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-inline-flex align-items-center bg-light px-3 py-1 rounded-pill small fw-bold">
+                                <i class="fas fa-map-marker-alt text-danger me-2"></i>{{ baker.city }}
+                            </div>
+                        </td>
+                        <td>
+                            {% if baker.status == 'approved' %}
+                            <span class="status-badge bg-success bg-opacity-10 text-success">
+                                <i class="fas fa-circle xsmall me-1"></i> Active
+                            </span>
+                            {% elif baker.status == 'rejected' %}
+                            <span class="status-badge bg-danger bg-opacity-10 text-danger">
+                                <i class="fas fa-circle xsmall me-1"></i> Restricted
+                            </span>
+                            {% else %}
+                            <span class="status-badge bg-warning bg-opacity-10 text-warning">
+                                <i class="fas fa-circle xsmall me-1"></i> Verification Pending
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end pe-4">
+                            <div class="btn-group gap-2">
+                                {% if baker.status == 'pending' %}
+                                <a href="{% url 'admin_user_detail' baker.user_profile.user.id %}" class="btn btn-primary btn-sm rounded-pill px-3" title="Review Certificate & Details">
+                                    <i class="fas fa-eye me-1"></i> Review
+                                </a>
+                                <form action="{% url 'admin_approve_baker' baker.id %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="action-btn btn btn-success shadow-sm"
+                                        title="Approve Baker">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </form>
+                                <form action="{% url 'admin_reject_baker' baker.id %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="action-btn btn btn-danger shadow-sm"
+                                        title="Reject Application"
+                                        onclick="return confirm('Ensure you have reviewed the documentation. Reject this baker?')">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </form>
+                                {% elif baker.status == 'approved' %}
+                                <form action="{% url 'admin_reject_baker' baker.id %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3"
+                                        onclick="return confirm('This will suspend the baker from the marketplace. Proceed?')">
+                                        <i class="fas fa-ban me-1"></i> Suspend
+                                    </button>
+                                </form>
+                                {% else %}
+                                <form action="{% url 'admin_approve_baker' baker.id %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-success btn-sm rounded-pill px-3">
+                                        <i class="fas fa-redo me-1"></i> Reinstate
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+                            <div class="py-5">
+                                <i class="fas fa-users-slash fa-4x text-muted opacity-25 mb-4"></i>
+                                <h4 class="text-muted fw-bold">No Partners Found</h4>
+                                <p class="text-muted">Adjust your filters or invite new bakers to join the platform.</p>
+                                <a href="{% url 'admin_bakers' %}" class="btn btn-primary rounded-pill px-4">Reset
+                                    View</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Real-time search functionality
+    document.getElementById('bakerSearch').addEventListener('keyup', function () {
+        let filter = this.value.toLowerCase();
+        let rows = document.querySelectorAll('#bakersTable tbody tr');
+
+        rows.forEach(row => {
+            let text = row.textContent.toLowerCase();
+            row.style.display = text.includes(filter) ? '' : 'none';
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,10 @@
+ID    | Username                  | Role            | Name                 | Orders   | Reviews 
+----------------------------------------------------------------------------------------------------
+2     | 0000000001                | baker           | Rosey Paul           | 0        | 0       
+3     | 0000000002                | baker           | Susma Pramodh        | 0        | 0       
+4     | 0000000003                | baker           | Sundhari Rajeev      | 0        | 0       
+5     | 1000000000                | customer        | Raju                 | 7        | 4       
+6     | 2000000000                | customer        | Rojo                 | 1        | 1       
+7     | 3000000000                | customer        | Max                  | 3        | 3       
+16    | 1234567890                | admin           | System Admin         | 0        | 0       
+20    | 0000000000                | delivery_assistant | Delivery Assistant   | 0        | 0       

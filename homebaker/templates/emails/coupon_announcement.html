@@ -1,0 +1,39 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+<div style="text-align: center;">
+    <div style="font-size: 48px; margin-bottom: 20px;">🎉</div>
+    <h2 style="color: #6366f1; font-size: 28px; margin-bottom: 10px;">Exclusive Discount Just for You!</h2>
+    <p style="font-size: 18px; color: #475569;">Hello {{ customer_name }}, we have some sweet news!</p>
+</div>
+
+<div class="detail-card" style="text-align: center; border: 2px solid #e2e8f0;">
+    <p style="margin-bottom: 5px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Use Coupon Code</p>
+    <div class="otp-box" style="margin: 10px 0; background-color: #f5f3ff; border: 2px dashed #8b5cf6; color: #7c3aed;">
+        {{ coupon_code }}
+    </div>
+    <h3 style="margin-top: 10px; color: #1e293b; font-size: 24px;">Get {{ discount_value }}% OFF</h3>
+    <p style="color: #64748b; font-size: 14px; margin-top: 10px;">
+        {% if min_order > 0 %}
+            Valid on orders above ₹{{ min_order }}
+        {% else %}
+            Valid on all orders!
+        {% endif %}
+    </p>
+</div>
+
+<div style="margin-top: 30px; line-height: 1.8; color: #334155;">
+    <p>We're excited to offer you this special discount on your next purchase at <strong>HomeBaker</strong>. Whether you're celebrating a birthday, an anniversary, or just craving something sweet, our home bakers are ready to create something magical for you.</p>
+    
+    {% if valid_until %}
+    <p style="background-color: #fff7ed; padding: 10px; border-left: 4px solid #f97316; font-size: 14px;">
+        <strong>Hurry!</strong> This offer is valid until {{ valid_until|date:"d M Y" }}.
+    </p>
+    {% endif %}
+</div>
+
+<div style="text-align: center; margin-top: 40px;">
+    <a href="{{ action_url }}" class="btn" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); padding: 15px 35px; font-size: 18px;">🛒 Shop Now</a>
+    <p style="margin-top: 20px; font-size: 12px; color: #94a3b8;">Terms and conditions apply. One use per customer.</p>
+</div>
+{% endblock %}

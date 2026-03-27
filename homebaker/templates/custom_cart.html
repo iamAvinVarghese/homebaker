@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Custom Order Cart{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Custom Order Cart</h2>
+
+    {% if cart_items %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body p-0">
+                    <table class="table mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th class="ps-4">Cake</th>
+                                <th>Price</th>
+                                <th>Size</th>
+                                <th class="pe-4 text-end">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart_items %}
+                            <tr>
+                                <td class="ps-4 py-3">
+                                    <div class="d-flex align-items-center">
+                                        {% if item.cake.image %}
+                                        <img src="{{ item.cake.image.url }}" alt="{{ item.cake.name }}"
+                                            style="width: 60px; height: 60px; object-fit: cover; margin-right: 15px;"
+                                            class="rounded">
+                                        {% elif item.cake.image_url %}
+                                        <img src="{{ item.cake.image_url }}" alt="{{ item.cake.name }}"
+                                            style="width: 60px; height: 60px; object-fit: cover; margin-right: 15px;"
+                                            class="rounded">
+                                        {% endif %}
+                                        <div>
+                                            <h6 class="mb-0">{{ item.cake.name }}</h6>
+                                            <span class="badge bg-info text-dark">Custom Request</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-3 align-middle">
+                                    ₹{{ item.price }}
+                                </td>
+                                <td class="py-3 align-middle">
+                                    {{ item.custom_size }}
+                                </td>
+                                <td class="py-3 align-middle pe-4 text-end fw-bold">₹{{ item.total|floatformat:2 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="alert alert-info mt-3">
+                <i class="fas fa-info-circle me-2"></i> This is a specialized cart for your accepted custom request. Size and pricing are fixed as per the baker's quote.
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Order Summary</h5>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal:</span>
+                        <span>₹{{ subtotal|floatformat:2 }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Delivery:</span>
+                        <span>₹{{ delivery_charge|floatformat:2 }}</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="h5 mb-0">Total:</span>
+                        <span class="h5 mb-0 text-primary">₹{{ grand_total|floatformat:2 }}</span>
+                    </div>
+                    
+                    <form action="{% url 'checkout' %}" method="get">
+                        <input type="hidden" name="cart_type" value="custom">
+                        <button type="submit" class="btn btn-primary w-100 py-3 fw-bold mb-3">
+                            Proceed to Checkout <i class="fas fa-arrow-right ms-2"></i>
+                        </button>
+                    </form>
+                    
+                    <a href="{% url 'my_custom_requests' %}" class="btn btn-outline-secondary w-100 py-2">
+                        Back to Custom Requests
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-shopping-basket fa-4x text-muted mb-4"></i>
+        <h3>No custom items in this cart</h3>
+        <p class="text-muted">You can find your accepted requests in the "My Custom Requests" section.</p>
+        <a href="{% url 'my_custom_requests' %}" class="btn btn-primary px-4 mt-3">View My Requests</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

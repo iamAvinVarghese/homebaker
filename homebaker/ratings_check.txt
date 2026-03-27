@@ -1,0 +1,2 @@
+User: 0000000001 | Shop: Raju Bakes | Rating: 4.00 | Cakes: 3
+User: 0000000003 | Shop: Ambika BAKES | Rating: 0.00 | Cakes: 2

@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Order Tracking #{{ order.order_id }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold mb-0">Order Tracking</h2>
+            <span class="badge bg-primary fs-6">{{ order.get_status_display }}</span>
+        </div>
+
+        <!-- Order Status Timeline -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+                <h5 class="card-title fw-bold mb-4">Status Timeline</h5>
+                <div class="timeline">
+                    {% for event in timeline %}
+                    <div class="timeline-item pb-4 ps-4 border-start {% if forloop.last %}border-start-0{% endif %} position-relative">
+                        <div class="position-absolute top-0 start-0 translate-middle rounded-circle 
+                            {% if event.is_error %}bg-danger
+                            {% elif event.is_current %}bg-primary pulse-animation
+                            {% elif event.is_completed %}bg-success
+                            {% else %}bg-light border{% endif %}"
+                            style="width: 16px; height: 16px; z-index: 2;">
+                            {% if event.is_completed and not event.is_current and not event.is_error %}
+                            <i class="fas fa-check text-white" style="font-size: 8px; position: absolute; top: 4px; left: 4px;"></i>
+                            {% endif %}
+                        </div>
+                        <div class="{% if not event.is_completed %}text-muted{% endif %}">
+                            <p class="mb-1 fw-bold">
+                                {{ event.status }}
+                                {% if event.is_current %}
+                                <span class="badge rounded-pill bg-primary ms-2" style="font-size: 0.6rem;">Current</span>
+                                {% endif %}
+                            </p>
+                            {% if event.time %}
+                            <small class="{% if event.is_completed %}text-muted{% else %}text-muted-light{% endif %}">
+                                {{ event.time|date:"M d, Y, h:i A" }}
+                            </small>
+                            {% else %}
+                            <small class="text-muted opacity-50 italic">Awaiting completion...</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <style>
+                .timeline-item.border-start {
+                    border-left: 2px solid #e9ecef !important;
+                }
+                .bg-success { background-color: #28a745 !important; }
+                .bg-light.border { border: 2px solid #dee2e6 !important; }
+                
+                @keyframes pulse {
+                    0% { box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.4); }
+                    70% { box-shadow: 0 0 0 10px rgba(13, 110, 253, 0); }
+                    100% { box-shadow: 0 0 0 0 rgba(13, 110, 253, 0); }
+                }
+                .pulse-animation {
+                    animation: pulse 2s infinite;
+                }
+                .italic { font-style: italic; }
+                </style>
+            </div>
+        </div>
+
+        <!-- Order Details -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+                <div class="d-flex justify-content-between">
+                    <span class="fw-bold text-dark">Order ID: {{ order.order_id }}</span>
+                    <span class="text-muted">{{ order.created_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold mb-2">Delivery Address</h6>
+                        <p class="text-muted mb-0">{{ order.delivery_address }}</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <h6 class="fw-bold mb-2">Payment Info</h6>
+                        <p class="text-muted mb-1">Method: {{ order.get_payment_method_display }}</p>
+                        <p class="text-muted mb-0">Status:
+                            <span
+                                class="badge {% if order.payment_status == 'paid' %}bg-success{% else %}bg-warning{% endif %}">
+                                {{ order.get_payment_status_display }}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+
+                <hr>
+
+                <h6 class="fw-bold mb-3">Order Items</h6>
+                {% for item in order.items.all %}
+                <div class="d-flex align-items-center mb-3">
+                    <div style="width: 60px; height: 60px;" class="flex-shrink-0 rounded overflow-hidden">
+                        {% if item.cake.image %}
+                        <img src="{{ item.cake.image.url }}" class="w-100 h-100 object-fit-cover"
+                            alt="{{ item.cake.name }}">
+                        {% elif item.cake.image_url %}
+                        <img src="{{ item.cake.image_url }}" class="w-100 h-100 object-fit-cover"
+                            alt="{{ item.cake.name }}">
+                        {% else %}
+                        <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
+                            <i class="fas fa-birthday-cake text-muted"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="ms-3 flex-grow-1">
+                        <h6 class="mb-0 fw-bold">{{ item.cake.name }}</h6>
+                        <div class="small text-muted mt-1">
+                            <span class="me-2"><i class="fas fa-utensils me-1 text-primary"></i> {{ item.cake.flavor|title }}</span>
+                            <span><i class="fas fa-weight-hanging me-1 text-primary"></i> {{ item.quantity }} kg</span>
+                        </div>
+                        {% if item.message_on_cake %}
+                        <div class="small text-primary mt-1">
+                            <i class="fas fa-quote-left me-1 opacity-50"></i> {{ item.message_on_cake }}
+                        </div>
+                        {% endif %}
+                        {% if item.cake.name|slice:":21" == "Custom Cake Request #" %}
+                        <div class="mt-2 p-2 bg-light rounded small text-secondary border-start border-3 border-primary">
+                            <strong><i class="fas fa-info-circle me-1"></i> Special Instructions:</strong><br>
+                            {{ item.cake.description }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="text-end">
+                        <span class="fw-bold">₹{{ item.subtotal }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <hr>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Subtotal</span>
+                    <span>₹{{ order.subtotal }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Delivery Charge</span>
+                    <span>₹{{ order.delivery_charge }}</span>
+                </div>
+                <div class="d-flex justify-content-between fw-bold fs-5 mt-3 pt-3 border-top">
+                    <span>Total Amount</span>
+                    <span class="text-primary">₹{{ order.total_amount }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <a href="{% url 'cakes' %}" class="btn btn-outline-primary">Continue Shopping</a>
+            {% if order.status == 'delivered' %}
+            <a href="{% url 'add_review' order.order_id %}" class="btn btn-primary ms-2">Write a Review</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,338 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold mb-2" style="color: var(--text-primary);">Create Account</h2>
+            <p class="text-muted">Join us and start ordering delicious cakes</p>
+        </div>
+
+        <div class="card border-0 shadow-sm p-4 p-md-5">
+
+            <form method="POST" id="registerForm" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {% for error in form.non_field_errors %}
+                    {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Full Name -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold mb-2">Full Name</label>
+                    {{ form.full_name }}
+                    {% if form.full_name.errors %}
+                    <div class="text-danger small">{{ form.full_name.errors }}</div>
+                    {% endif %}
+                </div>
+
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold mb-2">Email Address</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                    <div class="text-danger small">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Phone Number -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold mb-2">Phone Number</label>
+                    {{ form.phone_number }}
+                    {% if form.phone_number.errors %}
+                    <div class="text-danger small">{{ form.phone_number.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Password -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold mb-2">Password</label>
+                    <div class="input-group">
+                        {{ form.password1 }}
+                        <button class="btn btn-outline-secondary d-flex align-items-center justify-content-center" type="button" id="togglePassword1" style="width: 45px;">
+                            <svg class="eye-open" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <line x1="12" y1="5" x2="12" y2="2"></line>
+                                <line x1="17.3" y1="6.7" x2="19" y2="4"></line>
+                                <line x1="6.7" y1="6.7" x2="5" y2="4"></line>
+                            </svg>
+                            <svg class="eye-closed" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <line x1="3" y1="3" x2="21" y2="21"></line>
+                                <line x1="8" y1="16" x2="6" y2="19"></line>
+                                <line x1="12" y1="17" x2="12" y2="20"></line>
+                                <line x1="16" y1="16" x2="18" y2="19"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    {% if form.password1.errors %}
+                    <div class="text-danger small">{{ form.password1.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold mb-2">Confirm Password</label>
+                    <div class="input-group">
+                        {{ form.password2 }}
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword2">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    {% if form.password2.errors %}
+                    <div class="text-danger small">{{ form.password2.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Role -->
+                <div class="mb-4">
+                    <label class="form-label fw-semibold mb-2">Register As</label>
+                    <div class="d-flex gap-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="role" id="role_customer" value="customer"
+                                checked>
+                            <label class="form-check-label" for="role_customer">
+                                Customer
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="role" id="role_baker" value="baker">
+                            <label class="form-check-label" for="role_baker">
+                                Baker
+                            </label>
+                        </div>
+                    </div>
+                    {% if form.role.errors %}
+                    <div class="text-danger small">{{ form.role.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Baker Fields (Hidden by default) -->
+                <div id="bakerFields" style="display: none;">
+                    <h5 class="mb-3 text-primary border-bottom pb-2">Baker Details</h5>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold mb-2">Shop Name</label>
+                        {{ form.shop_name }}
+                        {% if form.shop_name.errors %}
+                        <div class="text-danger small">{{ form.shop_name.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold mb-2">Shop Address</label>
+                        {{ form.address }}
+                        {% if form.address.errors %}
+                        <div class="text-danger small">{{ form.address.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold mb-2">City</label>
+                            {{ form.city }}
+                            {% if form.city.errors %}
+                            <div class="text-danger small">{{ form.city.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold mb-2">Pincode</label>
+                            {{ form.pincode }}
+                            {% if form.pincode.errors %}
+                            <div class="text-danger small">{{ form.pincode.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold mb-2">FSSAI License Number</label>
+                        {{ form.license_number }}
+                        {% if form.license_number.errors %}
+                        <div class="text-danger small">{{ form.license_number.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold mb-2">FSSAI Certificate Image</label>
+                        {{ form.fssai_certificate }}
+                        {% if form.fssai_certificate.errors %}
+                        <div class="text-danger small">{{ form.fssai_certificate.errors }}</div>
+                        {% endif %}
+                        <div class="form-text text-muted mb-3">Upload your FSSAI certificate (Image only)</div>
+                        
+                        <!-- Verify Button -->
+                        <div class="d-flex align-items-center gap-3">
+                            <button type="button" id="btnVerifyFssai" class="btn btn-outline-primary btn-sm px-4">
+                                <i class="fas fa-check-circle me-1"></i> Verify Certificate
+                            </button>
+                            <div id="fssaiStatus" class="small fw-semibold"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" id="btnRegister" class="btn btn-primary w-100 btn-lg">
+                    Register
+                </button>
+            </form>
+
+            <div class="text-center mt-4">
+                <small class="text-muted">
+                    Already have an account? <a href="{% url 'login' %}" class="text-decoration-none">Login here</a>
+                </small>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Role toggle logic
+        const roleRadios = document.querySelectorAll('input[name="role"]');
+        const bakerFields = document.getElementById('bakerFields');
+        const btnRegister = document.getElementById('btnRegister');
+        
+        // Verification State
+        let isFssaiVerified = false;
+
+        function updateSubmitButton() {
+            const checkedRadio = document.querySelector('input[name="role"]:checked');
+            if (checkedRadio && checkedRadio.value === 'baker') {
+                btnRegister.disabled = !isFssaiVerified;
+                if (!isFssaiVerified) {
+                    btnRegister.title = "Please verify your FSSAI certificate first";
+                } else {
+                    btnRegister.title = "";
+                }
+            } else {
+                btnRegister.disabled = false;
+                btnRegister.title = "";
+            }
+        }
+
+        function toggleBakerFields() {
+            if (bakerFields) {
+                // Find checked radio
+                const checkedRadio = document.querySelector('input[name="role"]:checked');
+                if (checkedRadio && checkedRadio.value === 'baker') {
+                    bakerFields.style.display = 'block';
+                } else {
+                    bakerFields.style.display = 'none';
+                }
+            }
+            updateSubmitButton();
+        }
+
+        roleRadios.forEach(radio => {
+            radio.addEventListener('change', toggleBakerFields);
+        });
+
+        // Run on load
+        toggleBakerFields();
+
+        // Reset verification if inputs change
+        const licenseInput = document.querySelector('input[name="license_number"]');
+        const certInput = document.querySelector('input[name="fssai_certificate"]');
+        
+        [licenseInput, certInput].forEach(input => {
+            if (input) {
+                input.addEventListener('change', () => {
+                    isFssaiVerified = false;
+                    const fssaiStatus = document.getElementById('fssaiStatus');
+                    if (fssaiStatus && fssaiStatus.innerText.includes('Completed')) {
+                        fssaiStatus.innerHTML = '<span class="text-warning small">Details changed. Please re-verify.</span>';
+                    }
+                    updateSubmitButton();
+                });
+            }
+        });
+
+        // Password toggle logic
+        function setupPasswordToggle(inputId, toggleId) {
+            const toggleBtn = document.getElementById(toggleId);
+            // Django renders the input with id="id_<fieldname>"
+            const passwordInput = document.getElementById(inputId);
+
+            if (toggleBtn && passwordInput) {
+                toggleBtn.addEventListener('click', function () {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+
+                    const openIcon = this.querySelector('.eye-open');
+                    const closedIcon = this.querySelector('.eye-closed');
+                    
+                    if (type === 'text') {
+                        openIcon.style.display = 'none';
+                        closedIcon.style.display = 'block';
+                    } else {
+                        openIcon.style.display = 'block';
+                        closedIcon.style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        setupPasswordToggle('id_password1', 'togglePassword1');
+        setupPasswordToggle('id_password2', 'togglePassword2');
+
+        // FSSAI AJAX Verification
+        const btnVerify = document.getElementById('btnVerifyFssai');
+        const fssaiStatus = document.getElementById('fssaiStatus');
+
+        if (btnVerify) {
+            btnVerify.addEventListener('click', async function() {
+                if (!licenseInput.value || certInput.files.length === 0) {
+                    fssaiStatus.innerHTML = '<span class="text-warning">Please enter license number and upload image first.</span>';
+                    return;
+                }
+
+                // UI Loading State
+                btnVerify.disabled = true;
+                btnVerify.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Verifying...';
+                fssaiStatus.innerHTML = '<span class="text-muted">Analyzing certificate with AI...</span>';
+
+                const formData = new FormData();
+                formData.append('license_number', licenseInput.value);
+                formData.append('fssai_certificate', certInput.files[0]);
+
+                try {
+                    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                    const response = await fetch('/ajax-verify-fssai/', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': csrfToken
+                        },
+                        body: formData
+                    });
+                    const data = await response.json();
+
+                    if (data.status === 'success') {
+                        fssaiStatus.innerHTML = '<span class="text-success"><i class="fas fa-check-double me-1"></i> ' + data.message + '</span>';
+                        isFssaiVerified = true;
+                    } else {
+                        // Display the exact message passed from backend for debugging
+                        fssaiStatus.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle me-1"></i> ' + data.message + '</span>';
+                        isFssaiVerified = false;
+                    }
+                } catch (error) {
+                    fssaiStatus.innerHTML = '<span class="text-danger">Error connecting to server. Detail: ' + error.message + '</span>';
+                    isFssaiVerified = false;
+                } finally {
+                    btnVerify.disabled = false;
+                    btnVerify.innerHTML = '<i class="fas fa-check-circle me-1"></i> Verify Certificate';
+                    updateSubmitButton();
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

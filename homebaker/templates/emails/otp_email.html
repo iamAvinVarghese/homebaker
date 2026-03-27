@@ -1,0 +1,23 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+<h2 class="text-violet">Verification Code</h2>
+<p>Hello {% if customer_name %}{{ customer_name }}{% endif %},</p>
+<p>Your OTP for <strong>{{ purpose }}</strong> is ready. Please enter this code in the application to continue.</p>
+
+<div style="text-align: center;">
+    <div class="otp-box">
+        {{ otp }}
+    </div>
+</div>
+
+{% if is_delivery %}
+<p>Please share this code with your delivery partner to confirm reception of your order <strong>{{ order_id }}</strong>.</p>
+{% else %}
+<p>This code will expire in <strong>5 minutes</strong> for your security.</p>
+{% endif %}
+<p>If you did not request this code, you can safely ignore this email.</p>
+
+<br>
+<p>Best regards,<br>The Home Baker Team</p>
+{% endblock %}

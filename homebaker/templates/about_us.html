@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us - HomeBaker{% endblock %}
+
+{% block content %}
+<div class="about-us-container">
+    <!-- Hero Section -->
+    <section class="py-5 text-center bg-light rounded shadow-sm mb-5" style="background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%) !important; color: white;">
+        <div class="container py-4">
+            <h1 class="display-4 fw-bold">About HomeBaker</h1>
+            <p class="lead mb-0">Bringing the sweetness of home-baked love to your doorstep.</p>
+        </div>
+    </section>
+
+    <div class="row g-5">
+        <!-- Our Story -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm p-4 h-100">
+                <h2 class="text-primary mb-4 border-bottom pb-2">Our Story</h2>
+                <p>Welcome to <strong>HomeBaker</strong>, a platform dedicated to connecting passionate home bakers with cake enthusiasts. We believe that the best cakes aren't made in giant factories, but in home kitchens filled with love, tradition, and the finest ingredients.</p>
+                
+                <p>What started as a vision to empower local talent has grown into a community where every celebration is made special with a custom touch. Whether it's a birthday, wedding, or just a Tuesday treat, our bakers are here to make your moments unforgettable.</p>
+
+                <div class="mt-4 p-4 bg-light rounded border-start border-4 border-primary">
+                    <h5 class="fw-bold mb-3">College Project Milestone</h5>
+                    <p class="mb-0">This platform is a proud <strong>College Project</strong> developed with dedication and technical excellence. It was created by <strong>Avin CV</strong> and <strong>Dhijil Davis</strong>, reaching its significant development milestone on <strong>January 7th</strong>. This project showcases our commitment to building practical, user-centric web applications using modern technologies.</p>
+                </div>
+
+                <div class="mt-5">
+                    <h4 class="text-secondary">Our Mission</h4>
+                    <p>To provide a seamless experience for customers to discover unique, handcrafted cakes while providing home bakers with the tools and platform they need to grow their small businesses.</p>
+                </div>
+
+                <div class="mt-4 p-4 rounded" style="background: linear-gradient(135deg, #fff3e0, #ffe0b2); border-left: 4px solid #f57c00;">
+                    <div class="d-flex align-items-center mb-3">
+                        <span style="font-size: 2rem; margin-right: 12px;">🏠</span>
+                        <h5 class="fw-bold mb-0" style="color: #e65100;">Empowering Homemakers</h5>
+                    </div>
+                    <p class="mb-2">HomeBaker was built with a special purpose — to give <strong>unemployed housewives</strong> a powerful opportunity to <strong>earn money from the comfort of their own home</strong>.</p>
+                    <p class="mb-0">If you have a passion for baking, you don't need a storefront or big investment. Simply register as a baker, list your creations, and start receiving orders. HomeBaker handles the platform so you can focus on what you love — baking!</p>
+                </div>
+
+                <div class="mt-4">
+                    <h6 class="fw-bold text-muted mb-3">Why HomeBaker is perfect for homemakers:</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><span class="text-success me-2">✔</span> Work at your own pace — no fixed hours</li>
+                        <li class="mb-2"><span class="text-success me-2">✔</span> No investment required — just your skills</li>
+                        <li class="mb-2"><span class="text-success me-2">✔</span> Turn your hobby into a source of income</li>
+                        <li class="mb-2"><span class="text-success me-2">✔</span> Reach customers directly from your kitchen</li>
+                        <li class="mb-2"><span class="text-success me-2">✔</span> Be your own boss and build your brand</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact & Team -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm p-4 mb-4">
+                <h3 class="text-primary mb-4 border-bottom pb-2">Contact Us</h3>
+                <div class="d-flex align-items-center mb-4">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                        <i class="fas fa-envelope text-primary"></i>
+                    </div>
+                    <div>
+                        <div class="small text-muted">Email Address</div>
+                        <div class="fw-bold">exam.avin@gmail.com</div>
+                    </div>
+                </div>
+                <div class="d-grid">
+                    <a href="https://mail.google.com/mail/?view=cm&to=exam.avin@gmail.com" target="_blank" class="btn btn-primary">Send us a message</a>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm p-4 text-center">
+                <h4 class="text-secondary mb-3">The Developers</h4>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded mb-2">
+                            <i class="fas fa-user-code fa-2x text-primary mb-2"></i>
+                            <div class="small fw-bold">Avin CV</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded mb-2">
+                            <i class="fas fa-user-code fa-2x text-primary mb-2"></i>
+                            <div class="small fw-bold">Dhijil Davis</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .about-us-container {
+        animation: fadeIn 0.8s ease-out;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    [data-theme="dark"] .bg-light {
+        background-color: #2d2d2d !important;
+    }
+</style>
+{% endblock %}

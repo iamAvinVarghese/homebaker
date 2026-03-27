@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}User Detail - {{ user_obj.username }}{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --glass-bg: rgba(255, 255, 255, 0.95);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    }
+
+    .glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 1.5rem;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+    }
+
+    .profile-header {
+        background: var(--primary-gradient);
+        color: white;
+        border-radius: 1.5rem 1.5rem 0 0;
+        padding: 3rem 2rem;
+        text-align: center;
+        position: relative;
+    }
+
+    .profile-img-container {
+        width: 150px;
+        height: 150px;
+        margin: -75px auto 1.5rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    .profile-img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 5px solid white;
+        object-fit: cover;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .detail-label {
+        color: #64748b;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.25rem;
+    }
+
+    .detail-value {
+        font-weight: 500;
+        color: #1e293b;
+    }
+
+    .certificate-img {
+        max-width: 100%;
+        border-radius: 1rem;
+        border: 1px solid #e2e8f0;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .certificate-img:hover {
+        transform: scale(1.02);
+    }
+</style>
+
+<div class="container py-5">
+    <div class="mb-4">
+        <a href="javascript:history.back()" class="btn btn-outline-primary rounded-pill px-4">
+            <i class="fas fa-arrow-left me-2"></i> Go Back
+        </a>
+    </div>
+
+    <div class="glass-card overflow-hidden border-0">
+        <div class="profile-header">
+            <h1 class="display-6 fw-bold mb-1">{{ user_obj.get_full_name|default:user_obj.username }}</h1>
+            <p class="mb-0 text-white text-opacity-75">
+                <span class="badge bg-white bg-opacity-25 rounded-pill px-3">{{ profile.get_role_display }}</span>
+                {% if profile.is_suspended %}
+                <span class="badge bg-danger rounded-pill px-3 ms-2">Suspended</span>
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="profile-img-container">
+            {% if profile.profile_picture %}
+            <img src="{{ profile.profile_picture.url }}" class="profile-img shadow">
+            {% else %}
+            <div class="profile-img bg-secondary text-white d-flex align-items-center justify-content-center display-4">
+                {{ user_obj.username|make_list|first|upper }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="p-4 p-md-5 pt-0">
+            <div class="row g-5">
+                <!-- Core Info -->
+                <div class="col-lg-4">
+                    <h5 class="fw-bold mb-4 border-bottom pb-2">Account Information</h5>
+                    <div class="mb-3">
+                        <div class="detail-label">Username</div>
+                        <div class="detail-value">{{ user_obj.username }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="detail-label">Email Address</div>
+                        <div class="detail-value">{{ user_obj.email }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="detail-label">Phone Number</div>
+                        <div class="detail-value">{{ profile.phone_number }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="detail-label">Member Since</div>
+                        <div class="detail-value">{{ user_obj.date_joined|date:"F d, Y" }}</div>
+                    </div>
+                    <div class="mt-4">
+                        {% if not profile.is_suspended %}
+                        <form action="{% url 'admin_suspend_user' user_obj.id %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger w-100 rounded-pill" onclick="return confirm('Suspend this user?')">
+                                <i class="fas fa-ban me-2"></i> Suspend User
+                            </button>
+                        </form>
+                        {% else %}
+                        <form action="{% url 'admin_unsuspend_user' user_obj.id %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success w-100 rounded-pill">
+                                <i class="fas fa-check me-2"></i> Activate User
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Role Specific Info -->
+                <div class="col-lg-8">
+                    {% if baker_profile %}
+                    <h5 class="fw-bold mb-4 border-bottom pb-2">Baker Details</h5>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <div class="detail-label">Shop Name</div>
+                            <div class="detail-value">{{ baker_profile.shop_name }}</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-label">Status</div>
+                            <div class="detail-value">
+                                {% if baker_profile.status == 'approved' %}
+                                <span class="text-success"><i class="fas fa-check-circle me-1"></i> Approved</span>
+                                {% elif baker_profile.status == 'pending' %}
+                                <span class="text-warning"><i class="fas fa-clock me-1"></i> Pending Verification</span>
+                                {% else %}
+                                <span class="text-danger"><i class="fas fa-times-circle me-1"></i> {{ baker_profile.get_status_display }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="detail-label">Address</div>
+                            <div class="detail-value">{{ baker_profile.address }}, {{ baker_profile.city }} - {{ baker_profile.pincode }}</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-label">License Number</div>
+                            <div class="detail-value">{{ baker_profile.license_number|default:"Not Provided" }}</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-label">Commission Rate</div>
+                            <div class="detail-value">{{ baker_profile.commission_rate }}%</div>
+                        </div>
+                    </div>
+
+                    {% if baker_profile.fssai_certificate %}
+                    <h6 class="fw-bold mb-3">FSSAI Certificate</h6>
+                    <a href="{{ baker_profile.fssai_certificate.url }}" target="_blank">
+                        <img src="{{ baker_profile.fssai_certificate.url }}" class="certificate-img mb-4 shadow-sm" alt="FSSAI Certificate">
+                    </a>
+                    {% endif %}
+
+                    {% elif profile.role == 'customer' %}
+                    <h5 class="fw-bold mb-4 border-bottom pb-2">Recent Order History</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="small text-muted">
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in user_orders %}
+                                <tr>
+                                    <td class="fw-bold">{{ order.order_id }}</td>
+                                    <td>{{ order.created_at|date:"M d, Y" }}</td>
+                                    <td>₹{{ order.total_amount }}</td>
+                                    <td>
+                                        <span class="badge rounded-pill {% if order.status == 'delivered' %}bg-success{% elif order.status == 'cancelled' %}bg-danger{% else %}bg-primary{% endif %} bg-opacity-10 {% if order.status == 'delivered' %}text-success{% elif order.status == 'cancelled' %}text-danger{% else %}text-primary{% endif %}">
+                                            {{ order.get_status_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">No orders placed yet.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ subject }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        .wrapper {
+            width: 100%;
+            table-layout: fixed;
+            background-color: #f8fafc;
+            padding-bottom: 40px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            margin-top: 40px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .header {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            padding: 40px 20px;
+            text-align: center;
+            color: #ffffff;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+        .content {
+            padding: 40px 30px;
+            line-height: 1.6;
+        }
+        .content h2 {
+            margin-top: 0;
+            color: #0f172a;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .footer {
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #64748b;
+            background-color: #f1f5f9;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #6366f1;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+        .otp-box {
+            display: inline-block;
+            background-color: #f1f2ff;
+            border: 2px dashed #6366f1;
+            padding: 20px 40px;
+            border-radius: 12px;
+            font-size: 32px;
+            font-weight: 700;
+            color: #4338ca;
+            letter-spacing: 4px;
+            margin: 24px 0;
+        }
+        .detail-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .detail-row {
+            margin-bottom: 8px;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #64748b;
+            display: inline-block;
+            width: 120px;
+        }
+        .text-success { color: #10b981; }
+        .text-danger { color: #ef4444; }
+        .text-violet { color: #8b5cf6; }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="container">
+            <div class="header">
+                <h1>HomeBaker</h1>
+            </div>
+            <div class="content">
+                {% block content %}
+                {% endblock %}
+            </div>
+            <div class="footer">
+                <p>&copy; 2026 HomeBaker. All rights reserved.</p>
+                <p>Connecting you with the best home-made cakes.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

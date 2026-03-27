@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold mb-2" style="color: var(--text-primary);">Welcome Back</h2>
+            <p class="text-muted">Sign in to your account</p>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0 p-0">
+                <ul class="nav nav-tabs nav-fill mb-0" id="loginTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active py-3 fw-semibold border-0" id="password-tab" data-bs-toggle="tab"
+                            data-bs-target="#password-login" type="button" role="tab">
+                            Password Login
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link py-3 fw-semibold border-0" id="otp-tab" data-bs-toggle="tab"
+                            data-bs-target="#otp-login" type="button" role="tab">
+                            OTP Login
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card-body p-4 p-md-5 tab-content" id="loginTabContent">
+                <!-- PASSWORD LOGIN -->
+                <div class="tab-pane fade show active" id="password-login" role="tabpanel">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold mb-2">Phone Number</label>
+                            <input type="tel" name="phone_number" class="form-control form-control-lg"
+                                placeholder="Enter phone number" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold mb-2">Password</label>
+                            <div class="input-group">
+                                <input type="password" name="password" id="id_password"
+                                    class="form-control form-control-lg" required>
+                                <button class="btn btn-outline-secondary d-flex align-items-center justify-content-center" type="button" id="togglePassword" style="width: 45px;">
+                                    <svg class="eye-open" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <line x1="12" y1="5" x2="12" y2="2"></line>
+                                        <line x1="17.3" y1="6.7" x2="19" y2="4"></line>
+                                        <line x1="6.7" y1="6.7" x2="5" y2="4"></line>
+                                    </svg>
+                                    <svg class="eye-closed" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <line x1="3" y1="3" x2="21" y2="21"></line>
+                                        <line x1="8" y1="16" x2="6" y2="19"></line>
+                                        <line x1="12" y1="17" x2="12" y2="20"></line>
+                                        <line x1="16" y1="16" x2="18" y2="19"></line>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 btn-lg">
+                            Login
+                        </button>
+                    </form>
+                </div>
+
+                <!-- OTP LOGIN -->
+                <div class="tab-pane fade" id="otp-login" role="tabpanel">
+                    <div id="otp-request-section">
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold mb-2">Phone Number</label>
+                            <input type="tel" id="otp_phone_number" class="form-control form-control-lg"
+                                placeholder="Enter registered phone number">
+                        </div>
+                        <button type="button" id="sendOtpBtn" class="btn btn-primary w-100 btn-lg">
+                            Send OTP to Email
+                        </button>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <small class="text-muted">
+                        Don't have an account? <a href="{% url 'register' %}" class="text-decoration-none">Register
+                            here</a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleBtn = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('id_password');
+
+        if (toggleBtn && passwordInput) {
+            toggleBtn.addEventListener('click', function () {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+
+                const openIcon = this.querySelector('.eye-open');
+                const closedIcon = this.querySelector('.eye-closed');
+                
+                if (type === 'text') {
+                    openIcon.style.display = 'none';
+                    closedIcon.style.display = 'block';
+                } else {
+                    openIcon.style.display = 'block';
+                    closedIcon.style.display = 'none';
+                }
+            });
+        }
+
+        // OTP Notification helper for Login
+        function showNotification(message, type) {
+            const container = document.getElementById('alert-container');
+            if (!container) return;
+            
+            const alertHtml = `
+                <div class="alert alert-${type} alert-dismissible fade show mt-3 shadow-sm border-0 message-alert-custom" role="alert" data-tag="${type}">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', alertHtml);
+            
+            // Auto fade out logic (replicated from base.html for dynamic alerts)
+            setTimeout(function() {
+                const newAlert = container.lastElementChild;
+                if (newAlert) {
+                    newAlert.classList.add('alert-fade-out');
+                    setTimeout(() => newAlert.remove(), 800);
+                }
+            }, 5000);
+        }
+
+        // OTP Login Logic
+        const sendOtpBtn = document.getElementById('sendOtpBtn');
+        const otpPhoneInput = document.getElementById('otp_phone_number');
+
+        if (sendOtpBtn && otpPhoneInput) {
+            sendOtpBtn.addEventListener('click', function () {
+                const phone = otpPhoneInput.value;
+                if (!phone) {
+                    showNotification('Please enter your phone number.', 'warning');
+                    return;
+                }
+
+                sendOtpBtn.disabled = true;
+                sendOtpBtn.innerText = 'Sending...';
+
+                const formData = new FormData();
+                formData.append('phone_number', phone);
+                formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+                fetch('{% url "send_login_otp" %}', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            // Store the success message in sessionStorage so it can be shown on the next page
+                            sessionStorage.setItem('otp_sent_message', data.message);
+                            // Redirect to verify page
+                            window.location.href = '{% url "verify_otp" %}';
+                        } else {
+                            showNotification(data.message, 'danger');
+                            sendOtpBtn.disabled = false;
+                            sendOtpBtn.innerText = 'Send OTP to Email';
+                        }
+                    })
+                    .catch(error => {
+                        showNotification('Error: ' + error, 'danger');
+                        sendOtpBtn.disabled = false;
+                        sendOtpBtn.innerText = 'Send OTP to Email';
+                    });
+            });
+        }
+    });
+</script>
+
+{% endblock %}

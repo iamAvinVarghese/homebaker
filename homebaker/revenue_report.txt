@@ -1,0 +1,6 @@
+Checking bakers...
+Baker: 0000000001
+Total Revenue: 1800
+Orders contributing to revenue:
+ - Order ##16672: 1050.00 (Date: 2026-02-14 15:55)
+ - Order ##55677: 750.00 (Date: 2026-02-14 15:47)

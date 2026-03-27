@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 100">
+  <defs>
+    <style>
+      .cls-1 { fill: #1c3d86; font-family: Arial, sans-serif; font-weight: bold; font-style: italic; font-size: 80px; }
+      .cls-2 { fill: #f58220; font-family: Arial, sans-serif; font-weight: bold; font-style: italic; font-size: 80px; }
+      .cls-3 { fill: #f58220; }
+      .cls-4 { fill: #009345; }
+    </style>
+  </defs>
+  <!-- Text fssai with specific coloring -->
+  <text x="10" y="80" class="cls-1">fss</text>
+  <text x="130" y="80" class="cls-1">a</text>
+  <text x="180" y="80" class="cls-2">i</text>
+  
+  <!-- Orange line above -->
+  <rect x="50" y="25" width="200" height="5" class="cls-3"/>
+  <!-- Green line below -->
+  <rect x="10" y="90" width="280" height="5" class="cls-4"/>
+  
+  <!-- Leaf accent roughly -->
+  <path d="M220,25 Q230,5 240,15 Q230,25 220,25" fill="#009345"/>
+  <circle cx="218" cy="28" r="3" fill="#8B4513"/>
+</svg>

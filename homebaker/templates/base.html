@@ -1,0 +1,727 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Home Baker{% endblock %}</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #2d3436;
+            --text-secondary: #495057;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --navbar-bg: #ffffff;
+            --navbar-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --bg-card: #2d2d2d;
+            --text-primary: #ffffff;
+            --text-secondary: #e0e0e0;
+            --text-muted: #b0b0b0;
+            --border-color: #404040;
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            --navbar-bg: #2d2d2d;
+            --navbar-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        [data-theme="dark"] .text-dark {
+            color: #ffffff !important;
+        }
+
+        /* Active Navigation Link Styling */
+        .navbar-nav .nav-link.active {
+            color: #6c5ce7 !important;
+            font-weight: 700 !important;
+            border-bottom: 2px solid #6c5ce7;
+        }
+
+        [data-theme="dark"] .navbar-nav .nav-link.active {
+            color: #a29bfe !important;
+            border-bottom-color: #a29bfe;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .navbar {
+            background-color: var(--navbar-bg) !important;
+            box-shadow: var(--navbar-shadow);
+            border-bottom-color: var(--border-color) !important;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            color: #6c5ce7 !important;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--text-secondary) !important;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #6c5ce7 !important;
+        }
+
+        .navbar-toggler {
+            border-color: var(--border-color);
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(45, 52, 54, 0.85)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        [data-theme="dark"] .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.85)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        .card {
+            background-color: var(--bg-card) !important;
+            border-color: var(--border-color) !important;
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .table {
+            color: var(--text-primary);
+        }
+
+        .table-light {
+            background-color: var(--bg-secondary) !important;
+        }
+
+        .form-control,
+        .form-select {
+            background-color: var(--bg-secondary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background-color: var(--bg-secondary);
+            border-color: #6c5ce7;
+            color: var(--text-primary);
+        }
+
+        textarea.form-control {
+            background-color: var(--bg-secondary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        textarea.form-control:focus {
+            background-color: var(--bg-secondary);
+            border-color: #6c5ce7;
+            color: var(--text-primary);
+        }
+
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+
+        .text-secondary {
+            color: var(--text-secondary) !important;
+        }
+
+        .form-text {
+            color: var(--text-muted);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-muted);
+            opacity: 0.9;
+        }
+
+        .border-bottom {
+            border-color: var(--border-color) !important;
+        }
+
+        .border-top {
+            border-color: var(--border-color) !important;
+        }
+
+        .border-end {
+            border-color: var(--border-color) !important;
+        }
+
+        .border-start {
+            border-color: var(--border-color) !important;
+        }
+
+        .border {
+            border-color: var(--border-color) !important;
+        }
+
+        .bg-light {
+            background-color: var(--bg-primary) !important;
+        }
+
+        footer {
+            background-color: var(--navbar-bg) !important;
+            border-top-color: var(--border-color) !important;
+            color: var(--text-secondary);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-outline-primary {
+            border-color: #6c5ce7;
+            color: #6c5ce7;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #6c5ce7;
+            border-color: #6c5ce7;
+            color: white;
+        }
+
+        .btn-outline-secondary {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: var(--bg-secondary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        hr {
+            border-color: var(--border-color);
+            opacity: 1;
+        }
+
+        .input-group-text {
+            background-color: var(--bg-secondary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .badge {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .shadow-sm {
+            box-shadow: var(--shadow) !important;
+        }
+
+        .shadow-lg {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        [data-theme="dark"] .shadow-lg {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+        }
+
+        main {
+            min-height: calc(100vh - 200px);
+            padding: 2rem 0;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.25rem;
+            padding: 0.5rem;
+            margin-left: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-toggle:focus {
+            outline: none;
+        }
+
+        /* Fix for select dropdown visibility in dark mode */
+        select option {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+        }
+
+        /* Modal Dark Mode Support */
+        [data-theme="dark"] .modal-content {
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+
+        [data-theme="dark"] .modal-header,
+        [data-theme="dark"] .modal-footer {
+            border-color: var(--border-color);
+        }
+
+        [data-theme="dark"] .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        /* Dropdown Dark Mode */
+        [data-theme="dark"] .dropdown-menu {
+            background-color: var(--bg-card);
+            border-color: var(--border-color);
+        }
+
+        [data-theme="dark"] .dropdown-item {
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .dropdown-item:hover,
+        [data-theme="dark"] .dropdown-item:focus {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        /* Message Alert Styles */
+        .message-alert-custom {
+            border-left-width: 5px !important;
+            border-left-style: solid !important;
+        }
+        
+        .message-alert-custom[data-tag="success"] {
+            border-left-color: #28a745 !important;
+        }
+        
+        .message-alert-custom[data-tag="error"] {
+            border-left-color: #dc3545 !important;
+        }
+        
+        .message-alert-custom[data-tag="warning"] {
+            border-left-color: #ffc107 !important;
+        }
+        
+        .message-alert-custom[data-tag="info"],
+        .message-alert-custom:not([data-tag="success"]):not([data-tag="error"]):not([data-tag="warning"]) {
+            border-left-color: #17a2b8 !important;
+        }
+
+        /* Stylish Alert Fade Out Animation */
+        .alert-fade-out {
+            animation: slideUpFadeOut 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        @keyframes slideUpFadeOut {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-20px);
+                margin-top: -50px; /* smoothly close the gap */
+            }
+        }
+    </style>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg border-bottom sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'home' %}">
+                🎂 HomeBaker
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    {% if not user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/about-us/' in request.path %}active{% endif %}" href="{% url 'about_us' %}">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/faq/' in request.path %}active{% endif %}" href="{% url 'faq' %}">FAQ</a>
+                    </li>
+                    {% endif %}
+                    {% if user.is_authenticated and user.profile.role == 'customer' %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/customer-home/' %}active{% endif %}" href="{% url 'customer_home' %}">Home</a>
+                    </li>
+                    {% endif %}
+                    {% if not user.is_authenticated or user.profile.role != 'delivery_assistant' %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/cakes/' in request.path %}active{% endif %}" href="{% url 'cakes' %}">Cakes</a>
+                    </li>
+                    {% endif %}
+
+                    {% if user.is_authenticated %}
+                    <!-- Notification Icon -->
+                    <li class="nav-item dropdown me-2">
+                        <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-bell"></i>
+                            {% if unread_notifications_count > 0 %}
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                style="font-size: 0.55rem; padding: 0.25em 0.4em; transform: translate(-10%, -10%) !important;">
+                                {{ unread_notifications_count }}
+                            </span>
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg p-0"
+                            aria-labelledby="notificationDropdown"
+                            style="width: 300px; max-height: 400px; overflow-y: auto;">
+                            <li class="p-3 border-bottom d-flex justify-content-between align-items-center bg-light">
+                                <h6 class="mb-0 fw-bold" style="color: var(--text-primary)">Notifications</h6>
+                                <div class="d-flex align-items-center">
+                                    <span class="badge bg-primary rounded-pill me-2">{{ unread_notifications_count }}
+                                        New</span>
+                                    {% if unread_notifications_count > 0 %}
+                                    <button class="btn btn-link btn-sm text-primary p-0 text-decoration-none"
+                                        onclick="markAllNotificationsAsRead(event)" title="Mark all as read">
+                                        <i class="fas fa-check-double"></i>
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </li>
+                            <div id="notificationList">
+                                {% if user.notifications.exists %}
+                                {% for notification in user.notifications.all|slice:":10" %}
+                                <li>
+                                    <a class="dropdown-item p-3 border-bottom {% if not notification.is_read %}bg-primary bg-opacity-10{% endif %}"
+                                        href="javascript:void(0);" data-notification-id="{{ notification.id }}"
+                                        data-redirect-url="{% if notification.notification_type == 'new_order' or notification.notification_type == 'payment_received' or notification.notification_type == 'review_received' %}{% url 'baker_orders' %}{% elif notification.notification_type == 'order_confirmed' %}{% url 'my_orders' %}{% elif notification.notification_type == 'new_custom_request' %}{% url 'baker_custom_requests' %}{% elif notification.notification_type == 'baker_approved' %}{% url 'baker_dashboard' %}{% elif notification.notification_type == 'baker_rejected' %}{% url 'profile' %}{% elif notification.order %}{% url 'order_tracking' notification.order.order_id %}{% elif 'custom_request' in notification.notification_type %}{% url 'my_custom_requests' %}{% else %}{% url 'notifications' %}{% endif %}"
+                                        onclick="handleNotificationClick(this)">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div class="flex-grow-1">
+                                                <div class="small fw-bold mb-1" style="color: var(--text-primary)">
+                                                    {{ notification.title }}
+                                                </div>
+                                                <div class="small text-wrap mb-1" style="color: var(--text-primary)">
+                                                    {{ notification.message|linebreaksbr|safe }}
+                                                </div>
+                                                <div class="text-secondary" style="font-size: 0.7rem;">
+                                                    <i class="far fa-clock me-1"></i>
+                                                    {{ notification.created_at|timesince }} ago
+                                                </div>
+                                            </div>
+                                            {% if not notification.is_read %}
+                                            <div class="ms-2 d-flex flex-column align-items-center">
+                                                <span class="badge bg-primary p-1 rounded-circle mb-2"
+                                                    style="width: 8px; height: 8px; display: inline-block;"></span>
+                                                <button class="btn btn-link text-primary p-0 nav-mark-read"
+                                                    onclick="event.stopPropagation(); markAsRead(this.closest('a'), '{{ notification.id }}', null)"
+                                                    title="Mark as read">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </a>
+                                </li>
+                                {% endfor %}
+                                {% else %}
+                                <li class="p-4 text-center text-muted">
+                                    <i class="fas fa-bell-slash fa-2x mb-2 opacity-25"></i>
+                                    <p class="mb-0">No notifications yet</p>
+                                </li>
+                                {% endif %}
+                            </div>
+                            <li><a class="dropdown-item text-center py-2 small fw-bold text-primary border-top"
+                                    href="{% url 'notifications' %}">View
+                                    All</a></li>
+                        </ul>
+                    </li>
+
+                    <script>
+                        function handleNotificationClick(element) {
+                            const id = element.getAttribute('data-notification-id');
+                            const url = element.getAttribute('data-redirect-url');
+                            markAsRead(element, id, url);
+                        }
+
+                        function markAsRead(element, notificationId, redirectUrl) {
+                            fetch(`/mark-notification-read/${notificationId}/`, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRFToken': '{{ csrf_token }}',
+                                    'Content-Type': 'application/json'
+                                }
+                            }).then(response => {
+                                if (response.ok) {
+                                    if (redirectUrl) {
+                                        window.location.href = redirectUrl;
+                                    } else {
+                                        // Update UI without redirect
+                                        element.classList.remove('bg-primary', 'bg-opacity-10');
+                                        const badge = element.querySelector('.rounded-pill.bg-primary');
+                                        if (badge) badge.remove();
+                                        const checkBtn = element.querySelector('.nav-mark-read');
+                                        if (checkBtn) checkBtn.closest('.ms-2').remove();
+
+                                        // Update global counters
+                                        updateNotificationCounters();
+                                    }
+                                }
+                            });
+                        }
+
+                        function markAllNotificationsAsRead(event) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            fetch('{% url "mark_all_notifications_read" %}', {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRFToken': '{{ csrf_token }}',
+                                    'Content-Type': 'application/json'
+                                }
+                            }).then(response => {
+                                if (response.ok) {
+                                    // Update UI
+                                    const items = document.querySelectorAll('#notificationList a.bg-primary');
+                                    items.forEach(item => {
+                                        item.classList.remove('bg-primary', 'bg-opacity-10');
+                                        const indicator = item.querySelector('.ms-2');
+                                        if (indicator) indicator.remove();
+                                    });
+
+                                    // Remove counters
+                                    const counters = document.querySelectorAll('.unread-count'); // If we had such a class
+                                    // But we use django variables, so we just clear specific elements
+                                    const bellBadge = document.querySelector('.nav-link .badge');
+                                    if (bellBadge) bellBadge.remove();
+
+                                    const headerBadge = document.querySelector('.dropdown-menu .badge');
+                                    if (headerBadge) headerBadge.textContent = '0 New';
+
+                                    const allReadBtn = document.querySelector('button[onclick="markAllNotificationsAsRead(event)"]');
+                                    if (allReadBtn) allReadBtn.remove();
+                                }
+                            });
+                        }
+
+                        function updateNotificationCounters() {
+                            const bellBadge = document.querySelector('.nav-link .badge');
+                            const headerBadge = document.querySelector('.dropdown-menu .badge');
+
+                            if (bellBadge) {
+                                let count = parseInt(bellBadge.textContent);
+                                if (count > 1) {
+                                    bellBadge.textContent = count - 1;
+                                    headerBadge.textContent = (count - 1) + ' New';
+                                } else {
+                                    bellBadge.remove();
+                                    headerBadge.textContent = '0 New';
+                                    const allReadBtn = document.querySelector('button[onclick="markAllNotificationsAsRead(event)"]');
+                                    if (allReadBtn) allReadBtn.remove();
+                                }
+                            }
+                        }
+                    </script>
+
+                    <!-- Customer Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="customerDropdown" role="button"
+                            data-bs-toggle="dropdown">
+                            My Account
+                            {% if user.profile.profile_picture %}
+                            <img src="{{ user.profile.profile_picture.url }}" alt="Profile" class="rounded-circle ms-1"
+                                style="width: 25px; height: 25px; object-fit: cover;">
+                            {% else %}
+                            <i class="fas fa-user-circle ms-1"></i>
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu border-0 shadow">
+                            <li><a class="dropdown-item" href="{% url 'profile' %}">👤 My Profile</a></li>
+                            {% if user.profile.role == 'customer' %}
+                            <li><a class="dropdown-item" href="{% url 'cart' %}">🛒 Cart</a></li>
+                            <li><a class="dropdown-item" href="{% url 'my_orders' %}">📦 My Orders</a></li>
+                            <li><a class="dropdown-item" href="{% url 'my_custom_requests' %}">🎨 My Custom Requests</a>
+                            </li>
+                            {% endif %}
+                            <li><a class="dropdown-item" href="{% url 'wallet' %}">💰 Wallet</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Baker Dropdown (if baker) -->
+                    {% if user.profile.role == 'baker' %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-primary fw-bold" href="#" id="bakerDropdown"
+                            role="button" data-bs-toggle="dropdown">
+                            👨‍🍳 Baker Menu
+                        </a>
+                        <ul class="dropdown-menu border-0 shadow">
+                            <li><a class="dropdown-item" href="{% url 'baker_dashboard' %}">📊 Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{% url 'baker_ai_analytics' %}">🚀 AI Analytics</a></li>
+                            <li><a class="dropdown-item" href="{% url 'baker_cakes' %}">🍰 Manage Cakes</a></li>
+                            <li><a class="dropdown-item" href="{% url 'baker_orders' %}">📝 Manage Orders</a></li>
+                            <li><a class="dropdown-item" href="{% url 'baker_custom_requests' %}">🎨 Custom Requests</a>
+                            </li>
+                            <li><a class="dropdown-item" href="{% url 'baker_expenses' %}">💸 Expenses</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+
+                    <!-- Admin Link (if staff) -->
+                    {% if user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link text-danger fw-bold" href="{% url 'admin_dashboard' %}">
+                            🛡️ Admin Panel
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/helpdesk/' in request.path %}active{% else %}fw-bold text-warning{% endif %}" href="{% url 'admin_helpdesk' %}">
+                            🎧 Help Desk
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if '/coupons/' in request.path %}active{% else %}fw-bold text-success{% endif %}" href="{% url 'admin_coupons' %}">
+                            🎟️ Coupons
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    <!-- Delivery Assistant Link -->
+                    {% if user.profile.role == 'delivery_assistant' %}
+                    <li class="nav-item">
+                        <a class="nav-link text-success fw-bold" href="{% url 'delivery_dashboard' %}">
+                            🚚 Delivery Dashboard
+                        </a>
+                    </li>
+                    {% elif not user.is_staff %}
+                    <li class="nav-item ms-2 me-1" style="display: flex; align-items: center;">
+                        <a class="nav-link {% if '/services/' in request.path %}active{% else %}fw-bold text-secondary{% endif %}" href="{% url 'services' %}">
+                            <i class="fas fa-headset me-1"></i>Services
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    <li class="nav-item ms-2" style="display: flex; align-items: center;">
+                        <a class="btn btn-outline-danger btn-sm" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary btn-sm ms-2" href="{% url 'register' %}">Register</a>
+                    </li>
+                    {% endif %}
+
+                    <li class="nav-item ms-3">
+                        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                            <span id="themeIcon">🌙</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="container">
+        <!-- Notification Alerts Container -->
+        <div id="alert-container" style="position: relative; z-index: 1050;">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-3 shadow-sm border-0 message-alert-custom" role="alert" data-tag="{{ message.tags }}">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="text-center py-4 mt-auto border-top">
+        <div class="container">
+            <small class="text-muted">© 2026 Home Baker Cake System. All rights reserved.</small>
+        </div>
+    </footer>
+
+    <!-- Chat Widget -->
+    {% include 'chatbot/include/chat_widget.html' %}
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Options and UI Initialization Script -->
+    <script>
+        (function () {
+            // Get theme from localStorage or default to light
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            const html = document.documentElement;
+
+            // Apply theme immediately to prevent flash
+            if (currentTheme === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+                document.getElementById('themeIcon').textContent = '☀️';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                document.getElementById('themeIcon').textContent = '🌙';
+            }
+
+            // Theme toggle function
+            function toggleTheme() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+
+                // Update icon
+                const icon = document.getElementById('themeIcon');
+                icon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            }
+
+            // Add event listener to toggle button
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+            
+            // Auto fade-out alerts stylishly
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    // Add stylish fade out class
+                    alert.classList.add('alert-fade-out');
+                    // Remove from DOM after animation completes
+                    setTimeout(() => alert.remove(), 800);
+                });
+            }, 5000); // 5000ms = 5 seconds
+        })();
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Notifications - HomeBaker{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0" style="color: #6f42c1;">My Notifications</h2>
+                {% if notifications_list %}
+                <button class="btn btn-outline-light btn-sm" onclick="markAllAsReadPage()">
+                    <i class="fas fa-check-double me-1"></i> Mark all as read
+                </button>
+                {% endif %}
+            </div>
+
+            <div class="card border-0 shadow-sm overflow-hidden">
+                <div class="list-group list-group-flush">
+                    {% for notification in notifications_list %}
+                    <div class="list-group-item p-4 {% if not notification.is_read %}bg-primary bg-opacity-10 border-start border-primary border-4{% else %}border-start border-4 border-transparent{% endif %}"
+                        id="notification-{{ notification.id }}">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center mb-1">
+                                    <h6 class="mb-0 fw-bold text-black">{{ notification.title }}</h6>
+                                    {% if not notification.is_read %}
+                                    <span class="badge bg-primary ms-2" style="font-size: 0.6rem;">NEW</span>
+                                    {% endif %}
+                                </div>
+                                <p class="text-black mb-2">{{ notification.message }}</p>
+                                <div class="d-flex align-items-center text-black small">
+                                    <i class="far fa-clock me-1"></i>
+                                    {{ notification.created_at|timesince }} ago
+                                    {% if notification.order %}
+                                    <span class="mx-2">•</span>
+                                    <a href="{% url 'my_orders' %}" class="text-decoration-none text-primary">View Order</a>
+                                    {% elif "custom_request" in notification.notification_type %}
+                                    <span class="mx-2">•</span>
+                                    <a href="{% url 'my_custom_requests' %}" class="text-decoration-none text-primary">View Request</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if not notification.is_read %}
+                            <button class="btn btn-link text-primary p-0 ms-3" title="Mark as read"
+                                onclick="markIndividualAsReadPage(this, '{{ notification.id }}')">
+                                <i class="fas fa-check-circle fa-lg"></i>
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-bell-slash fa-3x mb-3 text-muted opacity-25"></i>
+                        <p class="text-black">You have no notifications yet.</p>
+                        <a href="{% url 'cakes' %}" class="btn btn-primary mt-2">Explore Cakes</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function markAllAsReadPage() {
+        fetch('{% url "mark_all_notifications_read" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            if (response.ok) {
+                location.reload();
+            }
+        });
+    }
+
+    function markIndividualAsReadPage(button, id) {
+        fetch(`/mark-notification-read/${id}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            }
+        }).then(response => {
+            if (response.ok) {
+                const item = document.getElementById(`notification-${id}`);
+                item.classList.remove('bg-primary', 'bg-opacity-10', 'border-primary');
+                item.classList.add('border-transparent');
+                button.remove();
+                const badge = item.querySelector('.badge');
+                if (badge) badge.remove();
+
+                // Optional: update navbar count if you want to be extra smooth
+                const counter = document.querySelector('.badge.rounded-pill.bg-danger');
+                if (counter) {
+                    let count = parseInt(counter.textContent);
+                    if (count > 1) {
+                        counter.textContent = count - 1;
+                    } else {
+                        counter.remove();
+                    }
+                }
+            }
+        });
+    }
+</script>
+
+<style>
+    .border-transparent {
+        border-color: transparent !important;
+    }
+</style>
+{% endblock %}

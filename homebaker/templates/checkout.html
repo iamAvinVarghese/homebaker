@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Checkout</h2>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Delivery Details</h5>
+                    <form method="POST" id="checkoutForm">
+                        {% csrf_token %}
+                        <input type="hidden" name="cart_type" value="{{ cart_type }}">
+                        <input type="hidden" name="coupon_code" id="hiddenCouponCode" value="">
+                        <div class="mb-3">
+                            <label class="form-label">Delivery Date</label>
+                            <input type="date" name="delivery_date" class="form-control" required
+                                min="{% now 'Y-m-d' %}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Delivery Address</label>
+
+                            <!-- Saved Address Option -->
+                            {% if default_address %}
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="address_option" id="addr_saved"
+                                    value="saved" checked onchange="toggleAddressField()">
+                                <label class="form-check-label" for="addr_saved">
+                                    <strong>Use Default Address:</strong><br>
+                                    {{ default_address }}
+                                </label>
+                            </div>
+                            {% endif %}
+
+                            <!-- New Address Option -->
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="radio" name="address_option" id="addr_new"
+                                    value="new" {% if not default_address %}checked{% endif %}
+                                    onchange="toggleAddressField()">
+                                <label class="form-check-label" for="addr_new">
+                                    Use Different Address
+                                </label>
+                            </div>
+
+                            <!-- New Address Field (Hidden if Saved is selected) -->
+                            <div id="newAddressField" {% if default_address %}style="display: none;"{% endif %}>
+                                <textarea name="new_address" class="form-control mb-2" rows="3"
+                                    placeholder="Enter delivery address"></textarea>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="save_as_default"
+                                        id="saveDefault">
+                                    <label class="form-check-label text-muted" for="saveDefault">
+                                        Save as default address
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Coupon Code -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Coupon Code</label>
+                            <div class="input-group">
+                                <input type="text" id="couponInput" class="form-control text-uppercase"
+                                    placeholder="Enter coupon code">
+                                <button type="button" class="btn btn-outline-primary" id="applyCouponBtn">Apply</button>
+                            </div>
+                            <div id="couponMsg" class="form-text mt-1"></div>
+                        </div>
+
+                        <script>
+                            function toggleAddressField() {
+                                const newAddrRadio = document.getElementById('addr_new');
+                                const field = document.getElementById('newAddressField');
+                                if (newAddrRadio.checked) {
+                                    field.style.display = 'block';
+                                    field.querySelector('textarea').required = true;
+                                } else {
+                                    field.style.display = 'none';
+                                    field.querySelector('textarea').required = false;
+                                }
+                            }
+                            // Run on load to set initial state
+                            document.addEventListener('DOMContentLoaded', toggleAddressField);
+                        </script>
+                        <div class="mb-3">
+                            <label class="form-label">Payment Method</label>
+                            <input type="hidden" name="payment_method" value="wallet">
+                            <div class="form-control bg-light text-muted" style="cursor: default;">
+                                <i class="fas fa-wallet me-2 text-primary"></i> Wallet (Balance: ₹{{ wallet_balance|floatformat:2 }})
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100" id="placeOrderBtn">Place Order</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.querySelector('form').addEventListener('submit', function(e) {
+                const btn = document.getElementById('placeOrderBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+            });
+        </script>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Order Summary</h5>
+                    {% for item in cart_items %}
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>{{ item.cake.name }} x{{ item.quantity }}</span>
+                        <span>₹{{ item.total|floatformat:2 }}</span>
+                    </div>
+                    {% endfor %}
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <span>Subtotal:</span>
+                        <span>₹{{ subtotal|floatformat:2 }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Delivery:</span>
+                        <span>₹{{ delivery_charge|floatformat:2 }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between text-success" id="discountRow" style="display:none !important;">
+                        <span>Discount:</span>
+                        <span>- ₹<span id="discountDisplay">0.00</span></span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between fw-bold">
+                        <span>Total:</span>
+                        <span>₹<span id="grandTotalDisplay">{{ grand_total|floatformat:2 }}</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const subtotal = parseFloat("{{ subtotal }}");
+    const deliveryCharge = parseFloat("{{ delivery_charge }}");
+    const csrfToken = "{{ csrf_token }}";
+
+    const applyBtn = document.getElementById('applyCouponBtn');
+    applyBtn.addEventListener('click', function () {
+        const msgEl = document.getElementById('couponMsg');
+        const discountRow = document.getElementById('discountRow');
+        const discountDisplay = document.getElementById('discountDisplay');
+        const grandTotalDisplay = document.getElementById('grandTotalDisplay');
+        const hiddenCoupon = document.getElementById('hiddenCouponCode');
+        const couponInput = document.getElementById('couponInput');
+
+        // If currently applied, then "Remove"
+        if (applyBtn.textContent === 'Remove') {
+            couponInput.value = '';
+            couponInput.disabled = false;
+            applyBtn.textContent = 'Apply';
+            applyBtn.className = 'btn btn-outline-primary';
+            discountRow.style.setProperty('display', 'none', 'important');
+            grandTotalDisplay.textContent = (subtotal + deliveryCharge).toFixed(2);
+            hiddenCoupon.value = '';
+            msgEl.textContent = '';
+            return;
+        }
+
+        const code = couponInput.value.trim().toUpperCase();
+        if (!code) {
+            msgEl.className = 'form-text text-danger mt-1';
+            msgEl.textContent = 'Please enter a coupon code.';
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('coupon_code', code);
+        formData.append('subtotal', subtotal.toString());
+        formData.append('csrfmiddlewaretoken', csrfToken);
+
+        fetch("{% url 'apply_coupon' %}", {method: 'POST', body: formData})
+            .then(r => r.json())
+            .then(data => {
+                if (data.valid) {
+                    const discount = parseFloat(data.discount);
+                    const newTotal = Math.max(subtotal + deliveryCharge - discount, 0);
+                    discountDisplay.textContent = discount.toFixed(2);
+                    discountRow.style.setProperty('display', 'flex', 'important');
+                    grandTotalDisplay.textContent = newTotal.toFixed(2);
+                    hiddenCoupon.value = code;
+                    msgEl.className = 'form-text text-success mt-1';
+                    msgEl.textContent = data.message;
+                    
+                    // Toggle to Remove Button
+                    applyBtn.textContent = 'Remove';
+                    applyBtn.className = 'btn btn-outline-danger';
+                    couponInput.disabled = true;
+                } else {
+                    discountRow.style.setProperty('display', 'none', 'important');
+                    grandTotalDisplay.textContent = (subtotal + deliveryCharge).toFixed(2);
+                    hiddenCoupon.value = '';
+                    msgEl.className = 'form-text text-danger mt-1';
+                    msgEl.textContent = data.message;
+                }
+            })
+            .catch(() => {
+                msgEl.className = 'form-text text-danger mt-1';
+                msgEl.textContent = 'Error checking coupon. Please try again.';
+            });
+    });
+</script>
+{% endblock %}

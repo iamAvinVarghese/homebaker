@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Manage Orders | Home Baker{% endblock %}
+
+{% block content %}
+<div class="row mb-5 pt-4">
+    <div class="col-md-12">
+        <h1 class="fw-bold mb-0" style="color: #b084ff;"><i class="fas fa-edit me-2"></i> Manage Orders</h1>
+        <p class="text-secondary lead">View and accept incoming orders.</p>
+    </div>
+</div>
+
+<!-- Orders List -->
+<div class="card shadow border-0 overflow-hidden" style="border-radius: 15px;">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead style="background-color: #14141c; color: #c7a6ff;">
+                    <tr>
+                        <th class="ps-4 py-3 border-0">Order ID</th>
+                        <th class="py-3 border-0">Customer</th>
+                        <th class="py-3 border-0">Date</th>
+                        <th class="py-3 border-0">Status</th>
+                        <th class="py-3 border-0">Items Details</th>
+                        <th class="py-3 border-0">Payment</th>
+                        <th class="py-3 border-0">Total</th>
+                        <th class="text-end pe-4 py-3 border-0">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white">
+                    {% for order in orders %}
+                    <tr>
+                        <td class="ps-4 fw-bold">
+                            <a href="#" class="text-decoration-none" style="color: #7b3fe4;">{{ order.order_id }}</a>
+                        </td>
+                         <td>
+                            <div class="d-flex align-items-center">
+                                {% if order.customer.profile.profile_picture %}
+                                <img src="{{ order.customer.profile.profile_picture.url }}" class="rounded-circle me-2"
+                                    width="32" height="32" style="object-fit: cover; border: 1px solid #7b3fe4;">
+                                {% else %}
+                                <div class="rounded-circle d-flex align-items-center justify-content-center me-2"
+                                    style="width: 32px; height: 32px; background-color: #7b3fe4; color: white; font-weight: bold; font-size: 0.85rem;">
+                                    {{ order.customer.get_full_name|default:order.customer.username|make_list|first|upper }}
+                                </div>
+                                {% endif %}
+                                <span class="text-dark">{{ order.customer.get_full_name|default:order.customer.username }}</span>
+                            </div>
+                        </td>
+                        <td class="text-secondary small">{{ order.created_at|date:"M d, Y" }}</td>
+                        <td>
+                            {% if order.status == 'pending' %}
+                            <span class="badge rounded-pill bg-warning text-dark px-3 mt-1">Pending</span>
+                            {% endif %}
+                            {% if order.status == 'confirmed' %}
+                            <span class="badge rounded-pill bg-info text-dark px-3 mt-1">Confirmed</span>
+                            {% endif %}
+                            {% if order.status == 'awaiting_confirmation' %}
+                            <span class="badge rounded-pill bg-secondary text-white px-3 mt-1">Awaiting Clarification</span>
+                            {% endif %}
+                            {% if order.status == 'baking' %}
+                            <span class="badge rounded-pill bg-primary px-3 mt-1">Baking</span>
+                            {% endif %}
+                            {% if order.status == 'ready' %}
+                            <span class="badge rounded-pill bg-success px-3 mt-1">Ready</span>
+                            {% endif %}
+                            {% if order.status == 'delivered' %}
+                            <span class="badge rounded-pill bg-success px-3 mt-1">Delivered</span>
+                            {% endif %}
+                            {% if order.status == 'cancelled' %}
+                            <span class="badge rounded-pill bg-danger px-3 mt-1">Cancelled</span>
+                            {% endif %}
+                            {% if order.status == 'out_for_delivery' %}
+                            <span class="badge rounded-pill bg-warning px-3 mt-1">Ready for Pickup</span>
+                            {% endif %}
+                            {% if order.status == 'packing' %}
+                            <span class="badge rounded-pill bg-info px-3 mt-1">Packing</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% for item in order.items.all %}
+                                {% if item.cake.baker == request.user %}
+                                <div class="mb-3">
+                                    <div class="small fw-bold text-dark">{{ item.cake.name }}</div>
+                                    <div class="small text-muted d-flex flex-wrap gap-2 mt-1">
+                                        <span class="badge bg-light text-dark border"><i class="fas fa-utensils me-1 text-primary"></i> {{ item.cake.flavor|title }}</span>
+                                        <span class="badge bg-light text-dark border"><i class="fas fa-weight-hanging me-1 text-primary"></i> {{ item.quantity }} kg</span>
+                                        <span class="badge bg-light text-dark border"><i class="fas fa-tag me-1 text-primary"></i> ₹{{ item.subtotal }}</span>
+                                    </div>
+                                    {% if item.message_on_cake %}
+                                    <div class="x-small text-primary mt-1" style="font-size: 0.75rem;">
+                                        <i class="fas fa-quote-left me-1 opacity-50"></i> {{ item.message_on_cake }}
+                                    </div>
+                                    {% endif %}
+                                    {% if item.cake.name|slice:":21" == "Custom Cake Request #" %}
+                                    <div class="mt-1 p-2 bg-light rounded x-small text-secondary border-start border-3 border-primary" style="font-size: 0.7rem;">
+                                        <strong><i class="fas fa-info-circle me-1"></i> Design Details:</strong><br>
+                                        {{ item.cake.description }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% if order.payment_status == 'paid' %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2">
+                                <i class="fas fa-check-circle me-1"></i> Paid
+                            </span>
+                            {% else %}
+                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2">
+                                <i class="fas fa-clock me-1"></i> Pending
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="fw-bold text-dark">₹{{ order.total_amount }}</td>
+                        <td class="text-end pe-4">
+                            {% if order.status == 'pending' %}
+                            <a href="{% url 'baker_accept_order' order.id %}"
+                                class="btn btn-sm btn-success px-3 py-1 shadow-sm">
+                                <i class="fas fa-check me-1"></i> Accept
+                            </a>
+                            {% endif %}
+                            {% if order.status == 'confirmed' or order.status == 'baking' or order.status == 'packing' or order.status == 'ready' %}
+                            <a href="{% url 'trigger_delivery' order.id %}"
+                                class="btn btn-sm text-white px-3 py-1 shadow-sm" style="background-color: #00d2ff;">
+                                <i class="fas fa-box me-1"></i> Ready for Pickup
+                            </a>
+                            {% endif %}
+                            {% if order.status == 'out_for_delivery' %}
+                            <div class="d-inline-block">
+                                <span class="badge bg-warning text-dark px-3 py-2">
+                                    <i class="fas fa-box-open me-1"></i> Ready for Pickup
+                                </span>
+                            </div>
+                            {% endif %}
+                            {% if order.status == 'delivered' %}
+                            <span class="badge bg-success-subtle text-success border border-success px-3 py-2">
+                                <i class="fas fa-check-double me-1"></i> Completed
+                            </span>
+                            {% endif %}
+                            {% if order.status == 'cancelled' %}
+                            <button class="btn btn-sm btn-secondary opacity-50 px-3 cursor-default"
+                                disabled>Cancelled</button>
+                            {% else %}
+                                {% if order.status != 'delivered' and order.status != 'out_for_delivery' %}
+                                <form action="{% url 'baker_cancel_order' order.id %}" method="POST" class="d-inline ms-1" onsubmit="return confirm('Are you sure you want to cancel this order? This will refund the customer.')">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger px-2 py-1">
+                                        <i class="fas fa-times me-1"></i> Cancel
+                                    </button>
+                                </form>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5">
+                            <div class="text-muted opacity-50">
+                                <i class="fas fa-clipboard-list fa-4x mb-3"></i>
+                                <h5 class="fw-bold">No incoming orders</h5>
+                                <p>You'll see new orders here as customers place them.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .avatar-circle {
+        transition: transform 0.2s;
+    }
+
+    .table tr {
+        transition: background-color 0.2s;
+    }
+
+    .table tr:hover {
+        background-color: #fcfaff !important;
+    }
+
+    .btn-success {
+        background-color: #2ecc71;
+        border: none;
+    }
+
+    .btn-success:hover {
+        background-color: #27ae60;
+    }
+</style>
+{% endblock %}

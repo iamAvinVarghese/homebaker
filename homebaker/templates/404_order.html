@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Order Not Found{% endblock %}
+
+{% block content %}
+<div class="container text-center py-5">
+    <div class="card shadow-lg border-0 mx-auto" style="max-width: 600px; border-radius: 20px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);">
+        <div class="card-body p-5">
+            <div class="display-1 text-danger mb-4"><i class="fas fa-search-minus"></i></div>
+            <h2 class="fw-bold mb-3">Order Not Found</h2>
+            <p class="text-muted mb-4">We couldn't find an order with ID <strong>{{ order_id }}</strong> associated with your account.</p>
+            
+            <div class="alert alert-info border-0 text-start" style="background: rgba(13, 202, 240, 0.1);">
+                <ul class="mb-0">
+                    <li>Check if the Order ID is correct.</li>
+                    <li>Ensure you are logged in with the correct account.</li>
+                    <li>The order may have been deleted or archived.</li>
+                </ul>
+            </div>
+            
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">
+                <a href="{% url 'my_orders' %}" class="btn btn-primary px-4 py-2 rounded-pill">View My Orders</a>
+                <a href="{% url 'home' %}" class="btn btn-outline-secondary px-4 py-2 rounded-pill">Back onto Home</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

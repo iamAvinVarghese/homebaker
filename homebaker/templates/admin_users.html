@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Manage Users{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">Manage Users</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item active">Users</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-white py-3">
+            <form method="get" class="row g-3 align-items-center">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" name="search" class="form-control" placeholder="Name, Email or Username"
+                            value="{{ search_query }}">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label visually-hidden">Role Filter</label>
+                    <select name="role" class="form-select" onchange="this.form.submit()">
+                        <option value="" {% if not role_filter %}selected{% endif %}>All Roles</option>
+                        <option value="customer" {% if role_filter == 'customer' %}selected{% endif %}>Customers</option>
+                        <option value="baker" {% if role_filter == 'baker' %}selected{% endif %}>Bakers</option>
+                        <option value="delivery_assistant" {% if role_filter == 'delivery_assistant' %}selected{% endif %}>Delivery Assistants</option>
+                        <option value="admin" {% if role_filter == 'admin' %}selected{% endif %}>Admins</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Filter</button>
+                </div>
+                <div class="col-md-3 text-end">
+                    <span class="text-muted">Total: {{ users.count }} users</span>
+                </div>
+            </form>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>User</th>
+                            <th>Role</th>
+                            <th>Contact</th>
+                            <th>Joined</th>
+                            <th>Status</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user_obj in users %}
+                        <tr>
+                            <td>
+                                    <a href="{% url 'admin_user_detail' user_obj.id %}" class="d-flex align-items-center text-decoration-none">
+                                        {% if user_obj.profile.profile_picture %}
+                                        <img src="{{ user_obj.profile.profile_picture.url }}" class="rounded-circle me-3"
+                                            width="40" height="40" style="object-fit: cover;">
+                                        {% else %}
+                                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-3"
+                                            style="width: 40px; height: 40px;">
+                                            {{ user_obj.username|make_list|first|upper }}
+                                        </div>
+                                        {% endif %}
+                                        <div>
+                                            <div class="fw-bold text-dark">
+                                                {{ user_obj.get_full_name|default:user_obj.username }}
+                                            </div>
+                                            {% if user_obj.profile.role == 'baker' and user_obj.profile.baker_profile %}
+                                            <div class="text-muted small">
+                                                {{ user_obj.profile.baker_profile.shop_name }}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </a>
+                            </td>
+                            <td>
+                                {% if user_obj.profile.role == 'customer' %}
+                                <span class="badge bg-info text-dark">Customer</span>
+                                {% elif user_obj.profile.role == 'baker' %}
+                                <span class="badge bg-warning text-dark">Baker</span>
+                                {% elif user_obj.profile.role == 'delivery_assistant' %}
+                                <span class="badge bg-dark bg-opacity-75">Delivery Assistant</span>
+                                {% elif user_obj.profile.role == 'admin' %}
+                                <span class="badge bg-primary">Admin</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="small">
+                                    <div>{{ user_obj.email }}</div>
+                                    <div>{{ user_obj.profile.phone_number }}</div>
+                                </div>
+                            </td>
+                            <td>{{ user_obj.date_joined|date:"M d, Y" }}</td>
+                            <td>
+                                {% if user_obj.profile.is_suspended %}
+                                <span class="badge bg-danger">Suspended</span>
+                                {% elif user_obj.profile.is_account_locked %}
+                                <span class="badge bg-warning text-dark">Blocked (Temp)</span>
+                                {% else %}
+                                <span class="badge bg-success">Active</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end pe-4">
+                                {% if user_obj != request.user %}
+                                <div class="btn-group">
+                                    {% if user_obj.profile.is_suspended or user_obj.profile.is_account_locked %}
+                                    <form action="{% url 'admin_unsuspend_user' user_obj.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-success" title="Unsuspend/Unblock">
+                                            <i class="fas fa-unlock"></i> Activate
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                    <button type="button" class="btn btn-sm btn-outline-danger dropdown-toggle"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-ban"></i> Block/Suspend
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <form action="{% url 'admin_block_user_temp' user_obj.id %}" method="post">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="duration" value="24">
+                                                <button type="submit" class="dropdown-item">
+                                                    <i class="fas fa-clock me-2"></i>Block for 24 Hours
+                                                </button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <form action="{% url 'admin_block_user_temp' user_obj.id %}" method="post">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="duration" value="168">
+                                                <button type="submit" class="dropdown-item">
+                                                    <i class="fas fa-calendar-week me-2"></i>Block for 7 Days
+                                                </button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li>
+                                            <form action="{% url 'admin_suspend_user' user_obj.id %}" method="post">
+                                                {% csrf_token %}
+                                                <button type="submit" class="dropdown-item text-danger"
+                                                    onclick="return confirm('Are you sure you want to suspend this user indefinitely?')">
+                                                    <i class="fas fa-ban me-2"></i>Suspend Indefinitely
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4">No users found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if users.paginator.num_pages > 1 %}
+            <div class="card-footer bg-white py-3">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if users.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link"
+                                href="?page={{ users.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if role_filter %}&role={{ role_filter }}{% endif %}">Previous</a>
+                        </li>
+                        {% endif %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Page {{ users.number }} of {{ users.paginator.num_pages }}</span>
+                        </li>
+                        {% if users.has_next %}
+                        <li class="page-item">
+                            <a class="page-link"
+                                href="?page={{ users.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if role_filter %}&role={{ role_filter }}{% endif %}">Next</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

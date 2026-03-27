@@ -1,0 +1,471 @@
+{% extends 'base.html' %}
+{% block title %}Welcome — HomeBaker{% endblock %}
+
+{% block content %}
+
+<style>
+    /* ===== CUSTOMER HOME — PREMIUM STYLES ===== */
+
+    /* Welcome Banner */
+    .welcome-banner {
+        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 50%, #fd79a8 100%);
+        border-radius: 20px;
+        padding: 2.5rem 2rem;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 40px rgba(108, 92, 231, 0.35);
+    }
+
+    .welcome-banner::before {
+        content: '🎂';
+        position: absolute;
+        right: -10px;
+        top: -20px;
+        font-size: 9rem;
+        opacity: 0.15;
+        transform: rotate(15deg);
+        pointer-events: none;
+        line-height: 1;
+    }
+
+    .welcome-banner .greeting {
+        font-size: 0.95rem;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        opacity: 0.85;
+        margin-bottom: 0.25rem;
+        font-weight: 500;
+    }
+
+    .welcome-banner h1 {
+        font-size: clamp(1.6rem, 4vw, 2.4rem);
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        line-height: 1.2;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    }
+
+    .welcome-banner p {
+        opacity: 0.9;
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .welcome-banner .btn-light {
+        font-weight: 600;
+        color: #6c5ce7;
+        border: none;
+        padding: 0.6rem 1.6rem;
+        border-radius: 50px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .welcome-banner .btn-light:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    }
+
+    /* Stat Cards */
+    .stat-card {
+        border-radius: 16px;
+        border: none !important;
+        padding: 1.4rem 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), box-shadow 0.25s;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 35px rgba(0,0,0,0.12) !important;
+    }
+
+    .stat-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .stat-icon.purple  { background: rgba(108, 92, 231, 0.15); }
+    .stat-icon.blue    { background: rgba(0, 184, 255, 0.12); }
+    .stat-icon.green   { background: rgba(0, 184, 148, 0.12); }
+    .stat-icon.pink    { background: rgba(253, 121, 168, 0.15); }
+
+    .stat-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        margin-bottom: 0.15rem;
+    }
+
+    .stat-value {
+        font-size: 1.7rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        line-height: 1;
+    }
+
+    /* Section headers */
+    .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+
+    .section-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .section-title span {
+        width: 4px;
+        height: 18px;
+        background: linear-gradient(180deg, #6c5ce7, #a29bfe);
+        border-radius: 2px;
+        display: inline-block;
+        margin-right: 0.5rem;
+        vertical-align: text-bottom;
+    }
+
+    /* Quick Action Cards */
+    .action-card {
+        border-radius: 16px;
+        border: none !important;
+        padding: 1.5rem 1rem;
+        text-align: center;
+        transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), box-shadow 0.25s;
+        cursor: pointer;
+        text-decoration: none;
+        display: block;
+        color: var(--text-primary);
+    }
+
+    .action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 16px 40px rgba(0,0,0,0.12) !important;
+        color: var(--text-primary);
+        text-decoration: none;
+    }
+
+    .action-card .action-icon {
+        font-size: 2.2rem;
+        display: block;
+        margin-bottom: 0.6rem;
+        line-height: 1;
+    }
+
+    .action-card .action-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    /* Order Status Badges */
+    .order-status-badge {
+        display: inline-block;
+        padding: 0.3em 0.85em;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: capitalize;
+        white-space: nowrap;
+        min-width: 80px;
+        text-align: center;
+    }
+
+    /* Cake Recommendation Cards */
+    .cake-card {
+        border-radius: 14px;
+        border: none !important;
+        overflow: hidden;
+        transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), box-shadow 0.25s;
+    }
+
+    .cake-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 14px 30px rgba(0,0,0,0.13) !important;
+    }
+
+    .cake-card img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+    }
+
+    .cake-card .cake-price {
+        font-weight: 700;
+        color: #6c5ce7;
+    }
+
+    /* Dark mode tweaks */
+    [data-theme="dark"] .welcome-banner {
+        box-shadow: 0 10px 40px rgba(108, 92, 231, 0.2);
+    }
+
+    [data-theme="dark"] .stat-icon.purple { background: rgba(108, 92, 231, 0.25); }
+    [data-theme="dark"] .stat-icon.blue   { background: rgba(0, 184, 255, 0.2); }
+    [data-theme="dark"] .stat-icon.green  { background: rgba(0, 184, 148, 0.2); }
+    [data-theme="dark"] .stat-icon.pink   { background: rgba(253, 121, 168, 0.2); }
+
+    /* Entry animations */
+    @keyframes fadeSlideUp {
+        from { opacity: 0; transform: translateY(22px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-in {
+        animation: fadeSlideUp 0.5s ease both;
+    }
+
+    .delay-1 { animation-delay: 0.05s; }
+    .delay-2 { animation-delay: 0.12s; }
+    .delay-3 { animation-delay: 0.19s; }
+    .delay-4 { animation-delay: 0.26s; }
+    .delay-5 { animation-delay: 0.33s; }
+</style>
+
+<!-- ===== WELCOME BANNER ===== -->
+<div class="welcome-banner animate-in">
+    <div class="greeting">👋 Good to see you</div>
+    <h1>Welcome back, {{ user.first_name|default:user.username }}!</h1>
+    <p>Ready to order something sweet today? Discover handcrafted cakes made with love.</p>
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{% url 'cakes' %}" class="btn btn-light">
+            🎂 Browse Cakes
+        </a>
+        <a href="{% url 'custom_cake' %}" class="btn btn-outline-light">
+            ✨ Design Custom Cake
+        </a>
+    </div>
+</div>
+
+<!-- ===== STATS ROW ===== -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3 animate-in delay-1">
+        <div class="stat-card card shadow-sm">
+            <div class="stat-icon purple">📦</div>
+            <div>
+                <div class="stat-label">Total Orders</div>
+                <div class="stat-value">{{ total_orders }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3 animate-in delay-2">
+        <div class="stat-card card shadow-sm">
+            <div class="stat-icon blue">🚀</div>
+            <div>
+                <div class="stat-label">Active</div>
+                <div class="stat-value">{{ active_orders }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3 animate-in delay-3">
+        <div class="stat-card card shadow-sm">
+            <div class="stat-icon green">✅</div>
+            <div>
+                <div class="stat-label">Delivered</div>
+                <div class="stat-value">{{ delivered_orders }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3 animate-in delay-4">
+        <div class="stat-card card shadow-sm">
+            <div class="stat-icon pink">💰</div>
+            <div>
+                <div class="stat-label">Wallet</div>
+                <div class="stat-value" style="font-size:1.35rem;">₹{{ wallet_balance }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== QUICK ACTIONS ===== -->
+<div class="mb-4 animate-in delay-2">
+    <div class="section-header">
+        <h2 class="section-title"><span></span>Quick Actions</h2>
+    </div>
+    <div class="row g-3">
+        <div class="col-4 col-md-2">
+            <a href="{% url 'cakes' %}" class="action-card card shadow-sm">
+                <span class="action-icon">🎂</span>
+                <p class="action-label">Shop Cakes</p>
+            </a>
+        </div>
+        <div class="col-4 col-md-2">
+            <a href="{% url 'cart' %}" class="action-card card shadow-sm">
+                <span class="action-icon">🛒</span>
+                <p class="action-label">My Cart</p>
+            </a>
+        </div>
+        <div class="col-4 col-md-2">
+            <a href="{% url 'my_orders' %}" class="action-card card shadow-sm">
+                <span class="action-icon">📦</span>
+                <p class="action-label">My Orders</p>
+            </a>
+        </div>
+        <div class="col-4 col-md-2">
+            <a href="{% url 'custom_cake' %}" class="action-card card shadow-sm">
+                <span class="action-icon">✨</span>
+                <p class="action-label">Custom Cake</p>
+            </a>
+        </div>
+        <div class="col-4 col-md-2">
+            <a href="{% url 'wallet' %}" class="action-card card shadow-sm">
+                <span class="action-icon">💰</span>
+                <p class="action-label">Wallet</p>
+            </a>
+        </div>
+        <div class="col-4 col-md-2">
+            <a href="{% url 'profile' %}" class="action-card card shadow-sm">
+                <span class="action-icon">👤</span>
+                <p class="action-label">Profile</p>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MAIN CONTENT: Recent Orders + Recommendations ===== -->
+<div class="row g-4">
+
+    <!-- RECENT ORDERS -->
+    <div class="col-lg-7 animate-in delay-3">
+        <div class="card shadow-sm border-0" style="border-radius: 16px;">
+            <div class="card-body p-0">
+                <div class="section-header p-3 pb-0">
+                    <h2 class="section-title"><span></span>Recent Orders</h2>
+                    <a href="{% url 'my_orders' %}" class="btn btn-sm btn-outline-primary" style="border-radius: 50px; font-size: 0.78rem;">
+                        View All →
+                    </a>
+                </div>
+
+                {% if recent_orders %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle" style="font-size: 0.875rem;">
+                        <thead>
+                            <tr class="border-top">
+                                <th class="ps-3 py-2 text-muted fw-semibold" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:.5px; white-space:nowrap;">Order ID</th>
+                                <th class="py-2 text-muted fw-semibold" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:.5px; white-space:nowrap;">Date</th>
+                                <th class="py-2 text-muted fw-semibold" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:.5px;">Status</th>
+                                <th class="pe-3 py-2 text-muted fw-semibold text-end" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:.5px;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in recent_orders %}
+                            <tr>
+                                <td class="ps-3 py-2">
+                                    <a href="{% url 'order_tracking' order.order_id %}" class="fw-semibold text-decoration-none" style="color: #6c5ce7;">
+                                        {{ order.order_id }}
+                                    </a>
+                                </td>
+                                <td class="py-2 text-muted">{{ order.created_at|date:"d M Y" }}</td>
+                                <td class="py-2">
+                                    {% if order.status == 'pending' %}
+                                        <span class="order-status-badge" style="background:#f39c12; color:#fff;">Pending</span>
+                                    {% elif order.status == 'confirmed' %}
+                                        <span class="order-status-badge" style="background:#0984e3; color:#fff;">Confirmed</span>
+                                    {% elif order.status == 'baking' %}
+                                        <span class="order-status-badge" style="background:#fd79a8; color:#fff;">Baking</span>
+                                    {% elif order.status == 'packing' %}
+                                        <span class="order-status-badge" style="background:#6c5ce7; color:#fff;">Packing</span>
+                                    {% elif order.status == 'out_for_delivery' %}
+                                        <span class="order-status-badge" style="background:#00b894; color:#fff;">On the Way</span>
+                                    {% elif order.status == 'delivered' %}
+                                        <span class="order-status-badge" style="background:#00b894; color:#fff;">Delivered</span>
+                                    {% elif order.status == 'cancelled' %}
+                                        <span class="order-status-badge" style="background:#d63031; color:#fff;">Cancelled</span>
+                                    {% else %}
+                                        <span class="order-status-badge" style="background:#636e72; color:#fff;">{{ order.status|title }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="pe-3 py-2 text-end fw-bold">₹{{ order.total_amount }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5 px-3">
+                    <div style="font-size: 3.5rem; margin-bottom: 0.75rem;">🛒</div>
+                    <h6 class="fw-bold mb-1">No orders yet</h6>
+                    <p class="text-muted mb-3" style="font-size: 0.875rem;">Place your first order and enjoy homemade goodness!</p>
+                    <a href="{% url 'cakes' %}" class="btn btn-primary btn-sm" style="border-radius: 50px;">Browse Cakes</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- TRENDING / RECOMMENDED CAKES -->
+    <div class="col-lg-5 animate-in delay-4">
+        <div class="section-header">
+            <h2 class="section-title"><span></span>
+                {% if recommended_cakes %}For You{% else %}Trending Now{% endif %}
+            </h2>
+            <a href="{% url 'cakes' %}" class="btn btn-sm btn-outline-primary" style="border-radius: 50px; font-size: 0.78rem;">See All →</a>
+        </div>
+
+        {% with cakes_to_show=recommended_cakes|default:trending_cakes %}
+        {% if cakes_to_show %}
+        <div class="d-flex flex-column gap-3">
+            {% for cake in cakes_to_show|slice:":4" %}
+            <a href="{% url 'cakes' %}" class="text-decoration-none">
+                <div class="card cake-card shadow-sm d-flex flex-row align-items-center" style="border-radius: 14px; overflow: hidden;">
+                    {% if cake.image %}
+                    <img src="{{ cake.image.url }}" alt="{{ cake.name }}"
+                         style="width: 75px; height: 75px; object-fit: cover; flex-shrink: 0;">
+                    {% elif cake.image_url %}
+                    <img src="{{ cake.image_url }}" alt="{{ cake.name }}"
+                         style="width: 75px; height: 75px; object-fit: cover; flex-shrink: 0;">
+                    {% else %}
+                    <div style="width: 75px; height: 75px; background: linear-gradient(135deg, #a29bfe, #fd79a8); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0;">
+                        🎂
+                    </div>
+                    {% endif %}
+                    <div class="p-2 flex-grow-1 overflow-hidden">
+                        <div class="fw-bold text-truncate" style="font-size: 0.9rem; color: var(--text-primary);">{{ cake.name }}</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">
+                            {{ cake.flavor|title }}
+                            {% if cake.average_rating %}
+                             · ⭐ {{ cake.average_rating|floatformat:1 }}
+                            {% endif %}
+                        </div>
+                        <div class="cake-price mt-1" style="font-size: 0.9rem;">₹{{ cake.price }}<small class="text-muted fw-normal">/kg</small></div>
+                    </div>
+                    <div class="pe-3">
+                        <i class="fas fa-chevron-right text-muted" style="font-size: 0.75rem;"></i>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="card shadow-sm border-0 text-center py-5" style="border-radius:16px;">
+            <div style="font-size:2.5rem;">🎂</div>
+            <p class="text-muted mt-2 mb-0" style="font-size:0.875rem;">Check back later for picks!</p>
+        </div>
+        {% endif %}
+        {% endwith %}
+    </div>
+
+</div>
+
+<!-- ===== EMPTY SPACE FOOTER ===== -->
+<div class="mt-4"></div>
+
+{% endblock %}

@@ -1,0 +1,14 @@
+Testing CakeDesigner.generate_custom_design...
+D:\HomeBakerProject\homebaker\main\ai_utils.py:351: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+
+Result:
+Image URL: https://image.pollinations.ai/prompt/A%20high%20quality%20realistic%20photo%20of%20a%202kg%20Round%20cake%2C%20flavor%20Chocolate%20Truffle%2C%20Gold%20and%20Black%20color%20theme%2C%20Elegant%20style%2C%20for%20Anniversary%2C%20professional%20food%20photography%2C%208k%20resolution%2C%20delicious%2C%20cinematic%20lighting
+Description: A breathtakingly elegant, tall single-tier round cake, precisely 2kg, stands majestically with an air of sophisticated luxury. Its surface is impeccably smooth, enrobed in a rich, velvety matte black fondant that provides a dramatic and opulent canvas. A stunning cascade of meticulously handcrafted edible sugar roses and delicate leaves artfully sweeps down one side of the cake, starting gracefully from the top edge and flowing towards the base. These exquisite roses are a magnificent blend of lustrous antique gold, some subtly dusted with edible glitter for an extra shimmer, and deep, almost obsidian black, adding remarkable depth and contrast. A delicate, hand-painted gold filigree pattern or abstract gilded strokes subtly adorns parts of the black fondant background, peeking through the rose arrangement, creating an impression of understated artistry. Along the front face, the message 'Happy 25th' is impeccably rendered in elegant, shimmering gold fondant letters, positioned centrally to catch the eye. The top edge of the cake is finished with a fine piping of gold royal icing, and a scattering of tiny, perfect edible gold pearls delicately nestles amongst the roses and around the base, completing this anniversary masterpiece with unparalleled glamour and precision. The overall presentation exudes premium bakery styling, showcasing flawless execution and a harmonious blend of richness and refinement.

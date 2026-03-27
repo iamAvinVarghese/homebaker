@@ -1,0 +1,226 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load l10n %}
+{% block title %}AI Analytics - Baker{% endblock %}
+
+{% block content %}
+<style>
+    /* Premium Aesthetic Styles */
+    .analytics-bg {
+        background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+        min-height: calc(100vh - 80px);
+    }
+    .glass-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
+        border-radius: 1.5rem;
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+    }
+    .glass-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(31, 38, 135, 0.1);
+    }
+    .gradient-text {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .gradient-bg {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .growth-positive { color: #10b981; }
+    .growth-negative { color: #ef4444; }
+    
+    .insight-item {
+        transition: all 0.3s ease;
+        border-radius: 1.2rem;
+        border-left: 6px solid transparent;
+        background: #fff;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+    }
+    .insight-item:hover {
+        transform: translateX(5px) scale(1.01);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+    }
+    .insight-success { border-left-color: #10b981; }
+    .insight-warning { border-left-color: #f59e0b; }
+    .insight-info { border-left-color: #3b82f6; }
+    
+    .insight-icon {
+        width: 55px;
+        height: 55px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+    .icon-success { background-color: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .icon-warning { background-color: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+    .icon-info { background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+    .tracking-wider { letter-spacing: 0.15em; }
+    
+    .rating-star {
+        color: #fbbf24;
+        text-shadow: 0 0 15px rgba(251, 191, 36, 0.6);
+    }
+    
+    .pulse-dot {
+        height: 10px;
+        width: 10px;
+        background-color: #10b981;
+        border-radius: 50%;
+        display: inline-block;
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+</style>
+
+<div class="analytics-bg pt-5 pb-5">
+    <div class="container pb-5">
+        <!-- Header -->
+        <div class="row align-items-center mb-5">
+            <div class="col-md-9">
+                <div class="d-flex align-items-center mb-2">
+                    <div class="gradient-bg p-3 rounded-circle me-4 shadow flex-shrink-0 d-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
+                        <i class="fas fa-brain text-white fa-2x"></i>
+                    </div>
+                    <div>
+                        <div class="d-flex align-items-center mb-1">
+                            <h1 class="fw-bold mb-0 me-3">AI Analytics Hub</h1>
+                            <span class="badge bg-white text-dark shadow-sm border border-light rounded-pill px-3 py-2 d-flex align-items-center">
+                                <span class="pulse-dot me-2"></span> Real-time Analysis
+                            </span>
+                        </div>
+                        <p class="text-muted mb-0 fs-5">Data-driven intelligence to scale your bakery business</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 text-md-end mt-4 mt-md-0">
+                <a href="{% url 'baker_dashboard' %}" class="btn btn-light rounded-pill px-4 py-2 shadow-sm border-0 fw-semibold text-secondary hover-primary">
+                    <i class="fas fa-arrow-left me-2"></i> Dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="row g-5">
+            <!-- Left Column: Key Metrics & Prediction -->
+            <div class="col-lg-5">
+                <div class="glass-card h-100 p-5 d-flex flex-column justify-content-between">
+                    <div>
+                        <h6 class="text-muted small text-uppercase fw-bold mb-4 tracking-wider"><i class="fas fa-chart-line me-2"></i>Performance Forecast</h6>
+                        
+                        <div class="text-center mb-5 mt-4">
+                            <h1 class="display-2 fw-bolder mb-0 {% if growth_data.predicted_growth >= 0 %}growth-positive{% else %}growth-negative{% endif %}" style="letter-spacing: -2px;">
+                                {% if growth_data.predicted_growth > 0 %}+{% endif %}{{ growth_data.predicted_growth|floatformat:1 }}<span class="fs-2">%</span>
+                            </h1>
+                            <p class="text-muted fs-5 mt-2">Predicted Growth (Next 30 Days)</p>
+                        </div>
+
+                        <div class="progress mb-4 bg-light shadow-inner" style="height: 12px; border-radius: 10px; overflow: visible;">
+                            {% if growth_data.predicted_growth >= 0 %}
+                            <div class="progress-bar bg-success rounded-pill position-relative" 
+                                 role="progressbar" 
+                                 style="width: {{ growth_data.predicted_growth|default:5|floatformat:0|unlocalize }}%; min-width: 10%; box-shadow: 0 4px 10px rgba(0,0,0,0.1);" 
+                                 aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                                 <div class="position-absolute bg-white rounded-circle shadow" style="width: 16px; height: 16px; right: -8px; top: -2px;"></div>
+                            </div>
+                            {% else %}
+                            <div class="progress-bar bg-danger rounded-pill position-relative" 
+                                 role="progressbar" 
+                                 style="width: 15%; min-width: 10%; box-shadow: 0 4px 10px rgba(0,0,0,0.1);" 
+                                 aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                                 <div class="position-absolute bg-white rounded-circle shadow" style="width: 16px; height: 16px; right: -8px; top: -2px;"></div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="p-4 rounded-4 bg-white border border-light shadow-sm d-flex align-items-center mt-5">
+                            <div class="me-4 flex-shrink-0">
+                                <div class="icon-indicator rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background: {% if growth_data.trend == 'increasing' %}rgba(16, 185, 129, 0.1){% elif growth_data.trend == 'decreasing' %}rgba(239, 68, 68, 0.1){% else %}rgba(59, 130, 246, 0.1){% endif %};">
+                                    <i class="fas {% if growth_data.trend == 'increasing' %}fa-arrow-trend-up growth-positive{% elif growth_data.trend == 'decreasing' %}fa-arrow-trend-down growth-negative{% else %}fa-minus text-info{% endif %} fa-xl"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h5 class="mb-1 fw-bold text-dark">Trend: {{ growth_data.trend|title }}</h5>
+                                <p class="text-muted mb-0">Based on recent {{ growth_data.growth_rate|floatformat:1 }}% historical margin</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: AI Insights Feed -->
+            <div class="col-lg-7">
+                <div class="glass-card h-100 p-5">
+                    <h6 class="text-muted small text-uppercase fw-bold mb-4 tracking-wider"><i class="fas fa-lightbulb text-warning me-2"></i>Smart AI Insights</h6>
+                    
+                    <div class="d-flex flex-column gap-4 mt-4">
+                        {% for insight in insights %}
+                        <div class="insight-item p-4 d-flex align-items-start {% if insight.priority == 'success' %}insight-success{% elif insight.priority == 'warning' %}insight-warning{% else %}insight-info{% endif %}">
+                            <div class="insight-icon me-4 shadow-sm {% if insight.priority == 'success' %}icon-success{% elif insight.priority == 'warning' %}icon-warning{% else %}icon-info{% endif %}">
+                                {% if insight.type == 'revenue' %}<i class="fas fa-coins"></i>
+                                {% elif insight.type == 'profit' %}<i class="fas fa-sack-dollar"></i>
+                                {% elif insight.type == 'growth' %}<i class="fas fa-chart-pie"></i>
+                                {% elif insight.type == 'stock' %}<i class="fas fa-boxes-stacked"></i>
+                                {% elif insight.type == 'trending' %}<i class="fas fa-fire"></i>
+                                {% endif %}
+                            </div>
+                            <div class="flex-grow-1">
+                                <h5 class="fw-bold mb-2 text-dark">{{ insight.type|title }} Insight</h5>
+                                <p class="mb-0 text-secondary fs-6" style="line-height: 1.6;">{{ insight.message }}</p>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-5 my-5">
+                            <div class="mb-4">
+                                <i class="fas fa-robot fa-4x text-muted opacity-50"></i>
+                            </div>
+                            <h4 class="fw-bold text-secondary">Gathering Intelligence</h4>
+                            <p class="text-muted fs-5">We are currently processing your bakery data. As you receive more orders, AI targeted insights will appear here automatically.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Stat Cards -->
+        <div class="row mt-5 g-4">
+            <div class="col-md-4">
+                <div class="glass-card p-4 text-center">
+                    <div class="mb-3"><i class="fas fa-star rating-star fa-2x"></i></div>
+                    <h6 class="text-muted small text-uppercase fw-bold mb-2 tracking-wider">Customer Rating</h6>
+                    <h2 class="fw-bold mb-0 gradient-text">{{ average_rating|floatformat:1 }} <span class="fs-5 fw-normal text-muted">/ 5.0</span></h2>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="glass-card p-4 text-center">
+                    <div class="mb-3"><i class="fas fa-bullseye text-primary fa-2x opacity-75"></i></div>
+                    <h6 class="text-muted small text-uppercase fw-bold mb-2 tracking-wider">AI Confidence</h6>
+                    <h2 class="fw-bold mb-0 text-dark">High Accuracy</h2>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="glass-card p-4 text-center">
+                    <div class="mb-3"><i class="fas fa-clock-rotate-left text-info fa-2x opacity-75"></i></div>
+                    <h6 class="text-muted small text-uppercase fw-bold mb-2 tracking-wider">Last Sync</h6>
+                    <h2 class="fw-bold mb-0 text-dark">Just Now</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

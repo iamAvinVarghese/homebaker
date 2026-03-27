@@ -1,0 +1,31 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+<h2 class="{% if status == 'Approved' or status == 'Accepted' %}text-success{% else %}text-danger{% endif %}">
+    {{ title }}
+</h2>
+
+<p>Hello,</p>
+<p>{{ message }}</p>
+
+{% if details %}
+<div class="detail-card">
+    {% for label, value in details.items %}
+    <div class="detail-row">
+        <span class="detail-label">{{ label }}:</span> <span>{{ value }}</span>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if action_url %}
+<div style="text-align: center;">
+    <a href="{{ action_url }}" class="btn">
+        {{ action_text|default:"View Dashboard" }}
+    </a>
+</div>
+{% endif %}
+
+<br>
+<p>Sweet regards,<br>The Home Baker Team</p>
+{% endblock %}

@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Shopping Cart{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Shopping Cart</h2>
+
+    {% if cart_items %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <table class="table" id="cart-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">
+                                    Select
+                                </th>
+                                <th>Cake</th>
+                                <th>Price</th>
+                                <th>Size (kg)</th>
+                                <th>Total</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart_items %}
+                            <tr class="cart-item-row" data-item-id="{{ item.cake.id }}" data-item-total="{{ item.total }}">
+                                <td>
+                                    <input type="checkbox" class="item-checkbox form-check-input" checked 
+                                           data-price="{{ item.total }}" value="{{ item.cake.id }}">
+                                </td>
+                                <td>
+                                    {% if item.cake.image %}
+                                    <img src="{{ item.cake.image.url }}" alt="{{ item.cake.name }}"
+                                        style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;"
+                                        class="rounded float-start">
+                                    {% elif item.cake.image_url %}
+                                    <img src="{{ item.cake.image_url }}" alt="{{ item.cake.name }}"
+                                        style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;"
+                                        class="rounded float-start">
+                                    {% endif %}
+                                    <strong>{{ item.cake.name }}</strong><br>
+                                    <small class="text-muted">{{ item.cake.get_flavor_display }}</small>
+                                </td>
+                                <td>
+                                    {% if item.ml_multiplier != 1.0 %}
+                                    <small class="text-muted text-decoration-line-through d-block">₹{{ item.base_price }}/kg</small>
+                                    {% endif %}
+                                    <span class="fw-bold text-primary">₹{{ item.adjusted_price }}/kg</span>
+
+                                </td>
+                                <td>
+                                    <form action="{% url 'update_cart' item.cake.id %}" method="post" class="d-inline">
+                                        {% csrf_token %}
+                                        <select name="quantity" class="form-select form-select-sm d-inline-block w-auto" onchange="this.form.submit()">
+                                            <option value="0.5" {% if item.quantity == 0.5 %}selected{% endif %}>0.5 kg</option>
+                                            <option value="1" {% if item.quantity == 1 %}selected{% endif %}>1 kg</option>
+                                            <option value="2" {% if item.quantity == 2 %}selected{% endif %}>2 kg</option>
+                                            <option value="3" {% if item.quantity == 3 %}selected{% endif %}>3 kg</option>
+                                        </select>
+                                    </form>
+                                </td>
+                                <td>₹{{ item.total|floatformat:2 }}</td>
+                                <td>
+                                    <a href="{% url 'remove_from_cart' item.cake.id %}" class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold mb-4">Order Summary</h5>
+                    <table class="table table-sm table-borderless">
+                        <tr>
+                            <td class="text-muted">Subtotal:</td>
+                            <td class="text-end fw-bold">₹<span id="subtotal-display">{{ subtotal|floatformat:2 }}</span></td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Delivery:</td>
+                            <td class="text-end fw-bold">₹<span id="delivery-display">{{ delivery_charge|floatformat:2 }}</span></td>
+                        </tr>
+                        <tr class="border-top">
+                            <td class="pt-3 h5">Total:</td>
+                            <td class="text-end pt-3 h5 text-primary fw-bold">₹<span id="grand-total-display">{{ grand_total|floatformat:2 }}</span></td>
+                        </tr>
+                    </table>
+                    <button id="checkout-btn" class="btn btn-primary w-100 py-3 fw-bold mb-2">Proceed to Checkout</button>
+                    <a href="{% url 'cakes' %}" class="btn btn-outline-secondary w-100 py-2">Continue Shopping</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const itemCheckboxes = document.querySelectorAll('.item-checkbox');
+            const subtotalDisplay = document.getElementById('subtotal-display');
+            const grandTotalDisplay = document.getElementById('grand-total-display');
+            const checkoutBtn = document.getElementById('checkout-btn');
+            const deliveryCharge = parseFloat("{{ delivery_charge|default:50 }}");
+
+            function updateTotals() {
+                let subtotal = 0;
+                let selectedIds = [];
+                
+                itemCheckboxes.forEach(cb => {
+                    if (cb.checked) {
+                        subtotal += parseFloat(cb.dataset.price);
+                        selectedIds.push(cb.value);
+                    }
+                });
+
+                subtotalDisplay.innerText = subtotal.toFixed(2);
+                const grandTotal = subtotal > 0 ? (subtotal + deliveryCharge) : 0;
+                grandTotalDisplay.innerText = grandTotal.toFixed(2);
+                
+                checkoutBtn.disabled = selectedIds.length === 0;
+                return selectedIds;
+            }
+
+            itemCheckboxes.forEach(cb => {
+                cb.addEventListener('change', function() {
+                    if (this.checked) {
+                        // Uncheck all other checkboxes
+                        itemCheckboxes.forEach(otherCb => {
+                            if (otherCb !== this) otherCb.checked = false;
+                        });
+                    }
+                    updateTotals();
+                });
+            });
+
+            checkoutBtn.addEventListener('click', function() {
+                const selectedIds = updateTotals();
+                if (selectedIds.length > 0) {
+                    window.location.href = "{% url 'checkout' %}?selected=" + selectedIds.join(',');
+                }
+            });
+            
+            // Initial run: If multiple are checked by default (template quirk), 
+            // ensure only first one remains checked for consistency with new rule
+            let foundChecked = false;
+            itemCheckboxes.forEach(cb => {
+                if (cb.checked) {
+                    if (foundChecked) cb.checked = false;
+                    else foundChecked = true;
+                }
+            });
+
+            updateTotals();
+        });
+    </script>
+    {% else %}
+    <div class="alert alert-info text-center">
+        <p class="mb-0">Your cart is empty. <a href="{% url 'cakes' %}">Browse cakes</a></p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
