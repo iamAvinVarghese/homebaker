@@ -4,162 +4,375 @@
 {% block title %}Delivery Dashboard{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-md-12">
-        <h2 class="fw-bold mb-3">Delivery Assistant Dashboard</h2>
-        <p class="text-muted">Welcome, {{ request.user.get_full_name|default:request.user.username }}. Manage your deliveries below.</p>
-    </div>
-</div>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
 
-<div class="mb-5">
-    <h4 class="fw-bold mb-3"><i class="fas fa-truck me-2 text-primary"></i>Active Deliveries</h4>
-    <div class="card border-0 shadow-sm overflow-hidden mb-4">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0 align-middle">
-                    <thead class="bg-light">
-                        <tr>
-                            <th class="ps-4 py-3">Order ID</th>
-                            <th>Customer</th>
-                            <th>Address</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for order in active_orders %}
-                        <tr>
-                            <td class="ps-4 py-3">
-                                <span class="fw-bold">{{ order.order_id }}</span>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    {% if order.customer.profile.profile_picture %}
-                                    <img src="{{ order.customer.profile.profile_picture.url }}" class="rounded-circle me-2"
-                                        width="32" height="32" style="object-fit: cover; border: 1px solid #0d6efd;">
-                                    {% else %}
-                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-2"
-                                        style="width: 32px; height: 32px; background-color: #0d6efd; color: white; font-weight: bold; font-size: 0.85rem;">
-                                        {{ order.customer.get_full_name|default:order.customer.username|make_list|first|upper }}
-                                    </div>
-                                    {% endif %}
-                                    <span>{{ order.customer.get_full_name|default:order.customer.username }}</span>
-                                </div>
-                            </td>
-                            <td class="text-truncate" style="max-width: 250px;">{{ order.delivery_address }}</td>
-                            <td>
-                                <span class="badge {% if order.status == 'out_for_delivery' %}bg-primary{% else %}bg-secondary{% endif %}">
-                                    {{ order.get_status_display }}
-                                </span>
-                            </td>
-                            <td class="pe-4">
-                                <button class="btn btn-sm btn-success verify-btn" 
-                                        data-order-id="{{ order.order_id }}"
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#otpModal">
-                                    <i class="fas fa-check-circle me-1"></i> Verify Delivery
-                                </button>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="5" class="py-5 text-center text-muted">
-                                No active orders to deliver.
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+    .script-font {
+        font-family: 'Great Vibes', cursive;
+        font-weight: normal;
+        letter-spacing: 1px;
+    }
+
+    /* Background Globs matching Home */
+    .bg-glob-1 {
+        position: fixed;
+        top: -10%;
+        left: -10%;
+        width: 800px;
+        height: 800px;
+        background: radial-gradient(circle, rgba(108, 30, 180, 0.2) 0%, rgba(7, 3, 10, 0) 60%);
+        border-radius: 50%;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .bg-glob-2 {
+        position: fixed;
+        top: 40%;
+        right: -20%;
+        width: 900px;
+        height: 900px;
+        background: radial-gradient(circle, rgba(108, 30, 180, 0.15) 0%, rgba(7, 3, 10, 0) 60%);
+        border-radius: 50%;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    /* Force dark theme for the whole page */
+    :host, body, html {
+        background-color: #07030a !important;
+    }
+
+    .content-wrapper {
+        position: relative;
+        z-index: 1;
+        padding-top: 3rem;
+        padding-bottom: 5rem;
+        background-color: #07030a; /* Additional fallback */
+    }
+
+    .gold-text { color: #ebd197 !important; }
+    .text-muted-premium { color: #94a3b8 !important; }
+
+    /* Premium Cards */
+    .premium-card {
+        background-color: rgba(30, 20, 40, 0.4) !important;
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(235, 209, 151, 0.15) !important;
+        border-radius: 20px;
+        color: #ffffff;
+        box-shadow: 0 15px 45px rgba(0,0,0,0.4);
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .premium-card:hover {
+        transform: translateY(-8px);
+        border-color: rgba(235, 209, 151, 0.4) !important;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 20px rgba(235, 209, 151, 0.1);
+    }
+
+    .gold-icon-glow {
+        color: #ebd197;
+        filter: drop-shadow(0 0 5px rgba(235, 209, 151, 0.5));
+        transition: all 0.3s ease;
+    }
+
+    .premium-card:hover .gold-icon-glow {
+        filter: drop-shadow(0 0 12px rgba(235, 209, 151, 0.8));
+        transform: scale(1.1);
+    }
+
+    .table {
+        color: #ffffff !important;
+        margin-bottom: 0;
+        background-color: transparent !important;
+    }
+    .table * {
+        background-color: transparent !important;
+    }
+    .table thead th {
+        background-color: rgba(235, 209, 151, 0.05) !important;
+        color: #ebd197 !important;
+        border-bottom: 1px solid rgba(235, 209, 151, 0.1) !important;
+        padding: 1.2rem 1rem;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+    }
+    .table tbody td {
+        padding: 1.2rem 1rem;
+        border-bottom: 1px solid rgba(235, 209, 151, 0.1) !important;
+        vertical-align: middle;
+        color: #fff !important;
+    }
+    .table-hover tbody tr:hover {
+        background-color: rgba(235, 209, 151, 0.03) !important;
+    }
+
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+    .status-active {
+        background: rgba(108, 30, 180, 0.2);
+        color: #d8b4fe;
+        border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+    .status-completed {
+        background: rgba(16, 185, 129, 0.1);
+        color: #6ee7b7;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .btn-verify {
+        background: linear-gradient(135deg, #ebd197, #c5a059);
+        color: #07030a;
+        border: none;
+        border-radius: 50px;
+        padding: 0.5rem 1.2rem;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(235, 209, 151, 0.2);
+    }
+    .btn-verify:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(235, 209, 151, 0.4);
+        color: #000;
+    }
+
+    /* Modal Styling */
+    .glass-modal .modal-content {
+        background: rgba(25, 15, 35, 0.9);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(235, 209, 151, 0.2);
+        border-radius: 25px;
+        color: #fff;
+    }
+    .otp-input {
+        background: rgba(0, 0, 0, 0.3) !important;
+        border: 1px solid rgba(235, 209, 151, 0.2) !important;
+        color: #ebd197 !important;
+        font-size: 2.5rem !important;
+        letter-spacing: 1rem;
+        text-align: center;
+        border-radius: 15px;
+        padding: 1rem;
+    }
+    .otp-input:focus {
+        border-color: #ebd197 !important;
+        box-shadow: 0 0 20px rgba(235, 209, 151, 0.2) !important;
+    }
+
+    .animate-row {
+        animation: fadeInUpPremium 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+        opacity: 0;
+    }
+    @keyframes fadeInUpPremium {
+        from { opacity: 0; transform: translateY(30px) scale(0.98); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+</style>
+
+<div class="bg-glob-1"></div>
+<div class="bg-glob-2"></div>
+
+<div class="content-wrapper">
+    <div class="container">
+        <!-- Header -->
+        <div class="row mb-5 animate-row align-items-center" style="animation-delay: 0.1s;">
+            <div class="col-md-auto mb-3 mb-md-0 text-center text-md-start">
+                <div class="position-relative d-inline-block">
+                    {% if request.user.profile.profile_picture %}
+                    <img src="{{ request.user.profile.profile_picture.url }}" class="rounded-circle shadow-lg" 
+                         width="100" height="100" style="object-fit: cover; border: 3px solid rgba(235, 209, 151, 0.4); filter: drop-shadow(0 0 15px rgba(235, 209, 151, 0.2));">
+                    {% else %}
+                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-lg"
+                         style="width: 100px; height: 100px; background: linear-gradient(135deg, #4a1c6a, #2b1040); border: 3px solid rgba(235, 209, 151, 0.3);">
+                        <i class="fas fa-user gold-text" style="font-size: 3rem;"></i>
+                    </div>
+                    {% endif %}
+                    <div class="position-absolute bottom-0 end-0 bg-success rounded-circle border border-dark" 
+                         style="width: 22px; height: 22px; border-width: 3px !important;"></div>
+                </div>
+            </div>
+            <div class="col-md">
+                <h2 class="script-font gold-text mb-1" style="font-size: 3.5rem;">Confectionery Courier</h2>
+                <p class="text-muted-premium mb-0">WELCOME BACK, <span class="text-white fw-bold">{{ request.user.get_full_name|default:request.user.username|upper }}</span>. YOUR DELIVERY MISSION AWAITS.</p>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="mb-5">
-    <h4 class="fw-bold mb-3"><i class="fas fa-history me-2 text-success"></i>Recent Deliveries</h4>
-    <div class="card border-0 shadow-sm overflow-hidden">
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0 align-middle">
-                    <thead class="bg-light">
-                        <tr>
-                            <th class="ps-4 py-3">Order ID</th>
-                            <th>Customer</th>
-                            <th>Address</th>
-                            <th>Delivered At</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for order in delivered_orders %}
-                        <tr class="table-light opacity-75">
-                            <td class="ps-4 py-3">
-                                <span class="fw-bold text-muted">{{ order.order_id }}</span>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    {% if order.customer.profile.profile_picture %}
-                                    <img src="{{ order.customer.profile.profile_picture.url }}" class="rounded-circle me-2"
-                                        width="32" height="32" style="object-fit: cover; border: 1px solid #6c757d; opacity: 0.8;">
-                                    {% else %}
-                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-2"
-                                        style="width: 32px; height: 32px; background-color: #6c757d; color: white; font-weight: bold; font-size: 0.85rem;">
-                                        {{ order.customer.get_full_name|default:order.customer.username|make_list|first|upper }}
+        <!-- Active Deliveries -->
+        <div class="mb-5 animate-row" style="animation-delay: 0.2s;">
+            <div class="d-flex align-items-center mb-4">
+                <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px; background: rgba(235, 209, 151, 0.1); border: 1px solid rgba(235, 209, 151, 0.2);">
+                    <i class="fas fa-shipping-fast gold-text"></i>
+                </div>
+                <h4 class="gold-text mb-0 fw-bold">Active Delivery Assignments</h4>
+            </div>
+
+            <div class="card premium-card border-0 shadow-lg" style="background: rgba(30, 20, 40, 0.6) !important;">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-4">Order ID</th>
+                                <th>Customer</th>
+                                <th>Destination</th>
+                                <th>Status</th>
+                                <th class="text-end pe-4">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in active_orders %}
+                            <tr>
+                                <td class="ps-4">
+                                    <span class="fw-bold gold-text">#{{ order.order_id }}</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if order.customer.profile.profile_picture %}
+                                        <img src="{{ order.customer.profile.profile_picture.url }}" class="rounded-circle me-3"
+                                            width="38" height="38" style="object-fit: cover; border: 2px solid rgba(235, 209, 151, 0.3);">
+                                        {% else %}
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center me-3"
+                                            style="width: 38px; height: 38px; background: linear-gradient(135deg, #4a1c6a, #2b1040); color: white; font-weight: bold; border: 1px solid rgba(235, 209, 151, 0.2);">
+                                            {{ order.customer.get_full_name|default:order.customer.username|make_list|first|upper }}
+                                        </div>
+                                        {% endif %}
+                                        <div>
+                                            <div class="fw-bold">{{ order.customer.get_full_name|default:order.customer.username }}</div>
+                                            <div class="small text-muted-premium">{{ order.customer.phone_number }}</div>
+                                        </div>
                                     </div>
-                                    {% endif %}
-                                    <span class="text-muted">{{ order.customer.get_full_name|default:order.customer.username }}</span>
-                                </div>
-                            </td>
-                            <td class="text-truncate text-muted" style="max-width: 250px;">{{ order.delivery_address }}</td>
-                            <td class="text-muted small">
-                                {{ order.delivered_at|date:"M d, Y H:i" }}
-                            </td>
-                            <td>
-                                <span class="badge bg-success">
-                                    <i class="fas fa-check me-1"></i> {{ order.get_status_display }}
-                                </span>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="5" class="py-5 text-center text-muted">
-                                No past deliveries found.
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                                </td>
+                                <td>
+                                    <div class="text-truncate" style="max-width: 300px;" title="{{ order.delivery_address }}">
+                                        <i class="fas fa-map-marker-alt me-2 text-muted-premium small"></i>{{ order.delivery_address }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="status-badge status-active">
+                                        {{ order.get_status_display|upper }}
+                                    </span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <button class="btn btn-verify verify-btn" 
+                                            data-order-id="{{ order.order_id }}"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#otpModal">
+                                        Verify & Complete
+                                    </button>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="py-5 text-center text-muted-premium">
+                                    <i class="fas fa-inbox d-block mb-3" style="font-size: 2rem; opacity: 0.3;"></i>
+                                    NO ACTIVE ASSIGNMENTS AT THE MOMENT.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Deliveries -->
+        <div class="animate-row" style="animation-delay: 0.3s;">
+            <div class="d-flex align-items-center mb-4">
+                <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px; background: rgba(235, 209, 151, 0.05); border: 1px solid rgba(235, 209, 151, 0.1);">
+                    <i class="fas fa-history text-muted-premium"></i>
+                </div>
+                <h4 class="text-muted-premium mb-0 fw-bold">Recent History</h4>
+            </div>
+
+            <div class="card premium-card border-0 shadow-lg" style="background: rgba(20, 15, 30, 0.4) !important;">
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-4">Order ID</th>
+                                <th>Customer</th>
+                                <th>Completion Date</th>
+                                <th class="text-end pe-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in delivered_orders %}
+                            <tr style="opacity: 0.85;">
+                                <td class="ps-4">
+                                    <span class="fw-bold text-muted-premium">#{{ order.order_id }}</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if order.customer.profile.profile_picture %}
+                                        <img src="{{ order.customer.profile.profile_picture.url }}" class="rounded-circle me-3"
+                                            width="32" height="32" style="object-fit: cover; border: 1px solid rgba(235, 209, 151, 0.2);">
+                                        {% else %}
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center me-3"
+                                            style="width: 32px; height: 32px; background: rgba(255,255,255,0.05); color: #94a3b8; font-size: 0.8rem; border: 1px solid rgba(255, 255, 255, 0.1);">
+                                            {{ order.customer.get_full_name|default:order.customer.username|make_list|first|upper }}
+                                        </div>
+                                        {% endif %}
+                                        <span class="text-muted-premium">{{ order.customer.get_full_name|default:order.customer.username }}</span>
+                                    </div>
+                                </td>
+                                <td class="text-muted-premium small">
+                                    {{ order.delivered_at|date:"M d, Y • H:i" }}
+                                </td>
+                                <td class="text-end pe-4">
+                                    <span class="status-badge status-completed">
+                                        <i class="fas fa-check-double me-1"></i> DELIVERED
+                                    </span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="py-4 text-center text-muted-premium small">
+                                    NO RECENT HISTORY FOUND.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- OTP Modal -->
-<div class="modal fade" id="otpModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade glass-modal" id="otpModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content glass-card">
+        <div class="modal-content">
             <div id="otpFormView">
                 <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold">Enter Delivery OTP</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title gold-text fw-bold">Secure Verification</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body pt-3 pb-4">
-                    <p class="text-muted small mb-4">Ask the customer for the OTP generated by the baker after accepting the order.</p>
+                    <p class="text-muted-premium small mb-4">PLEASE ENTER THE 4-DIGIT VERIFICATION CODE PROVIDED BY THE CUSTOMER TO FINALIZE THIS DELIVERY.</p>
                     
-                    <div id="otpErrorAlert" class="alert alert-danger py-2 mb-3 d-none">
-                        <small id="otpErrorMessage"></small>
+                    <div id="otpErrorAlert" class="alert alert-danger bg-danger bg-opacity-25 border-0 text-white mb-4 d-none">
+                        <i class="fas fa-exclamation-triangle me-2"></i> <small id="otpErrorMessage"></small>
                     </div>
 
                     <form id="otpForm">
                         {% csrf_token %}
                         <input type="hidden" id="modalOrderId" name="order_id">
                         <div class="mb-4">
-                             <input type="text" class="form-control form-control-lg text-center fw-bold" 
-                                    id="otpInput" name="otp" placeholder="XXXX" maxlength="4" autofocus>
+                             <input type="text" class="form-control otp-input" 
+                                    id="otpInput" name="otp" placeholder="••••" maxlength="4" autofocus>
                         </div>
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
-                                <span id="btnText">Complete Delivery</span>
+                            <button type="submit" class="btn-verify py-3" id="submitBtn">
+                                <span id="btnText">CONFIRM DELIVERY</span>
                                 <span id="btnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                             </button>
                         </div>
@@ -171,11 +384,13 @@
             <div id="otpSuccessView" class="d-none">
                 <div class="modal-body text-center py-5">
                     <div class="mb-4">
-                        <i class="fas fa-check-circle text-success" style="font-size: 5rem;"></i>
+                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 100px; height: 100px; background: rgba(110, 231, 183, 0.1); border: 2px solid #6ee7b7;">
+                            <i class="fas fa-check text-success" style="font-size: 3rem;"></i>
+                        </div>
                     </div>
-                    <h3 class="fw-bold mb-2">Verification Completed!</h3>
-                    <p class="text-muted mb-4">The order has been marked as delivered successfully.</p>
-                    <button type="button" class="btn btn-success px-5" onclick="window.location.reload()">Great!</button>
+                    <h3 class="gold-text fw-bold mb-2">SUCCESS!</h3>
+                    <p class="text-muted-premium mb-4">THE MISSION IS COMPLETE. ORDER HAS BEEN MARKED AS DELIVERED.</p>
+                    <button type="button" class="btn-verify px-5" onclick="window.location.reload()">PROCEED</button>
                 </div>
             </div>
         </div>
@@ -184,7 +399,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const otpModal = document.getElementById('otpModal');
+    const otpModalElement = document.getElementById('otpModal');
     const otpForm = document.getElementById('otpForm');
     const modalOrderIdInput = document.getElementById('modalOrderId');
     const otpInput = document.getElementById('otpInput');
@@ -216,7 +431,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const otp = otpInput.value;
         
         if (!otp || otp.length < 4) {
-            showError('Please enter a valid 4-digit OTP.');
+            showError('PLEASE ENTER A VALID 4-DIGIT CODE.');
             return;
         }
         
@@ -240,10 +455,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.status === 'success') {
                 otpFormView.classList.add('d-none');
                 otpSuccessView.classList.remove('d-none');
-                // Auto reload after 2 seconds if they don't click
                 setTimeout(() => window.location.reload(), 3000);
             } else {
-                showError(data.message || 'Invalid OTP. Please try again.');
+                showError(data.message || 'INVALID CODE. PLEASE RE-VERIFY WITH CUSTOMER.');
                 otpInput.value = '';
                 otpInput.focus();
             }
@@ -251,7 +465,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             setLoading(false);
             console.error('Error:', error);
-            showError('An error occurred. Please try again.');
+            showError('AN UNEXPECTED ERROR OCCURRED.');
         });
     });
 
@@ -272,18 +486,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-
-<style>
-.glass-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-}
-.form-control-lg {
-    font-size: 2rem;
-    letter-spacing: 0.5rem;
-}
-</style>
-
 {% endblock %}

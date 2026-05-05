@@ -69,13 +69,20 @@ def baker_dashboard(request):
     profit_data = BusinessInsights.get_profit_analytics(request.user, days=30)
     total_profit = profit_data['profit']
     
-    # Total Expenses (Lifetime) - Calculated as 40% of (Revenue - Commission)
-    # Commission is 10%
+    # 1. Total lifetime revenue and commission
     total_commission = total_lifetime_revenue * Decimal('0.10')
-    total_expenses = (total_lifetime_revenue - total_commission) * Decimal('0.40')
+    net_revenue_after_commission = total_lifetime_revenue - total_commission
     
-    # Recalculate Profit based on this logic to be consistent
-    # Profit = Revenue - Commission - Expenses
+    # 2. Fixed 40% overhead simulation
+    fixed_overhead = net_revenue_after_commission * Decimal('0.40')
+    
+    # 3. Actual outlays from Treasury Ledger
+    actual_ledger_expenses = Expense.objects.filter(baker=request.user).aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
+    
+    # 4. Total Combined Expenses (Fixed 40% + Actual Ledger)
+    total_expenses = fixed_overhead + actual_ledger_expenses
+    
+    # 5. Net Profit (Revenue - Commission - Combined Expenses)
     total_profit = total_lifetime_revenue - total_commission - total_expenses
     
     # Custom Requests
@@ -84,14 +91,14 @@ def baker_dashboard(request):
     # Average rating
     avg_rating = baker_profile.average_rating
     
-    # Get chart data
-    chart_data = get_baker_chart_data(request.user)
-    # Get chart data
+    # Get chart data (which now uses combined logic)
     chart_data = get_baker_chart_data(request.user)
     
     # Recent orders
     recent_orders = baker_orders.order_by('-created_at')[:10]
     
+    # Recent Expenses (Treasury Logs)
+    recent_expenses = Expense.objects.filter(baker=request.user).order_by('-expense_date', '-created_at')[:5]
     
     context = {
         'total_orders': total_orders,
@@ -103,12 +110,14 @@ def baker_dashboard(request):
         'average_rating': avg_rating,
         'pending_custom_requests': pending_custom_requests,
         'chart_data': chart_data,
+        'recent_orders': recent_orders,
+        'recent_expenses': recent_expenses,
     }
     return render(request, 'baker_dashboard.html', context)
 
 
 def get_baker_chart_data(baker):
-    """Get data for Chart.js charts"""
+    """Get data for Chart.js charts with COMBINED (Fixed 40% + Ledger) expenses"""
     monthly_revenue_data = []
     monthly_expenses_data = []
     monthly_profit_data = []
@@ -127,23 +136,32 @@ def get_baker_chart_data(baker):
             status='delivered'
         ).aggregate(total=Sum('subtotal'))['total'] or Decimal('0.00')
         
-        rev_float = float(revenue)
+        # Calculate Actual Ledger Expenses for this month
+        actual_ledger = Expense.objects.filter(
+            baker=baker,
+            expense_date__gte=month_start.date(),
+            expense_date__lte=month_end.date()
+        ).aggregate(total=Sum('amount'))['total'] or Decimal('0.00')
+        
+        # Calculate Commission (10%) and Fixed Overhead (40% of net)
+        commission = revenue * Decimal('0.10')
+        net_rev = revenue - commission
+        fixed_overhead = net_rev * Decimal('0.40')
+        
+        # COMBINED Expenses
+        combined_expenses = fixed_overhead + actual_ledger
+        profit = revenue - commission - combined_expenses
         
         # Monthly Revenue Data
         monthly_revenue_data.append({
             'month': month_start.strftime('%b %Y'),
-            'revenue': rev_float
+            'revenue': float(revenue)
         })
-        
-        # Calculate Commission (10%) and Expenses (40% of Revenue - Commission)
-        commission = revenue * Decimal('0.10')
-        expenses = (revenue - commission) * Decimal('0.40')
-        profit = revenue - commission - expenses
         
         # Monthly Expenses Data
         monthly_expenses_data.append({
             'month': month_start.strftime('%b %Y'),
-            'expenses': float(expenses)
+            'expenses': float(combined_expenses)
         })
         
         # Monthly Profit Data

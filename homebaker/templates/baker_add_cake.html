@@ -1,74 +1,202 @@
 {% extends 'base.html' %}
+{% load static %}
 
-
-{% block title %}Add New Cake - HomeBaker{% endblock %}
+{% block title %}Artisan Creation | Add New Masterpiece{% endblock %}
 
 {% block content %}
-<div class="container py-4">
+<style>
+    :root {
+        --gold-primary: #ebd197;
+        --glass-bg: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(235, 209, 151, 0.1);
+        --purple-bg: #07030a;
+    }
+
+    body {
+        background-color: var(--purple-bg);
+    }
+
+    .luxury-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    }
+
+    .luxury-header {
+        background: rgba(255, 255, 255, 0.02);
+        border-bottom: 1px solid var(--glass-border);
+        padding: 2rem;
+        border-radius: 24px 24px 0 0;
+    }
+
+    .gold-text {
+        background: linear-gradient(135deg, #ebd197 0%, #f5d97a 50%, #ebd197 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: bold;
+    }
+
+    .luxury-input {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+        border-radius: 12px !important;
+        padding: 0.8rem 1.2rem !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .luxury-input:focus {
+        background: rgba(255, 255, 255, 0.08) !important;
+        border-color: var(--gold-primary) !important;
+        box-shadow: 0 0 15px rgba(235, 209, 151, 0.2) !important;
+    }
+
+    .form-label {
+        color: var(--gold-primary);
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.6rem;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+    }
+
+    .btn-luxury-save {
+        background: linear-gradient(135deg, #ebd197 0%, #c5a66a 100%);
+        color: #07030a !important;
+        border: none;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        border-radius: 12px;
+        padding: 1rem 2.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-luxury-save:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(235, 209, 151, 0.3);
+    }
+
+    .btn-luxury-cancel {
+        background: rgba(255, 255, 255, 0.05);
+        color: rgba(255, 255, 255, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 1rem 2rem;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-luxury-cancel:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+
+    .form-text {
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 0.8rem;
+    }
+
+    /* Style for file inputs */
+    input[type="file"]::file-selector-button {
+        background: rgba(235, 209, 151, 0.1);
+        color: var(--gold-primary);
+        border: 1px solid var(--glass-border);
+        border-radius: 8px;
+        padding: 0.4rem 1rem;
+        margin-right: 1rem;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    input[type="file"]::file-selector-button:hover {
+        background: rgba(235, 209, 151, 0.2);
+    }
+</style>
+
+<div class="container py-5 mt-4">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-white py-3">
-                    <h4 class="mb-0">Add New Cake</h4>
+        <div class="col-lg-9">
+            <!-- Form Card -->
+            <div class="luxury-card overflow-hidden">
+                <div class="luxury-header text-center">
+                    <h2 class="gold-text fw-extra-bold display-6 mb-1">New Masterpiece</h2>
+                    <p class="text-white-50 small text-uppercase fw-bold" style="letter-spacing: 2px;">Curation Registry</p>
                 </div>
-                <div class="card-body p-4">
+                
+                <div class="card-body p-4 p-md-5">
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
 
-                        <div class="row g-3">
+                        <div class="row g-4">
+                            <!-- Cake Name -->
                             <div class="col-12">
-                                <label class="form-label fw-semibold">Cake Name</label>
+                                <label class="form-label">Creation Title</label>
                                 {{ form.name }}
                                 {% if form.name.errors %}
-                                <div class="text-danger small">{{ form.name.errors }}</div>
+                                <div class="text-danger xsmall mt-1">{{ form.name.errors }}</div>
                                 {% endif %}
                             </div>
 
+                            <!-- Flavor and Occasion -->
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">Flavor</label>
+                                <label class="form-label">Gourmet Flavor</label>
                                 {{ form.flavor }}
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label fw-semibold">Occasion</label>
+                                <label class="form-label">Curated Occasion</label>
                                 {{ form.occasion }}
                             </div>
 
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Price (₹/kg)</label>
+                            <!-- Price -->
+                            <div class="col-md-12">
+                                <label class="form-label">Artisan Valuation (₹/kg)</label>
                                 {{ form.price }}
                                 {% if form.price.errors %}
-                                <div class="text-danger small">{{ form.price.errors }}</div>
+                                <div class="text-danger xsmall mt-1">{{ form.price.errors }}</div>
                                 {% endif %}
                             </div>
 
-
-
+                            <!-- Description -->
                             <div class="col-12">
-                                <label class="form-label fw-semibold">Description</label>
+                                <label class="form-label">Curator's Notes / Description</label>
                                 {{ form.description }}
                             </div>
 
+                            <!-- Visual Assets -->
                             <div class="col-12">
-                                <label class="form-label fw-semibold">Cake Image</label>
-                                {{ form.image }}
-                                <div class="form-text mt-1">Or provide an image URL if you prefer</div>
-                                {{ form.image_url }}
+                                <div class="p-4 rounded-4" style="background: rgba(255,255,255,0.02); border: 1px dashed rgba(235, 209, 151, 0.2);">
+                                    <label class="form-label d-block mb-3">Portfolio Visuals</label>
+                                    {{ form.image }}
+                                    <div class="form-text my-3 text-center">— OR —</div>
+                                    {{ form.image_url }}
+                                    <div class="form-text mt-2 text-center">Capture the essence of your creation through high-fidelity imagery.</div>
+                                </div>
                             </div>
 
+                            <!-- Availability -->
                             <div class="col-12">
-                                <div class="form-check form-switch">
-                                    {{ form.is_available }}
-                                    <label class="form-check-label" for="{{ form.is_available.id_for_label }}">Available
-                                        for ordering</label>
+                                <div class="luxury-input d-flex align-items-center justify-content-between p-3">
+                                    <span class="text-white-50">List in Public Gallery</span>
+                                    <div class="form-check form-switch m-0">
+                                        {{ form.is_available }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-end gap-2 mt-4">
-                            <a href="{% url 'baker_cakes' %}" class="btn btn-outline-secondary">Cancel</a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>Save Cake
+                        <!-- Action Buttons -->
+                        <div class="d-flex flex-column flex-md-row justify-content-center gap-3 mt-5">
+                            <a href="{% url 'baker_cakes' %}" class="btn-luxury-cancel text-center">
+                                Abandon Draft
+                            </a>
+                            <button type="submit" class="btn-luxury-save">
+                                <i class="fas fa-gem me-2"></i>Curate Masterpiece
                             </button>
                         </div>
                     </form>
@@ -77,4 +205,20 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Inject luxury classes into Django form widgets
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('input, select, textarea');
+        inputs.forEach(el => {
+            if (el.type !== 'checkbox' && el.type !== 'radio') {
+                el.classList.add('luxury-input');
+                el.classList.add('w-100');
+            }
+            if (el.type === 'checkbox') {
+                el.classList.add('form-check-input');
+            }
+        });
+    });
+</script>
 {% endblock %}

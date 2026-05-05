@@ -4,468 +4,458 @@
 {% block content %}
 
 <style>
-    /* ===== CUSTOMER HOME — PREMIUM STYLES ===== */
+    /* ===== CUSTOMER HOME — ULTRA-LUXURY OBSIDIAN & GOLD ===== */
+    :root {
+        --glass-bg: rgba(30, 20, 40, 0.4);
+        --glass-border: rgba(235, 209, 151, 0.15);
+        --gold-primary: #ebd197;
+        --gold-glow: rgba(235, 209, 151, 0.4);
+    }
 
     /* Welcome Banner */
     .welcome-banner {
-        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 50%, #fd79a8 100%);
-        border-radius: 20px;
-        padding: 2.5rem 2rem;
+        background: linear-gradient(135deg, #07030a 0%, #1a0b2e 100%);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 3rem 2.5rem;
         color: #fff;
         position: relative;
         overflow: hidden;
-        margin-bottom: 2rem;
-        box-shadow: 0 10px 40px rgba(108, 92, 231, 0.35);
+        margin-bottom: 2.5rem;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
     }
 
     .welcome-banner::before {
-        content: '🎂';
+        content: '';
         position: absolute;
-        right: -10px;
-        top: -20px;
-        font-size: 9rem;
-        opacity: 0.15;
-        transform: rotate(15deg);
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: radial-gradient(circle at 80% 20%, rgba(235, 209, 151, 0.08) 0%, transparent 50%);
         pointer-events: none;
-        line-height: 1;
     }
 
     .welcome-banner .greeting {
-        font-size: 0.95rem;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-        opacity: 0.85;
-        margin-bottom: 0.25rem;
-        font-weight: 500;
+        font-family: 'Great Vibes', cursive;
+        font-size: 1.8rem;
+        color: var(--gold-primary);
+        margin-bottom: 0.5rem;
+        text-shadow: 0 0 15px var(--gold-glow);
     }
 
     .welcome-banner h1 {
-        font-size: clamp(1.6rem, 4vw, 2.4rem);
+        font-family: 'Inter', sans-serif;
+        font-size: clamp(1.8rem, 5vw, 2.8rem);
         font-weight: 800;
-        margin-bottom: 0.5rem;
-        line-height: 1.2;
-        text-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        margin-bottom: 1rem;
+        letter-spacing: -1px;
+        background: linear-gradient(90deg, #fff, var(--gold-primary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
 
     .welcome-banner p {
-        opacity: 0.9;
-        font-size: 1rem;
-        margin-bottom: 1.5rem;
+        color: rgba(255,255,255,0.7);
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin-bottom: 2rem;
+        line-height: 1.6;
     }
 
-    .welcome-banner .btn-light {
-        font-weight: 600;
-        color: #6c5ce7;
-        border: none;
-        padding: 0.6rem 1.6rem;
+    .btn-gold-luxury {
+        background: linear-gradient(135deg, #ebd197, #c5a059);
+        color: #07030a !important;
+        font-weight: 700;
+        padding: 0.8rem 2rem;
         border-radius: 50px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        transition: transform 0.2s, box-shadow 0.2s;
+        border: none;
+        box-shadow: 0 8px 25px rgba(235, 209, 151, 0.3);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    .welcome-banner .btn-light:hover {
+    .btn-gold-luxury:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 12px 30px rgba(235, 209, 151, 0.5);
+    }
+
+    .btn-outline-gold-luxury {
+        background: rgba(235, 209, 151, 0.05);
+        color: var(--gold-primary) !important;
+        font-weight: 600;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        border: 1px solid var(--glass-border);
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-gold-luxury:hover {
+        background: rgba(235, 209, 151, 0.1);
+        border-color: var(--gold-primary);
         transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.25);
     }
 
     /* Stat Cards */
     .stat-card {
-        border-radius: 16px;
-        border: none !important;
-        padding: 1.4rem 1.2rem;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), box-shadow 0.25s;
-        overflow: hidden;
-        position: relative;
+        background: var(--glass-bg) !important;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid var(--glass-border) !important;
+        border-radius: 20px;
+        padding: 1.5rem;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
     .stat-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 14px 35px rgba(0,0,0,0.12) !important;
+        transform: translateY(-8px);
+        border-color: rgba(235, 209, 151, 0.4) !important;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.4) !important;
     }
 
-    .stat-icon {
-        width: 54px;
-        height: 54px;
-        border-radius: 14px;
+    .stat-icon-luxury {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        background: rgba(235, 209, 151, 0.1);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.5rem;
-        flex-shrink: 0;
+        font-size: 1.4rem;
+        color: var(--gold-primary);
+        border: 1px solid rgba(235, 209, 151, 0.1);
     }
 
-    .stat-icon.purple  { background: rgba(108, 92, 231, 0.15); }
-    .stat-icon.blue    { background: rgba(0, 184, 255, 0.12); }
-    .stat-icon.green   { background: rgba(0, 184, 148, 0.12); }
-    .stat-icon.pink    { background: rgba(253, 121, 168, 0.15); }
-
-    .stat-label {
-        font-size: 0.8rem;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        margin-bottom: 0.15rem;
-    }
-
-    .stat-value {
-        font-size: 1.7rem;
+    .stat-value-luxury {
+        font-family: 'Inter', sans-serif;
+        font-size: 1.8rem;
         font-weight: 800;
-        color: var(--text-primary);
-        line-height: 1;
-    }
-
-    /* Section headers */
-    .section-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1rem;
-    }
-
-    .section-title {
-        font-size: 1.15rem;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin: 0;
-    }
-
-    .section-title span {
-        width: 4px;
-        height: 18px;
-        background: linear-gradient(180deg, #6c5ce7, #a29bfe);
-        border-radius: 2px;
-        display: inline-block;
-        margin-right: 0.5rem;
-        vertical-align: text-bottom;
+        color: #fff;
+        letter-spacing: -1px;
     }
 
     /* Quick Action Cards */
-    .action-card {
-        border-radius: 16px;
-        border: none !important;
-        padding: 1.5rem 1rem;
+    .action-card-luxury {
+        background: rgba(235, 209, 151, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 1.8rem 1rem;
         text-align: center;
-        transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), box-shadow 0.25s;
-        cursor: pointer;
-        text-decoration: none;
+        transition: all 0.3s ease;
+        text-decoration: none !important;
         display: block;
-        color: var(--text-primary);
     }
 
-    .action-card:hover {
+    .action-card-luxury:hover {
+        background: rgba(235, 209, 151, 0.08);
+        border-color: var(--gold-primary);
         transform: translateY(-5px);
-        box-shadow: 0 16px 40px rgba(0,0,0,0.12) !important;
-        color: var(--text-primary);
-        text-decoration: none;
     }
 
-    .action-card .action-icon {
+    .action-card-luxury i {
+        font-size: 2rem;
+        color: var(--gold-primary);
+        margin-bottom: 0.8rem;
+        display: block;
+        filter: drop-shadow(0 0 8px var(--gold-glow));
+    }
+
+    .action-card-luxury span {
+        font-weight: 600;
+        color: #fff;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+    }
+
+    /* Section Headers */
+    .section-title-luxury {
+        font-family: 'Great Vibes', cursive;
         font-size: 2.2rem;
-        display: block;
-        margin-bottom: 0.6rem;
-        line-height: 1;
+        color: var(--gold-primary);
+        margin-bottom: 1.5rem;
     }
 
-    .action-card .action-label {
-        font-size: 0.85rem;
-        font-weight: 600;
-        margin: 0;
-    }
-
-    /* Order Status Badges */
-    .order-status-badge {
-        display: inline-block;
-        padding: 0.3em 0.85em;
-        border-radius: 50px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: capitalize;
-        white-space: nowrap;
-        min-width: 80px;
-        text-align: center;
-    }
-
-    /* Cake Recommendation Cards */
-    .cake-card {
-        border-radius: 14px;
-        border: none !important;
+    /* Premium Table */
+    .luxury-table-card {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
         overflow: hidden;
-        transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), box-shadow 0.25s;
     }
 
-    .cake-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 14px 30px rgba(0,0,0,0.13) !important;
+    .table-luxury {
+        color: #fff !important;
+        margin-bottom: 0;
     }
 
-    .cake-card img {
-        width: 100%;
-        height: 150px;
-        object-fit: cover;
+    .table-luxury thead th {
+        background: rgba(235, 209, 151, 0.05);
+        border-bottom: 1px solid var(--glass-border);
+        color: var(--gold-primary);
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        padding: 1.2rem 1rem;
     }
 
-    .cake-card .cake-price {
+    .table-luxury tbody td {
+        padding: 1.2rem 1rem;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        vertical-align: middle;
+    }
+
+    /* Order Status Badges Luxury */
+    .badge-status-luxury {
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.7rem;
         font-weight: 700;
-        color: #6c5ce7;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    /* Dark mode tweaks */
-    [data-theme="dark"] .welcome-banner {
-        box-shadow: 0 10px 40px rgba(108, 92, 231, 0.2);
+    /* Cake Card Side */
+    .cake-card-luxury {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--glass-border);
+        border-radius: 18px;
+        transition: all 0.3s ease;
+        overflow: hidden;
     }
 
-    [data-theme="dark"] .stat-icon.purple { background: rgba(108, 92, 231, 0.25); }
-    [data-theme="dark"] .stat-icon.blue   { background: rgba(0, 184, 255, 0.2); }
-    [data-theme="dark"] .stat-icon.green  { background: rgba(0, 184, 148, 0.2); }
-    [data-theme="dark"] .stat-icon.pink   { background: rgba(253, 121, 168, 0.2); }
-
-    /* Entry animations */
-    @keyframes fadeSlideUp {
-        from { opacity: 0; transform: translateY(22px); }
-        to   { opacity: 1; transform: translateY(0); }
+    .cake-card-luxury:hover {
+        background: rgba(235, 209, 151, 0.05);
+        border-color: var(--gold-primary);
+        transform: translateX(10px);
     }
 
-    .animate-in {
-        animation: fadeSlideUp 0.5s ease both;
+    /* Entry Animations */
+    @keyframes luxuryIn {
+        from { opacity: 0; transform: translateY(30px); filter: blur(10px); }
+        to { opacity: 1; transform: translateY(0); filter: blur(0); }
     }
 
-    .delay-1 { animation-delay: 0.05s; }
-    .delay-2 { animation-delay: 0.12s; }
-    .delay-3 { animation-delay: 0.19s; }
-    .delay-4 { animation-delay: 0.26s; }
-    .delay-5 { animation-delay: 0.33s; }
+    .luxury-animate {
+        animation: luxuryIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+
+    /* ===== DARK TABLE OVERRIDE ===== */
+    .luxury-table-card .table,
+    .luxury-table-card .table > :not(caption) > * > * {
+        background-color: transparent !important;
+        color: #fff !important;
+        border-color: rgba(255, 255, 255, 0.05) !important;
+        --bs-table-bg: transparent !important;
+        --bs-table-accent-bg: transparent !important;
+        --bs-table-hover-bg: rgba(235, 209, 151, 0.05) !important;
+        --bs-table-striped-bg: transparent !important;
+    }
+
+    .luxury-table-card .table tbody tr:hover td {
+        background-color: rgba(235, 209, 151, 0.05) !important;
+        color: #fff !important;
+    }
 </style>
 
 <!-- ===== WELCOME BANNER ===== -->
-<div class="welcome-banner animate-in">
-    <div class="greeting">👋 Good to see you</div>
-    <h1>Welcome back, {{ user.first_name|default:user.username }}!</h1>
-    <p>Ready to order something sweet today? Discover handcrafted cakes made with love.</p>
-    <div class="d-flex flex-wrap gap-2">
-        <a href="{% url 'cakes' %}" class="btn btn-light">
-            🎂 Browse Cakes
+<div class="welcome-banner luxury-animate" style="background: linear-gradient(135deg, rgba(7, 3, 10, 0.95) 0%, rgba(26, 11, 46, 0.95) 100%); backdrop-filter: blur(40px); border: 1px solid rgba(235, 209, 151, 0.2);">
+    <div class="d-flex justify-content-between align-items-start">
+        <div class="greeting" style="font-size: 1.2rem; letter-spacing: 2px; text-transform: uppercase; font-family: 'Inter', sans-serif !important; font-weight: 800;">
+            <i class="fas fa-crown me-2 gold-shimmer"></i> Elite Patron Status
+        </div>
+        <div class="badge-luxury py-1 px-3" style="font-size: 0.65rem; border-color: rgba(235, 209, 151, 0.3) !important;">
+            <i class="fas fa-certificate me-1"></i> MEMBER SINCE {{ user.date_joined|date:"Y" }}
+        </div>
+    </div>
+    <h1 class="mt-3 mb-2" style="font-size: 3.8rem; line-height: 1.1;">Welcome back, <span class="gold-shimmer script-font" style="font-size: 4.5rem; -webkit-text-fill-color: initial !important; background: none !important; color: #ebd197 !important;">{{ user.first_name|default:user.username }}</span></h1>
+    <p class="mt-3" style="font-size: 1.15rem; opacity: 0.8; font-weight: 500;">Ready to commission your next masterpiece? Discover artisanal cakes crafted with unparalleled precision.</p>
+    <div class="d-flex flex-wrap gap-3 mt-4">
+        <a href="{% url 'cakes' %}" class="btn btn-gold-luxury px-5">
+            <i class="fas fa-birthday-cake me-2"></i> Browse The Gallery
         </a>
-        <a href="{% url 'custom_cake' %}" class="btn btn-outline-light">
-            ✨ Design Custom Cake
+        <a href="{% url 'custom_cake' %}" class="btn btn-outline-gold-luxury px-5" style="border-radius: 50px; background: rgba(235, 209, 151, 0.05);">
+            <i class="fas fa-wand-magic-sparkles me-2"></i> Artisan Studio
         </a>
     </div>
 </div>
 
 <!-- ===== STATS ROW ===== -->
-<div class="row g-3 mb-4">
-    <div class="col-6 col-md-3 animate-in delay-1">
-        <div class="stat-card card shadow-sm">
-            <div class="stat-icon purple">📦</div>
-            <div>
-                <div class="stat-label">Total Orders</div>
-                <div class="stat-value">{{ total_orders }}</div>
+<div class="row g-4 mb-5">
+    <div class="col-6 col-md-3 luxury-animate delay-1">
+        <div class="stat-card">
+            <div class="stat-icon-luxury"><i class="fas fa-box"></i></div>
+            <div class="ms-3">
+                <div class="text-white-50 small text-uppercase fw-bold mb-1">Total Orders</div>
+                <div class="stat-value-luxury">{{ total_orders }}</div>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3 animate-in delay-2">
-        <div class="stat-card card shadow-sm">
-            <div class="stat-icon blue">🚀</div>
-            <div>
-                <div class="stat-label">Active</div>
-                <div class="stat-value">{{ active_orders }}</div>
+    <div class="col-6 col-md-3 luxury-animate delay-1">
+        <div class="stat-card">
+            <div class="stat-icon-luxury"><i class="fas fa-rocket"></i></div>
+            <div class="ms-3">
+                <div class="text-white-50 small text-uppercase fw-bold mb-1">Active</div>
+                <div class="stat-value-luxury">{{ active_orders }}</div>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3 animate-in delay-3">
-        <div class="stat-card card shadow-sm">
-            <div class="stat-icon green">✅</div>
-            <div>
-                <div class="stat-label">Delivered</div>
-                <div class="stat-value">{{ delivered_orders }}</div>
+    <div class="col-6 col-md-3 luxury-animate delay-1">
+        <div class="stat-card">
+            <div class="stat-icon-luxury"><i class="fas fa-check-circle"></i></div>
+            <div class="ms-3">
+                <div class="text-white-50 small text-uppercase fw-bold mb-1">Delivered</div>
+                <div class="stat-value-luxury">{{ delivered_orders }}</div>
             </div>
         </div>
     </div>
-    <div class="col-6 col-md-3 animate-in delay-4">
-        <div class="stat-card card shadow-sm">
-            <div class="stat-icon pink">💰</div>
-            <div>
-                <div class="stat-label">Wallet</div>
-                <div class="stat-value" style="font-size:1.35rem;">₹{{ wallet_balance }}</div>
+    <div class="col-6 col-md-3 luxury-animate delay-1">
+        <div class="stat-card">
+            <div class="stat-icon-luxury"><i class="fas fa-wallet"></i></div>
+            <div class="ms-3">
+                <div class="text-white-50 small text-uppercase fw-bold mb-1">Wallet</div>
+                <div class="stat-value-luxury" style="font-size: 1.5rem;">₹{{ wallet_balance }}</div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- ===== QUICK ACTIONS ===== -->
-<div class="mb-4 animate-in delay-2">
-    <div class="section-header">
-        <h2 class="section-title"><span></span>Quick Actions</h2>
-    </div>
+<div class="mb-5 luxury-animate delay-2">
+    <h2 class="section-title-luxury">Quick Actions</h2>
     <div class="row g-3">
         <div class="col-4 col-md-2">
-            <a href="{% url 'cakes' %}" class="action-card card shadow-sm">
-                <span class="action-icon">🎂</span>
-                <p class="action-label">Shop Cakes</p>
+            <a href="{% url 'cakes' %}" class="action-card-luxury">
+                <i class="fas fa-birthday-cake"></i>
+                <span>Shop</span>
             </a>
         </div>
         <div class="col-4 col-md-2">
-            <a href="{% url 'cart' %}" class="action-card card shadow-sm">
-                <span class="action-icon">🛒</span>
-                <p class="action-label">My Cart</p>
+            <a href="{% url 'cart' %}" class="action-card-luxury">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Cart</span>
             </a>
         </div>
         <div class="col-4 col-md-2">
-            <a href="{% url 'my_orders' %}" class="action-card card shadow-sm">
-                <span class="action-icon">📦</span>
-                <p class="action-label">My Orders</p>
+            <a href="{% url 'my_orders' %}" class="action-card-luxury">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Orders</span>
             </a>
         </div>
         <div class="col-4 col-md-2">
-            <a href="{% url 'custom_cake' %}" class="action-card card shadow-sm">
-                <span class="action-icon">✨</span>
-                <p class="action-label">Custom Cake</p>
+            <a href="{% url 'custom_cake' %}" class="action-card-luxury">
+                <i class="fas fa-magic"></i>
+                <span>Custom</span>
             </a>
         </div>
         <div class="col-4 col-md-2">
-            <a href="{% url 'wallet' %}" class="action-card card shadow-sm">
-                <span class="action-icon">💰</span>
-                <p class="action-label">Wallet</p>
+            <a href="{% url 'wallet' %}" class="action-card-luxury">
+                <i class="fas fa-wallet"></i>
+                <span>Wallet</span>
             </a>
         </div>
         <div class="col-4 col-md-2">
-            <a href="{% url 'profile' %}" class="action-card card shadow-sm">
-                <span class="action-icon">👤</span>
-                <p class="action-label">Profile</p>
+            <a href="{% url 'profile' %}" class="action-card-luxury">
+                <i class="fas fa-user-cog"></i>
+                <span>Settings</span>
             </a>
         </div>
     </div>
 </div>
 
-<!-- ===== MAIN CONTENT: Recent Orders + Recommendations ===== -->
-<div class="row g-4">
-
+<!-- ===== MAIN CONTENT ===== -->
+<div class="row g-5">
     <!-- RECENT ORDERS -->
-    <div class="col-lg-7 animate-in delay-3">
-        <div class="card shadow-sm border-0" style="border-radius: 16px;">
-            <div class="card-body p-0">
-                <div class="section-header p-3 pb-0">
-                    <h2 class="section-title"><span></span>Recent Orders</h2>
-                    <a href="{% url 'my_orders' %}" class="btn btn-sm btn-outline-primary" style="border-radius: 50px; font-size: 0.78rem;">
-                        View All →
-                    </a>
-                </div>
+    <div class="col-lg-8 luxury-animate delay-3">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="section-title-luxury mb-0">Recent Orders</h2>
+            <a href="{% url 'my_orders' %}" class="btn btn-outline-gold-luxury btn-sm">View All History</a>
+        </div>
 
-                {% if recent_orders %}
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0 align-middle" style="font-size: 0.875rem;">
-                        <thead>
-                            <tr class="border-top">
-                                <th class="ps-3 py-2 text-muted fw-semibold" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:.5px; white-space:nowrap;">Order ID</th>
-                                <th class="py-2 text-muted fw-semibold" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:.5px; white-space:nowrap;">Date</th>
-                                <th class="py-2 text-muted fw-semibold" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:.5px;">Status</th>
-                                <th class="pe-3 py-2 text-muted fw-semibold text-end" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:.5px;">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for order in recent_orders %}
-                            <tr>
-                                <td class="ps-3 py-2">
-                                    <a href="{% url 'order_tracking' order.order_id %}" class="fw-semibold text-decoration-none" style="color: #6c5ce7;">
-                                        {{ order.order_id }}
-                                    </a>
-                                </td>
-                                <td class="py-2 text-muted">{{ order.created_at|date:"d M Y" }}</td>
-                                <td class="py-2">
-                                    {% if order.status == 'pending' %}
-                                        <span class="order-status-badge" style="background:#f39c12; color:#fff;">Pending</span>
-                                    {% elif order.status == 'confirmed' %}
-                                        <span class="order-status-badge" style="background:#0984e3; color:#fff;">Confirmed</span>
-                                    {% elif order.status == 'baking' %}
-                                        <span class="order-status-badge" style="background:#fd79a8; color:#fff;">Baking</span>
-                                    {% elif order.status == 'packing' %}
-                                        <span class="order-status-badge" style="background:#6c5ce7; color:#fff;">Packing</span>
-                                    {% elif order.status == 'out_for_delivery' %}
-                                        <span class="order-status-badge" style="background:#00b894; color:#fff;">On the Way</span>
-                                    {% elif order.status == 'delivered' %}
-                                        <span class="order-status-badge" style="background:#00b894; color:#fff;">Delivered</span>
-                                    {% elif order.status == 'cancelled' %}
-                                        <span class="order-status-badge" style="background:#d63031; color:#fff;">Cancelled</span>
-                                    {% else %}
-                                        <span class="order-status-badge" style="background:#636e72; color:#fff;">{{ order.status|title }}</span>
-                                    {% endif %}
-                                </td>
-                                <td class="pe-3 py-2 text-end fw-bold">₹{{ order.total_amount }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                {% else %}
-                <div class="text-center py-5 px-3">
-                    <div style="font-size: 3.5rem; margin-bottom: 0.75rem;">🛒</div>
-                    <h6 class="fw-bold mb-1">No orders yet</h6>
-                    <p class="text-muted mb-3" style="font-size: 0.875rem;">Place your first order and enjoy homemade goodness!</p>
-                    <a href="{% url 'cakes' %}" class="btn btn-primary btn-sm" style="border-radius: 50px;">Browse Cakes</a>
-                </div>
-                {% endif %}
+        <div class="luxury-table-card">
+            {% if recent_orders %}
+            <div class="table-responsive">
+                <table class="table table-luxury align-middle">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th class="text-end">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in recent_orders %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'order_tracking' order.order_id %}" class="text-decoration-none gold-num fw-bold">
+                                    {{ order.order_id }}
+                                </a>
+                            </td>
+                            <td class="text-white-50">{{ order.created_at|date:"d M Y" }}</td>
+                            <td>
+                                <span class="badge-status-luxury" style="border-color: {% if order.status == 'delivered' %}#22c55e{% elif order.status == 'cancelled' %}#ef4444{% else %}#ebd197{% endif %}; color: {% if order.status == 'delivered' %}#22c55e{% elif order.status == 'cancelled' %}#ef4444{% else %}#ebd197{% endif %};">
+                                    {{ order.get_status_display }}
+                                </span>
+                            </td>
+                            <td class="text-end fw-bold gold-num">₹{{ order.total_amount }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-shopping-bag gold-num opacity-25 fa-3x mb-3"></i>
+                <h5 class="text-white">Your treasury is empty</h5>
+                <p class="text-white-50">Embark on your first culinary journey today.</p>
+                <a href="{% url 'cakes' %}" class="btn btn-gold-luxury btn-sm mt-2">Start Exploring</a>
+            </div>
+            {% endif %}
         </div>
     </div>
 
-    <!-- TRENDING / RECOMMENDED CAKES -->
-    <div class="col-lg-5 animate-in delay-4">
-        <div class="section-header">
-            <h2 class="section-title"><span></span>
-                {% if recommended_cakes %}For You{% else %}Trending Now{% endif %}
-            </h2>
-            <a href="{% url 'cakes' %}" class="btn btn-sm btn-outline-primary" style="border-radius: 50px; font-size: 0.78rem;">See All →</a>
-        </div>
-
+    <!-- RECOMMENDATIONS -->
+    <div class="col-lg-4 luxury-animate delay-3">
+        <h2 class="section-title-luxury">Picks For You</h2>
+        
         {% with cakes_to_show=recommended_cakes|default:trending_cakes %}
         {% if cakes_to_show %}
         <div class="d-flex flex-column gap-3">
             {% for cake in cakes_to_show|slice:":4" %}
             <a href="{% url 'cakes' %}" class="text-decoration-none">
-                <div class="card cake-card shadow-sm d-flex flex-row align-items-center" style="border-radius: 14px; overflow: hidden;">
-                    {% if cake.image %}
-                    <img src="{{ cake.image.url }}" alt="{{ cake.name }}"
-                         style="width: 75px; height: 75px; object-fit: cover; flex-shrink: 0;">
-                    {% elif cake.image_url %}
-                    <img src="{{ cake.image_url }}" alt="{{ cake.name }}"
-                         style="width: 75px; height: 75px; object-fit: cover; flex-shrink: 0;">
-                    {% else %}
-                    <div style="width: 75px; height: 75px; background: linear-gradient(135deg, #a29bfe, #fd79a8); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0;">
-                        🎂
-                    </div>
-                    {% endif %}
-                    <div class="p-2 flex-grow-1 overflow-hidden">
-                        <div class="fw-bold text-truncate" style="font-size: 0.9rem; color: var(--text-primary);">{{ cake.name }}</div>
-                        <div class="text-muted" style="font-size: 0.75rem;">
-                            {{ cake.flavor|title }}
-                            {% if cake.average_rating %}
-                             · ⭐ {{ cake.average_rating|floatformat:1 }}
-                            {% endif %}
+                <div class="cake-card-luxury d-flex align-items-center p-2">
+                    <div class="rounded-3 overflow-hidden" style="width: 70px; height: 70px; flex-shrink: 0;">
+                        {% if cake.image %}
+                        <img src="{{ cake.image.url }}" class="w-100 h-100 object-fit-cover">
+                        {% else %}
+                        <div class="w-100 h-100 bg-dark d-flex align-items-center justify-content-center gold-num">
+                            <i class="fas fa-birthday-cake"></i>
                         </div>
-                        <div class="cake-price mt-1" style="font-size: 0.9rem;">₹{{ cake.price }}<small class="text-muted fw-normal">/kg</small></div>
+                        {% endif %}
                     </div>
-                    <div class="pe-3">
-                        <i class="fas fa-chevron-right text-muted" style="font-size: 0.75rem;"></i>
+                    <div class="ms-3 flex-grow-1">
+                        <div class="text-white fw-bold small text-truncate" style="max-width: 150px;">{{ cake.name }}</div>
+                        <div class="gold-num small">₹{{ cake.price }}</div>
+                    </div>
+                    <div class="me-2 gold-num opacity-50">
+                        <i class="fas fa-chevron-right fa-xs"></i>
                     </div>
                 </div>
             </a>
             {% endfor %}
         </div>
         {% else %}
-        <div class="card shadow-sm border-0 text-center py-5" style="border-radius:16px;">
-            <div style="font-size:2.5rem;">🎂</div>
-            <p class="text-muted mt-2 mb-0" style="font-size:0.875rem;">Check back later for picks!</p>
+        <div class="luxury-table-card p-5 text-center">
+            <i class="fas fa-magic gold-num fa-2x mb-3 opacity-25"></i>
+            <p class="text-white-50 small mb-0">Personalizing your collection...</p>
         </div>
         {% endif %}
         {% endwith %}
     </div>
-
 </div>
 
-<!-- ===== EMPTY SPACE FOOTER ===== -->
-<div class="mt-4"></div>
+<div class="mt-5"></div>
 
 {% endblock %}

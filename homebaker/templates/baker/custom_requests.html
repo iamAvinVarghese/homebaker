@@ -1,198 +1,289 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Custom Cake Requests - HomeBaker{% endblock %}
+{% block title %}Custom Cake Requests - HomeBaker Studio{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold mb-0">Custom Cake Requests</h2>
-            <p class="text-muted">Review and respond to AI-designed and photo-uploaded requests.</p>
+<style>
+    .luxury-page-bg {
+        background: radial-gradient(circle at top right, #1a1025 0%, #07030a 100%);
+        min-height: 100vh;
+        color: #fff;
+    }
+
+    .request-card {
+        background: rgba(30, 20, 40, 0.5);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(235, 209, 151, 0.12);
+        border-radius: 28px;
+        transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .request-card:hover {
+        transform: translateY(-12px) scale(1.02);
+        border-color: rgba(235, 209, 151, 0.4);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    }
+
+    .image-container {
+        position: relative;
+        overflow: hidden;
+        border-radius: 24px 24px 0 0;
+    }
+
+    .card-img-top {
+        height: 280px;
+        object-fit: cover;
+        transition: transform 0.8s ease;
+    }
+
+    .request-card:hover .card-img-top {
+        transform: scale(1.1);
+    }
+
+    .badge-ai {
+        background: linear-gradient(135deg, #c8963e, #f5d97a);
+        color: #07030a;
+        font-weight: 800;
+        letter-spacing: 1px;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        box-shadow: 0 5px 15px rgba(200, 150, 62, 0.3);
+    }
+
+    .badge-status {
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.65rem;
+        letter-spacing: 0.5px;
+    }
+
+    .status-pending { background: rgba(235, 209, 151, 0.1); color: #ebd197; border: 1px solid rgba(235, 209, 151, 0.3); }
+    .status-accepted { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .status-completed { background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3); }
+
+    .spec-item {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 15px;
+        padding: 0.8rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .spec-item:hover {
+        background: rgba(235, 209, 151, 0.05);
+        border-color: rgba(235, 209, 151, 0.2);
+    }
+
+    .message-bubble {
+        background: rgba(30, 20, 40, 0.6);
+        border-left: 4px solid #ebd197;
+        padding: 1.2rem;
+        border-radius: 0 15px 15px 0;
+        font-style: italic;
+    }
+
+    .btn-premium-gold {
+        background: linear-gradient(135deg, #ebd197, #c5a059);
+        color: #07030a;
+        border: none;
+        border-radius: 50px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 1rem 2rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 20px rgba(197, 160, 89, 0.2);
+    }
+
+    .btn-premium-gold:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(197, 160, 89, 0.4);
+        filter: brightness(1.1);
+        color: #000;
+    }
+
+    .btn-studio-outline {
+        border: 1px solid rgba(235, 209, 151, 0.3);
+        color: #ebd197;
+        border-radius: 50px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-studio-outline:hover {
+        background: rgba(235, 209, 151, 0.1);
+        border-color: #ebd197;
+        color: #fff;
+    }
+
+    .modal-content-luxury {
+        background: rgba(20, 15, 30, 0.95);
+        backdrop-filter: blur(25px);
+        border: 1px solid rgba(235, 209, 151, 0.2);
+        border-radius: 30px;
+        color: #fff;
+    }
+
+    .form-control-luxury {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        color: #fff;
+        padding: 0.8rem 1.2rem;
+    }
+
+    .form-control-luxury:focus {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: #ebd197;
+        box-shadow: 0 0 15px rgba(235, 209, 151, 0.1);
+        color: #fff;
+    }
+</style>
+
+<div class="luxury-page-bg py-5">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5 gap-4">
+            <div>
+                <h1 class="script-font gold-shimmer mb-1" style="font-size: 4.5rem; text-shadow: 0 0 20px rgba(235, 209, 151, 0.2);">Custom Cake Requests</h1>
+                <p class="text-white-50 ms-2" style="letter-spacing: 1.5px; text-transform: uppercase; font-size: 0.85rem;">Review and respond to AI-designed and photo-uploaded requests</p>
+            </div>
+            <a href="{% url 'baker_dashboard' %}" class="btn btn-studio-outline">
+                <i class="fas fa-long-arrow-alt-left me-2"></i> Studio Dashboard
+            </a>
         </div>
-        <a href="{% url 'baker_dashboard' %}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
-        </a>
-    </div>
 
-    <div class="row g-4">
-        {% for req in custom_requests %}
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="position-relative">
-                    {% if req.request_type == 'AI' %}
-                    <img src="{{ req.specs.image_url|default:'https://via.placeholder.com/400x300?text=AI+Design' }}"
-                        class="card-img-top" alt="AI Generated Design" style="height: 250px; object-fit: cover;">
-                    <span class="badge bg-primary position-absolute top-0 end-0 m-3 shadow-sm">AI DESIGNED</span>
-                    {% else %}
-                    <img src="{{ req.reference_image.url }}" class="card-img-top" alt="Photo Reference"
-                        style="height: 250px; object-fit: cover;">
-                    <span class="badge bg-secondary position-absolute top-0 end-0 m-3 shadow-sm">PHOTO UPLOAD</span>
-                    {% endif %}
-                </div>
+        <div class="row g-5">
+            {% for req in custom_requests %}
+            <div class="col-md-6 col-lg-4">
+                <div class="request-card">
+                    <div class="image-container">
+                        {% if req.request_type == 'AI' %}
+                        <img src="{{ req.specs.image_url|default:'https://via.placeholder.com/400x300?text=AI+Design' }}"
+                            class="card-img-top" alt="AI Generated Design">
+                        <span class="badge-ai position-absolute top-0 end-0 m-4">AI DESIGNED</span>
+                        {% else %}
+                        <img src="{{ req.reference_image.url }}" class="card-img-top" alt="Photo Reference">
+                        <span class="badge-ai position-absolute top-0 end-0 m-4" style="background: linear-gradient(135deg, #94a3b8, #cbd5e1); color: #0f172a;">PHOTO REFERENCE</span>
+                        {% endif %}
+                    </div>
 
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <div class="d-flex align-items-center">
-                            {% if req.customer.profile.profile_picture %}
-                            <img src="{{ req.customer.profile.profile_picture.url }}" class="rounded-circle me-2"
-                                width="30" height="30" style="object-fit: cover; border: 1px solid #6c5ce7;">
-                            {% else %}
-                            <div class="rounded-circle d-flex align-items-center justify-content-center me-2"
-                                style="width: 30px; height: 30px; background-color: #6c5ce7; color: white; font-weight: bold; font-size: 0.8rem;">
-                                {{ req.customer.get_full_name|default:req.customer.username|make_list|first|upper }}
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="d-flex align-items-center">
+                                <div class="position-relative me-3">
+                                    {% if req.customer.profile.profile_picture %}
+                                    <img src="{{ req.customer.profile.profile_picture.url }}" class="rounded-circle"
+                                        width="45" height="45" style="object-fit: cover; border: 2px solid #ebd197; box-shadow: 0 0 15px rgba(235, 209, 151, 0.3);">
+                                    {% else %}
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                        style="width: 45px; height: 45px; background: rgba(235, 209, 151, 0.1); border: 2px solid #ebd197; color: #ebd197; font-weight: bold;">
+                                        {{ req.customer.get_full_name|default:req.customer.username|make_list|first|upper }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <h5 class="fw-bold text-white mb-0">{{ req.customer.get_full_name|default:req.customer.username }}</h5>
+                                    <small class="text-white-50"><i class="far fa-clock me-1"></i> {{ req.created_at|date:"d M Y" }}</small>
+                                </div>
                             </div>
-                            {% endif %}
-                            <h5 class="card-title fw-bold mb-0">
-                                {{ req.customer.get_full_name|default:req.customer.username }}
-                            </h5>
-                        </div>
-                        <span
-                            class="badge {% if req.status == 'PENDING' %}bg-warning{% elif req.status == 'ACCEPTED' %}bg-success{% else %}bg-danger{% endif %} text-uppercase shadow-sm">
-                            {{ req.status }}
-                        </span>
-                    </div>
-
-                    <p class="text-muted small mb-3">
-                        <i class="far fa-calendar-alt me-1"></i> Requested: {{ req.created_at|date:"M d, Y" }}
-                    </p>
-
-                    <div class="mb-3">
-                        <label class="fw-bold small text-uppercase text-muted d-block">Description</label>
-                        <p class="small mb-0 text-dark">{{ req.description }}</p>
-                    </div>
-
-                    <div class="row g-2 mb-3">
-                        <div class="col-6">
-                            <span class="badge bg-light text-dark w-100 text-start py-2 border shadow-sm">
-                                <i class="fas fa-utensils me-1 text-primary"></i> <strong>Flavor:</strong> {{ req.flavor|default:"Standard" }}
+                            <span class="badge-status {% if req.status == 'PENDING' %}status-pending{% elif req.status == 'ACCEPTED' %}status-accepted{% else %}status-completed{% endif %}">
+                                {{ req.status }}
                             </span>
                         </div>
-                        <div class="col-6">
-                            <span class="badge bg-light text-dark w-100 text-start py-2 border shadow-sm">
-                                <i class="fas fa-weight-hanging me-1 text-primary"></i> <strong>Weight:</strong> {{ req.size }} kg
-                            </span>
+
+                        <div class="mb-4">
+                            <p class="text-white-50 small mb-0" style="line-height: 1.6;">{{ req.description|truncatewords:25 }}</p>
                         </div>
-                        {% if req.price_quote or req.status == 'ACCEPTED' or req.status == 'COMPLETED' %}
-                        <div class="col-12">
-                            <span class="badge bg-soft-success text-success w-100 text-start py-2 border border-success shadow-sm" style="background-color: #e8f5e9;">
-                                <i class="fas fa-tag me-1 text-success"></i> <strong>Price Quote:</strong> ₹{{ req.price_quote|default:"Pending" }}
-                            </span>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-6">
+                                <div class="spec-item text-center">
+                                    <small class="text-white-50 d-block mb-1 text-uppercase" style="font-size: 0.6rem; letter-spacing: 1px;">Flavor</small>
+                                    <span class="fw-bold gold-shimmer" style="font-size: 0.9rem;">{{ req.flavor|default:"Standard" }}</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="spec-item text-center">
+                                    <small class="text-white-50 d-block mb-1 text-uppercase" style="font-size: 0.6rem; letter-spacing: 1px;">Weight</small>
+                                    <span class="fw-bold gold-shimmer" style="font-size: 0.9rem;">{{ req.size }} KG</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if req.specs.message_on_cake %}
+                        <div class="message-bubble mb-4">
+                            <small class="text-white-50 d-block mb-1 text-uppercase" style="font-size: 0.6rem; letter-spacing: 1px;">Message on Cake</small>
+                            <span class="text-white" style="font-size: 0.95rem;">"{{ req.specs.message_on_cake }}"</span>
                         </div>
                         {% endif %}
-                        {% if req.specs.shape %}
-                        <div class="col-6">
-                            <span class="badge bg-light text-dark w-100 text-start py-2 border shadow-sm">
-                                <i class="fas fa-shapes me-1 text-primary"></i> <strong>Shape:</strong> {{ req.specs.shape }}
-                            </span>
-                        </div>
-                        {% endif %}
-                        {% if req.specs.occasion %}
-                        <div class="col-6">
-                            <span class="badge bg-light text-dark w-100 text-start py-2 border shadow-sm">
-                                <i class="fas fa-gift me-1 text-primary"></i> <strong>Occasion:</strong> {{ req.specs.occasion }}
-                            </span>
-                        </div>
-                        {% endif %}
-                    </div>
 
-                    {% if req.specs.message_on_cake %}
-                    <div class="alert alert-primary py-2 px-3 mb-3 small border-0 shadow-sm" style="background-color: #f0f7ff;">
-                        <i class="fas fa-quote-left me-2 text-primary"></i>
-                        <strong>Message on Cake:</strong><br>
-                        <span class="text-dark">"{{ req.specs.message_on_cake }}"</span>
-                    </div>
-                    {% endif %}
-
-                    {% if req.specs.design_style %}
-                    <div class="mb-3">
-                        <label class="fw-bold small text-uppercase text-muted d-block">Design Style</label>
-                        <p class="small mb-0 text-muted"><i class="fas fa-palette me-1 text-primary"></i> {{ req.specs.design_style }}</p>
-                    </div>
-                    {% endif %}
-
-                    {% if req.specs.extra_instructions %}
-                    <div class="mb-3">
-                        <label class="fw-bold small text-uppercase text-muted d-block">Extra Instructions</label>
-                        <div class="alert alert-warning py-2 px-3 mb-0 small border-0 shadow-sm" style="background-color: #fffaf0;">
-                            <i class="fas fa-exclamation-circle me-2 text-warning"></i>
-                            <span class="text-dark">{{ req.specs.extra_instructions }}</span>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    {% if req.status == 'PENDING' %}
-                    <div class="d-grid gap-2 border-top pt-3">
-                        <button class="btn btn-primary" data-bs-toggle="modal"
-                            data-bs-target="#respondModal{{ req.id }}">
-                            <i class="fas fa-reply me-2"></i> Respond to Request
+                        {% if req.status == 'PENDING' %}
+                        <button class="btn btn-premium-gold w-100 mt-2" data-bs-toggle="modal" data-bs-target="#respondModal{{ req.id }}">
+                            <i class="fas fa-signature me-2"></i> Respond to Client
                         </button>
+                        {% else %}
+                        <div class="spec-item text-center mt-2" style="background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.2);">
+                            <span class="text-success fw-bold"><i class="fas fa-check-double me-2"></i> Response Sent: ₹{{ req.price_quote }}</span>
+                        </div>
+                        {% endif %}
                     </div>
-                    {% elif req.status == 'ACCEPTED' or req.status == 'COMPLETED' %}
-                    <div class="border-top pt-3">
-                        <label class="small text-muted d-block mb-1">Customer Contact</label>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <p class="fw-bold small mb-0 text-primary">
-                                {{ req.customer.get_full_name|default:req.customer.username }}
-                            </p>
-                            <span class="badge bg-success-soft text-success border border-success px-2 py-1">
-                                <i class="fas fa-check me-1"></i> {{ req.status|title }}
-                            </span>
+                </div>
+
+                <!-- Respond Modal -->
+                <div class="modal fade" id="respondModal{{ req.id }}" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content modal-content-luxury">
+                            <form action="{% url 'respond_to_custom_request' req.id %}" method="POST">
+                                {% csrf_token %}
+                                <div class="modal-header border-0 p-4 pb-0">
+                                    <h3 class="script-font gold-shimmer mb-0" style="font-size: 2.5rem;">Respond to Request</h3>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body p-4">
+                                    <div class="mb-4">
+                                        <label class="form-label text-white-50 small text-uppercase fw-bold">Select Action</label>
+                                        <select name="action" class="form-select form-control-luxury" onchange="toggleQuote(this, '{{ req.id }}')">
+                                            <option value="accept">Accept & Provide Valuation</option>
+                                            <option value="reject">Decline Request</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-4" id="quoteDiv{{ req.id }}">
+                                        <label class="form-label text-white-50 small text-uppercase fw-bold">Valuation (₹)</label>
+                                        <input type="number" name="price_quote" class="form-control form-control-luxury" placeholder="Enter estimated price">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label text-white-50 small text-uppercase fw-bold">Studio Message</label>
+                                        <textarea name="baker_message" class="form-control form-control-luxury" rows="4" placeholder="Craft a personalized message for your patron..."></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer border-0 p-4 pt-0">
+                                    <button type="button" class="btn btn-studio-outline w-100 mb-2" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-premium-gold w-100">Send Response</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    {% endif %}
                 </div>
             </div>
-
-            <!-- Respond Modal -->
-            <div class="modal fade" id="respondModal{{ req.id }}" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <form action="{% url 'respond_to_custom_request' req.id %}" method="POST">
-                            {% csrf_token %}
-                            <div class="modal-header">
-                                <h5 class="modal-title fw-bold">Respond to {{ req.customer.get_full_name|default:req.customer.username }}</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Action</label>
-                                    <select name="action" class="form-select"
-                                        onchange="toggleQuote(this, '{{ req.id }}')">
-                                        <option value="accept">Accept & Provide Quote</option>
-                                        <option value="reject">Reject Request</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3" id="quoteDiv{{ req.id }}">
-                                    <label class="form-label fw-bold">Estimated Price (₹)</label>
-                                    <input type="number" name="price_quote" class="form-control" placeholder="e.g. 1500"
-                                        step="0.01">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Message to Customer</label>
-                                    <textarea name="baker_message" class="form-control" rows="3"
-                                        placeholder="Tell the customer about the design, availability, or reason for rejection..."></textarea>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn btn-primary">Submit Response</button>
-                            </div>
-                        </form>
-                    </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <div class="mb-4">
+                    <i class="fas fa-palette fa-5x gold-shimmer opacity-25"></i>
                 </div>
+                <h2 class="script-font gold-shimmer" style="font-size: 3rem;">The Studio is Quiet</h2>
+                <p class="text-white-50">When patrons design custom creations, their artistic visions will appear here.</p>
             </div>
+            {% endfor %}
         </div>
-        {% empty %}
-        <div class="col-12 text-center py-5">
-            <div class="mb-3">
-                <i class="fas fa-inbox fa-4x text-light"></i>
-            </div>
-            <h4 class="text-muted">No custom requests yet</h4>
-            <p class="text-muted">When customers design cakes using AI or upload photos for you, they will appear here.
-            </p>
-        </div>
-        {% endfor %}
     </div>
 </div>
 
@@ -208,14 +299,5 @@
         }
     }
 </script>
-
-<style>
-    .text-truncate-3 {
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-</style>
 {% endblock %}
+k %}

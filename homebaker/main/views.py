@@ -15,7 +15,7 @@ from .views_customer import (
     submit_custom_request, my_custom_requests, cancel_custom_request, finalize_custom_request,
     verify_delivery, rate_order, mark_notification_read, mark_all_notifications_read,
     notifications_list, baker_public_profile, baker_reviews, services_index,
-    about_us, faq, apply_coupon
+    about_us, faq, apply_coupon, subscribe_newsletter
 )
 from .views_baker import (
     baker_dashboard, baker_cakes, baker_add_cake, baker_edit_cake,
@@ -29,5 +29,6 @@ from .views_admin import (
     admin_block_user_temp,
     admin_audit_logs, admin_analytics,
     admin_revenue, admin_orders_list, admin_commission, admin_user_detail, admin_helpdesk,
-    admin_coupons, admin_delete_coupon
+    admin_coupons, admin_delete_coupon,
+    admin_letterbox, admin_send_letter
 )

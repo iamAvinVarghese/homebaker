@@ -10,6 +10,9 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
@@ -18,87 +21,359 @@
 
     <style>
         :root {
-            --bg-primary: #f8f9fa;
-            --bg-secondary: #ffffff;
-            --bg-card: #ffffff;
-            --text-primary: #2d3436;
-            --text-secondary: #495057;
-            --text-muted: #6c757d;
-            --border-color: #dee2e6;
-            --shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            --navbar-bg: #ffffff;
-            --navbar-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        [data-theme="dark"] {
-            --bg-primary: #1a1a1a;
-            --bg-secondary: #2d2d2d;
-            --bg-card: #2d2d2d;
+            --bg-primary: #07030a;
+            --bg-secondary: rgba(30, 20, 40, 0.4);
+            --bg-card: rgba(30, 20, 40, 0.6);
             --text-primary: #ffffff;
-            --text-secondary: #e0e0e0;
-            --text-muted: #b0b0b0;
-            --border-color: #404040;
-            --shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            --navbar-bg: #2d2d2d;
-            --navbar-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            --text-secondary: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border-color: rgba(235, 209, 151, 0.15);
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            --navbar-bg: #07030a;
+            --navbar-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         }
 
-        [data-theme="dark"] .text-dark {
-            color: #ffffff !important;
-        }
 
-        /* Active Navigation Link Styling */
-        .navbar-nav .nav-link.active {
-            color: #6c5ce7 !important;
-            font-weight: 700 !important;
-            border-bottom: 2px solid #6c5ce7;
-        }
-
-        [data-theme="dark"] .navbar-nav .nav-link.active {
-            color: #a29bfe !important;
-            border-bottom-color: #a29bfe;
-        }
 
         body {
-            background-color: var(--bg-primary);
+            background-color: #07030a !important; /* Force dark background */
             color: var(--text-primary);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             transition: background-color 0.3s ease, color 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
+        main {
+            background-color: transparent !important;
+            flex: 1;
+        }
+
+        /* Premium Navbar Styling */
         .navbar {
-            background-color: var(--navbar-bg) !important;
-            box-shadow: var(--navbar-shadow);
-            border-bottom-color: var(--border-color) !important;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            background: linear-gradient(180deg, #07030a 0%, rgba(7,3,10,0.95) 100%) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            border-bottom: 1px solid rgba(235, 209, 151, 0.1) !important;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
         }
 
+        /* =============================================
+           ULTRA-LUXURY BRAND STYLES
+        ============================================= */
         .navbar-brand {
-            font-size: 1.5rem;
-            color: #6c5ce7 !important;
+            font-size: 1.9rem;
+            letter-spacing: 1px;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            position: relative;
+            text-decoration: none !important;
+        }
+        .navbar-brand:hover { transform: scale(1.04); }
+
+        /* --- Metallic shimmer text --- */
+        .gold-text {
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: linear-gradient(
+                90deg,
+                #c8963e 0%,
+                #f5d97a 20%,
+                #fff5c0 38%,
+                #ebd197 50%,
+                #fff5c0 62%,
+                #f5d97a 80%,
+                #c8963e 100%
+            );
+            background-size: 300% auto;
+            animation: shimmer-slide 3s linear infinite, luxury-halo 2.8s ease-in-out infinite;
+            position: relative;
+        }
+
+        /* --- High-Impact Gold Numbers (Sans-serif) --- */
+        .gold-num {
+            font-family: 'Inter', sans-serif !important;
+            font-weight: 800 !important;
+            letter-spacing: -1px;
+            background: linear-gradient(
+                90deg,
+                #c8963e 0%,
+                #f5d97a 20%,
+                #fff5c0 38%,
+                #ebd197 50%,
+                #fff5c0 62%,
+                #f5d97a 80%,
+                #c8963e 100%
+            );
+            background-size: 300% auto;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+            animation: shimmer-slide 3s linear infinite;
+            display: inline-block;
+        }
+
+        /* Force Inter for all numeric data and emphasized text */
+        h1:not(.script-font):not(.gold-text), 
+        h2:not(.script-font):not(.gold-text), 
+        h3:not(.script-font):not(.gold-text), 
+        h4:not(.script-font):not(.gold-text), 
+        h5:not(.script-font):not(.gold-text), 
+        h6:not(.script-font):not(.gold-text),
+        .fw-bold, .fw-extra-bold, .gold-num, .cake-price, .cart-total, .stat-value, 
+        [class*="price"], [class*="amount"], [class*="count"], [class*="stat"], [class*="rating"],
+        .badge, .table td, .table th, a.gold-num, a.gold-shimmer, span.gold-num, span.gold-shimmer {
+            font-family: 'Inter', sans-serif !important;
+        }
+
+        /* Only apply cursive font and gradient clip to text elements, not icons or numbers explicitly styled */
+        span.gold-text:not(.gold-num):not(.fw-extra-bold), 
+        h1.gold-text:not(.gold-num):not(.fw-extra-bold), 
+        h2.gold-text:not(.gold-num):not(.fw-extra-bold), 
+        h3.gold-text:not(.gold-num):not(.fw-extra-bold), 
+        h4.gold-text:not(.gold-num):not(.fw-extra-bold), 
+        h5.gold-text:not(.gold-num):not(.fw-extra-bold), 
+        h6.gold-text:not(.gold-num):not(.fw-extra-bold), 
+        p.gold-text:not(.gold-num):not(.fw-extra-bold), 
+        div.gold-text:not(.gold-num):not(.fw-extra-bold), 
+        a.gold-text:not(.dropdown-item):not(.gold-num):not(.fw-extra-bold) {
+            font-family: 'Great Vibes', cursive !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+        }
+
+        /* Fix for icons using gold-text - they should be solid gold, not transparent/cursive */
+        i.gold-text, .gold-text i {
+            font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands", sans-serif !important;
+            background: none !important;
+            -webkit-text-fill-color: #ebd197 !important;
+            color: #ebd197 !important;
+            -webkit-background-clip: initial !important;
+            background-clip: initial !important;
+            font-weight: 900 !important; /* FA weight */
+        }
+
+        .badge-luxury {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: rgba(255, 255, 255, 0.7) !important;
+            font-family: 'Inter', sans-serif !important;
+            font-weight: 500 !important;
+            padding: 0.5rem 1rem !important;
+            border-radius: 12px !important;
+            text-transform: none !important;
+        }
+
+        .bg-luxury-active { background: rgba(235, 209, 151, 0.05) !important; }
+        
+        .notification-icon-luxury {
+            width: 32px; height: 32px;
+            background: rgba(235, 209, 151, 0.1);
+            border: 1px solid rgba(235, 209, 151, 0.2);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.8rem;
+        }
+
+        .luxury-scroll::-webkit-scrollbar { width: 4px; }
+        .luxury-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        .luxury-scroll::-webkit-scrollbar-thumb { 
+            background: rgba(235, 209, 151, 0.2); 
+            border-radius: 10px;
+        }
+        .luxury-scroll::-webkit-scrollbar-thumb:hover { background: rgba(235, 209, 151, 0.4); }
+
+        .gold-glow-text {
+            color: #ebd197 !important;
+            text-shadow: 0 0 10px rgba(235, 209, 151, 0.5), 0 0 20px rgba(235, 209, 151, 0.2);
+            font-weight: 800 !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+
+        /* Fix for icons using gold-glow-text */
+        i.gold-glow-text, .gold-glow-text i {
+            font-family: "Font Awesome 5 Free", "Font Awesome 5 Brands", sans-serif !important;
+            background: none !important;
+            -webkit-text-fill-color: #ebd197 !important;
+            color: #ebd197 !important;
+            -webkit-background-clip: initial !important;
+            background-clip: initial !important;
+            font-weight: 900 !important;
+        }
+
+        @keyframes shimmer-slide {
+            0%   { background-position: 200% center; }
+            100% { background-position: -200% center; }
+        }
+
+        @keyframes luxury-halo {
+            0%,100% { filter: drop-shadow(0 0 6px rgba(235,209,151,0.5)) drop-shadow(0 0 20px rgba(235,209,151,0.15)); }
+            50%      { filter: drop-shadow(0 0 14px rgba(255,230,100,1)) drop-shadow(0 0 35px rgba(255,200,50,0.7)) drop-shadow(0 0 70px rgba(255,160,0,0.35)); }
+        }
+
+        /* --- Ultra icon glow --- */
+        .gold-glow {
+            color: #f5d97a;
+            font-size: 1.75rem;
+            position: relative;
+            z-index: 2;
+            animation: icon-luxury 2.8s ease-in-out infinite;
+        }
+
+        /* Support for gold-shimmer class used on icons throughout the site */
+        .gold-shimmer {
+            color: #ebd197 !important;
+        }
+        i.gold-shimmer, .gold-shimmer i {
+            color: #ebd197 !important;
+            -webkit-text-fill-color: #ebd197 !important;
+            background: none !important;
+            text-shadow: 0 0 12px rgba(235, 209, 151, 0.4);
+        }
+
+        @keyframes icon-luxury {
+            0%,100% {
+                transform: scale(1) rotate(-3deg);
+                filter:
+                    drop-shadow(0 0 4px  rgba(235,209,151,0.9))
+                    drop-shadow(0 0 12px rgba(235,209,151,0.5))
+                    drop-shadow(0 0 28px rgba(235,209,151,0.2));
+            }
+            50% {
+                transform: scale(1.2) rotate(6deg);
+                filter:
+                    drop-shadow(0 0 8px  rgba(255,255,180,1))
+                    drop-shadow(0 0 22px rgba(255,210,50,0.9))
+                    drop-shadow(0 0 45px rgba(255,170,0,0.7))
+                    drop-shadow(0 0 80px rgba(255,120,0,0.35));
+            }
+        }
+
+        /* --- Navbar animated shimmer border --- */
+        .navbar::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 1.5px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                rgba(235,209,151,0.1) 15%,
+                rgba(255,220,80,0.9) 40%,
+                rgba(255,255,180,1) 50%,
+                rgba(255,220,80,0.9) 60%,
+                rgba(235,209,151,0.1) 85%,
+                transparent 100%
+            );
+            background-size: 200% auto;
+            animation: border-sweep 3.5s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes border-sweep {
+            0%   { background-position: 200% center; }
+            100% { background-position: -200% center; }
+        }
+
+        /* === SPARKLE CANVAS === */
+        #sparkle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            pointer-events: none;
+            z-index: 1050;
         }
 
         .nav-link {
             font-weight: 500;
-            color: var(--text-secondary) !important;
-            transition: color 0.2s;
+            color: #e2e8f0 !important;
+            transition: color 0.3s, text-shadow 0.3s, transform 0.3s;
         }
 
         .nav-link:hover {
-            color: #6c5ce7 !important;
+            color: #ebd197 !important;
+            text-shadow: 0 0 8px rgba(235, 209, 151, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .navbar-nav .nav-link.active {
+            color: #ebd197 !important;
+            font-weight: 700 !important;
+            border-bottom: 2px solid #ebd197;
+            text-shadow: 0 0 10px rgba(235, 209, 151, 0.3);
+        }
+
+        .dropdown-item {
+            color: #ffffff !important;
+            padding: 0.7rem 1.5rem !important;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown-item:hover {
+            background-color: rgba(235, 209, 151, 0.1) !important;
+            color: #ebd197 !important;
+            transform: translateX(5px);
+        }
+
+        .dropdown-menu {
+            padding: 0.5rem 0 !important;
+            margin-top: 10px !important;
         }
 
         .navbar-toggler {
-            border-color: var(--border-color);
+            border-color: rgba(235, 209, 151, 0.3);
         }
 
         .navbar-toggler-icon {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(45, 52, 54, 0.85)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(235, 209, 151, 0.85)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
         }
 
-        [data-theme="dark"] .navbar-toggler-icon {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.85)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        .btn-premium-violet, .btn-premium-register {
+            background-color: rgba(235, 209, 151, 0.05);
+            color: #ebd197 !important;
+            border: 1px solid rgba(235, 209, 151, 0.3);
+            border-radius: 50px;
+            padding: 0.4rem 1.2rem;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif !important;
+            font-weight: 700;
         }
+
+        .btn-premium-violet:hover, .btn-premium-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(235, 209, 151, 0.2);
+            background-color: rgba(235, 209, 151, 0.1);
+            border-color: rgba(235, 209, 151, 0.6);
+            color: #ebd197 !important;
+        }
+
+        .btn-premium-logout {
+            background-color: rgba(220, 53, 69, 0.05);
+            color: #ff4d4d !important;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            border-radius: 50px;
+            padding: 0.4rem 1.2rem;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif !important;
+            font-weight: 700;
+        }
+
+        .btn-premium-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(220, 53, 69, 0.2);
+            background-color: rgba(220, 53, 69, 0.1);
+            border-color: rgba(220, 53, 69, 0.6);
+            color: #ff4d4d !important;
+        }
+
+
 
         .card {
             background-color: var(--bg-card) !important;
@@ -234,9 +509,7 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
         }
 
-        [data-theme="dark"] .shadow-lg {
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
-        }
+
 
         main {
             min-height: calc(100vh - 200px);
@@ -267,63 +540,160 @@
             color: var(--text-primary);
         }
 
-        [data-theme="dark"] .form-select {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-        }
 
-        /* Modal Dark Mode Support */
-        [data-theme="dark"] .modal-content {
-            background-color: var(--bg-card);
-            color: var(--text-primary);
-            border-color: var(--border-color);
-        }
 
-        [data-theme="dark"] .modal-header,
-        [data-theme="dark"] .modal-footer {
-            border-color: var(--border-color);
-        }
 
-        [data-theme="dark"] .btn-close {
-            filter: invert(1) grayscale(100%) brightness(200%);
-        }
 
-        /* Dropdown Dark Mode */
-        [data-theme="dark"] .dropdown-menu {
-            background-color: var(--bg-card);
-            border-color: var(--border-color);
-        }
-
-        [data-theme="dark"] .dropdown-item {
-            color: var(--text-primary);
-        }
-
-        [data-theme="dark"] .dropdown-item:hover,
-        [data-theme="dark"] .dropdown-item:focus {
-            background-color: var(--bg-secondary);
-            color: var(--text-primary);
-        }
-
-        /* Message Alert Styles */
-        .message-alert-custom {
-            border-left-width: 5px !important;
-            border-left-style: solid !important;
-        }
-        
-        .message-alert-custom[data-tag="success"] {
-            border-left-color: #28a745 !important;
-        }
-        
-        .message-alert-custom[data-tag="error"] {
-            border-left-color: #dc3545 !important;
-        }
-        
-        .message-alert-custom[data-tag="warning"] {
-            border-left-color: #ffc107 !important;
-        }
-        
-        .message-alert-custom[data-tag="info"],
         .message-alert-custom:not([data-tag="success"]):not([data-tag="error"]):not([data-tag="warning"]) {
             border-left-color: #17a2b8 !important;
+        }
+
+        /* Premium Toast Notifications */
+        #alert-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            width: 100%;
+            max-width: 500px;
+            pointer-events: none;
+        }
+
+        .message-alert-custom {
+            pointer-events: auto;
+            background: rgba(30, 20, 40, 0.85) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            border: 1px solid rgba(235, 209, 151, 0.3) !important;
+            border-radius: 50px !important; /* Fully rounded premium look */
+            color: #ffffff !important;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5) !important;
+            margin-bottom: 15px !important;
+            padding: 0.8rem 2rem !important;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            animation: toastIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        @keyframes toastIn {
+            0% { opacity: 0; transform: translateY(-20px) scale(0.9); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .message-alert-custom[data-tag="success"] {
+            border-left: 5px solid #ebd197 !important;
+            border-right: 1px solid rgba(235, 209, 151, 0.4) !important;
+        }
+        
+        .message-alert-custom[data-tag="error"], .message-alert-custom[data-tag="danger"] {
+            border-left: 5px solid #ff4d4d !important;
+        }
+
+        .message-alert-custom .btn-close {
+            filter: invert(1) sepia(1) saturate(5) hue-rotate(350deg); /* Make it gold-ish */
+            opacity: 0.8;
+            position: relative;
+            margin-left: 1rem;
+        }
+
+        /* Premium Input Autofill Fix */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 50px #07030a inset !important;
+            -webkit-text-fill-color: #ebd197 !important;
+            transition: background-color 5000s ease-in-out 0s;
+            caret-color: #ebd197 !important;
+            border: 1px solid rgba(235, 209, 151, 0.3) !important;
+        }
+
+        input {
+            color-scheme: dark;
+        }
+
+        /* Footer Premium Styles */
+        .footer-premium {
+            background-color: #07030a !important;
+            color: #e2e8f0;
+            border-top: 1px solid rgba(235, 209, 151, 0.1);
+            padding: 5rem 0 3rem 0;
+            position: relative;
+            overflow: hidden;
+            margin-top: auto;
+        }
+        .footer-heading {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.2rem;
+            color: #ebd197;
+            margin-bottom: 1.5rem;
+            font-weight: normal;
+        }
+        .footer-link {
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+            display: inline-block;
+        }
+        .footer-link:hover {
+            color: #ebd197;
+            transform: translateX(5px);
+        }
+        .newsletter-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(235, 209, 151, 0.2);
+            color: white;
+            border-radius: 50px 0 0 50px;
+            padding: 0.7rem 1.5rem;
+            width: 100%;
+        }
+        .newsletter-input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+        .newsletter-input:focus {
+            outline: none;
+            border-color: #ebd197;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .newsletter-btn {
+            background: linear-gradient(135deg, #4a1c6a, #2b1040);
+            color: white;
+            border: 1px solid rgba(235, 209, 151, 0.3);
+            border-left: none;
+            border-radius: 0 50px 50px 0;
+            padding: 0.7rem 1.8rem;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        .newsletter-btn:hover {
+            background: #5c207a;
+            color: #ebd197;
+        }
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(235, 209, 151, 0.1);
+            color: #ebd197;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            margin-right: 15px;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            border: 1px solid rgba(235, 209, 151, 0.2);
+        }
+        .social-icon:hover {
+            transform: translateY(-5px);
+            background: #ebd197;
+            color: #07030a;
+            box-shadow: 0 5px 15px rgba(235, 209, 151, 0.3);
         }
 
         /* Stylish Alert Fade Out Animation */
@@ -347,11 +717,15 @@
 
 <body class="d-flex flex-column min-vh-100">
 
+    <!-- Sparkle Canvas (fixed, covers navbar strip) -->
+    <canvas id="sparkle-canvas"></canvas>
+
     <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg border-bottom sticky-top">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="{% url 'home' %}">
-                🎂 HomeBaker
+            <a class="navbar-brand" id="navbar-brand-anchor" href="{% url 'home' %}">
+                <i class="fas fa-birthday-cake gold-glow me-2" id="brand-icon"></i>
+                <span class="gold-text" id="brand-text">HomeBaker</span>
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -362,286 +736,106 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                     {% if not user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if '/about-us/' in request.path %}active{% endif %}" href="{% url 'about_us' %}">About Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if '/faq/' in request.path %}active{% endif %}" href="{% url 'faq' %}">FAQ</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link fw-bold gold-num" href="{% url 'home' %}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link fw-bold gold-num" href="{% url 'about_us' %}">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link fw-bold gold-num" href="{% url 'faq' %}">FAQ</a></li>
+                    <li class="nav-item"><a class="nav-link fw-bold gold-num" href="{% url 'cakes' %}#cakes-section">Cakes</a></li>
+                    <li class="nav-item ms-lg-3"><a class="nav-link fw-bold gold-num" href="{% url 'login' %}">Login</a></li>
+                    <li class="nav-item"><a class="btn btn-premium-register ms-lg-2" href="{% url 'register' %}">Register</a></li>
+                    {% else %}
+                    
+                    <!-- Global/Customer Home -->
+                    {% if user.profile.role == 'customer' %}
+                    <li class="nav-item"><a class="nav-link fw-bold gold-num" href="{% url 'customer_home' %}">Home</a></li>
                     {% endif %}
-                    {% if user.is_authenticated and user.profile.role == 'customer' %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/customer-home/' %}active{% endif %}" href="{% url 'customer_home' %}">Home</a>
-                    </li>
-                    {% endif %}
-                    {% if not user.is_authenticated or user.profile.role != 'delivery_assistant' %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if '/cakes/' in request.path %}active{% endif %}" href="{% url 'cakes' %}">Cakes</a>
-                    </li>
-                    {% endif %}
+                    <li class="nav-item"><a class="nav-link fw-bold gold-num" href="{% url 'cakes' %}#cakes-section">Cakes</a></li>
 
-                    {% if user.is_authenticated %}
-                    <!-- Notification Icon -->
+                    <!-- Notifications -->
                     <li class="nav-item dropdown me-2">
-                        <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-bell"></i>
+                        <a class="nav-link position-relative gold-num" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-bell gold-shimmer fs-5"></i>
                             {% if unread_notifications_count > 0 %}
-                            <span
-                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                                style="font-size: 0.55rem; padding: 0.25em 0.4em; transform: translate(-10%, -10%) !important;">
-                                {{ unread_notifications_count }}
-                            </span>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.55rem; padding: 0.25em 0.4em; box-shadow: 0 0 10px rgba(220, 53, 69, 0.4);">{{ unread_notifications_count }}</span>
                             {% endif %}
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg p-0"
-                            aria-labelledby="notificationDropdown"
-                            style="width: 300px; max-height: 400px; overflow-y: auto;">
-                            <li class="p-3 border-bottom d-flex justify-content-between align-items-center bg-light">
-                                <h6 class="mb-0 fw-bold" style="color: var(--text-primary)">Notifications</h6>
-                                <div class="d-flex align-items-center">
-                                    <span class="badge bg-primary rounded-pill me-2">{{ unread_notifications_count }}
-                                        New</span>
-                                    {% if unread_notifications_count > 0 %}
-                                    <button class="btn btn-link btn-sm text-primary p-0 text-decoration-none"
-                                        onclick="markAllNotificationsAsRead(event)" title="Mark all as read">
-                                        <i class="fas fa-check-double"></i>
-                                    </button>
-                                    {% endif %}
-                                </div>
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg p-0 overflow-hidden" style="width: 350px; background: rgba(7, 3, 10, 0.98); backdrop-filter: blur(40px); border: 1px solid rgba(235, 209, 151, 0.2) !important; border-radius: 20px;">
+                            <li class="p-3 border-bottom d-flex justify-content-between align-items-center" style="background: linear-gradient(180deg, rgba(235, 209, 151, 0.08) 0%, transparent 100%); border-color: rgba(235, 209, 151, 0.1) !important;">
+                                <h6 class="mb-0 fw-bold gold-shimmer" style="font-family: 'Inter', sans-serif !important; letter-spacing: 1px; text-transform: uppercase; font-size: 0.75rem;">Elite Notifications</h6>
+                                <span class="badge-luxury py-1 px-2" style="font-size: 0.65rem; border-color: rgba(235, 209, 151, 0.3) !important;">{{ unread_notifications_count }} New</span>
                             </li>
-                            <div id="notificationList">
+                            <div id="notificationList" class="luxury-scroll" style="max-height: 380px; overflow-y: auto;">
                                 {% if user.notifications.exists %}
-                                {% for notification in user.notifications.all|slice:":10" %}
-                                <li>
-                                    <a class="dropdown-item p-3 border-bottom {% if not notification.is_read %}bg-primary bg-opacity-10{% endif %}"
-                                        href="javascript:void(0);" data-notification-id="{{ notification.id }}"
-                                        data-redirect-url="{% if notification.notification_type == 'new_order' or notification.notification_type == 'payment_received' or notification.notification_type == 'review_received' %}{% url 'baker_orders' %}{% elif notification.notification_type == 'order_confirmed' %}{% url 'my_orders' %}{% elif notification.notification_type == 'new_custom_request' %}{% url 'baker_custom_requests' %}{% elif notification.notification_type == 'baker_approved' %}{% url 'baker_dashboard' %}{% elif notification.notification_type == 'baker_rejected' %}{% url 'profile' %}{% elif notification.order %}{% url 'order_tracking' notification.order.order_id %}{% elif 'custom_request' in notification.notification_type %}{% url 'my_custom_requests' %}{% else %}{% url 'notifications' %}{% endif %}"
-                                        onclick="handleNotificationClick(this)">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <div class="flex-grow-1">
-                                                <div class="small fw-bold mb-1" style="color: var(--text-primary)">
-                                                    {{ notification.title }}
-                                                </div>
-                                                <div class="small text-wrap mb-1" style="color: var(--text-primary)">
-                                                    {{ notification.message|linebreaksbr|safe }}
-                                                </div>
-                                                <div class="text-secondary" style="font-size: 0.7rem;">
-                                                    <i class="far fa-clock me-1"></i>
-                                                    {{ notification.created_at|timesince }} ago
-                                                </div>
+                                    {% for notification in user.notifications.all|slice:":5" %}
+                                    <li><a class="dropdown-item p-3 border-bottom {% if not notification.is_read %}bg-luxury-active{% endif %}" href="{{ notification.get_target_url }}" style="border-color: rgba(235, 209, 151, 0.05) !important; white-space: normal;">
+                                        <div class="d-flex align-items-start">
+                                            <div class="notification-icon-luxury me-3">
+                                                <i class="fas fa-bell gold-shimmer"></i>
                                             </div>
-                                            {% if not notification.is_read %}
-                                            <div class="ms-2 d-flex flex-column align-items-center">
-                                                <span class="badge bg-primary p-1 rounded-circle mb-2"
-                                                    style="width: 8px; height: 8px; display: inline-block;"></span>
-                                                <button class="btn btn-link text-primary p-0 nav-mark-read"
-                                                    onclick="event.stopPropagation(); markAsRead(this.closest('a'), '{{ notification.id }}', null)"
-                                                    title="Mark as read">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
+                                            <div>
+                                                <div class="fw-bold gold-shimmer small mb-1" style="font-family: 'Inter', sans-serif !important;">{{ notification.title }}</div>
+                                                <div class="text-white opacity-75 xsmall lh-base">{{ notification.message|truncatechars:100 }}</div>
                                             </div>
-                                            {% endif %}
                                         </div>
-                                    </a>
-                                </li>
-                                {% endfor %}
+                                    </a></li>
+                                    {% endfor %}
                                 {% else %}
-                                <li class="p-4 text-center text-muted">
-                                    <i class="fas fa-bell-slash fa-2x mb-2 opacity-25"></i>
-                                    <p class="mb-0">No notifications yet</p>
-                                </li>
+                                    <li class="p-5 text-center">
+                                        <i class="fas fa-bell-slash text-white-50 mb-3 d-block fs-3"></i>
+                                        <span class="text-white-50 small">Your artisan alerts will appear here</span>
+                                    </li>
                                 {% endif %}
                             </div>
-                            <li><a class="dropdown-item text-center py-2 small fw-bold text-primary border-top"
-                                    href="{% url 'notifications' %}">View
-                                    All</a></li>
+                            <li><a class="dropdown-item text-center py-3 gold-num small fw-bold" href="{% url 'notifications' %}" style="background: linear-gradient(135deg, #ebd197, #c5a059); color: #07030a !important; margin: 0; border-radius: 0;">VIEW ALL NOTIFICATIONS</a></li>
                         </ul>
                     </li>
 
-                    <script>
-                        function handleNotificationClick(element) {
-                            const id = element.getAttribute('data-notification-id');
-                            const url = element.getAttribute('data-redirect-url');
-                            markAsRead(element, id, url);
-                        }
-
-                        function markAsRead(element, notificationId, redirectUrl) {
-                            fetch(`/mark-notification-read/${notificationId}/`, {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRFToken': '{{ csrf_token }}',
-                                    'Content-Type': 'application/json'
-                                }
-                            }).then(response => {
-                                if (response.ok) {
-                                    if (redirectUrl) {
-                                        window.location.href = redirectUrl;
-                                    } else {
-                                        // Update UI without redirect
-                                        element.classList.remove('bg-primary', 'bg-opacity-10');
-                                        const badge = element.querySelector('.rounded-pill.bg-primary');
-                                        if (badge) badge.remove();
-                                        const checkBtn = element.querySelector('.nav-mark-read');
-                                        if (checkBtn) checkBtn.closest('.ms-2').remove();
-
-                                        // Update global counters
-                                        updateNotificationCounters();
-                                    }
-                                }
-                            });
-                        }
-
-                        function markAllNotificationsAsRead(event) {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            fetch('{% url "mark_all_notifications_read" %}', {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRFToken': '{{ csrf_token }}',
-                                    'Content-Type': 'application/json'
-                                }
-                            }).then(response => {
-                                if (response.ok) {
-                                    // Update UI
-                                    const items = document.querySelectorAll('#notificationList a.bg-primary');
-                                    items.forEach(item => {
-                                        item.classList.remove('bg-primary', 'bg-opacity-10');
-                                        const indicator = item.querySelector('.ms-2');
-                                        if (indicator) indicator.remove();
-                                    });
-
-                                    // Remove counters
-                                    const counters = document.querySelectorAll('.unread-count'); // If we had such a class
-                                    // But we use django variables, so we just clear specific elements
-                                    const bellBadge = document.querySelector('.nav-link .badge');
-                                    if (bellBadge) bellBadge.remove();
-
-                                    const headerBadge = document.querySelector('.dropdown-menu .badge');
-                                    if (headerBadge) headerBadge.textContent = '0 New';
-
-                                    const allReadBtn = document.querySelector('button[onclick="markAllNotificationsAsRead(event)"]');
-                                    if (allReadBtn) allReadBtn.remove();
-                                }
-                            });
-                        }
-
-                        function updateNotificationCounters() {
-                            const bellBadge = document.querySelector('.nav-link .badge');
-                            const headerBadge = document.querySelector('.dropdown-menu .badge');
-
-                            if (bellBadge) {
-                                let count = parseInt(bellBadge.textContent);
-                                if (count > 1) {
-                                    bellBadge.textContent = count - 1;
-                                    headerBadge.textContent = (count - 1) + ' New';
-                                } else {
-                                    bellBadge.remove();
-                                    headerBadge.textContent = '0 New';
-                                    const allReadBtn = document.querySelector('button[onclick="markAllNotificationsAsRead(event)"]');
-                                    if (allReadBtn) allReadBtn.remove();
-                                }
-                            }
-                        }
-                    </script>
-
-                    <!-- Customer Dropdown -->
+                    <!-- Role-Specific Dropdown -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="customerDropdown" role="button"
-                            data-bs-toggle="dropdown">
-                            My Account
+                        <a class="nav-link dropdown-toggle d-flex align-items-center px-3 fw-bold gold-num" href="#" id="roleDropdown" data-bs-toggle="dropdown">
+                            {% if user.is_staff %}<i class="fas fa-shield-alt gold-shimmer me-2"></i>Admin Console
+                            {% elif user.profile.role == 'baker' %}<i class="fas fa-hat-chef gold-shimmer me-2"></i>Artisan Hub
+                            {% elif user.profile.role == 'delivery_assistant' %}<i class="fas fa-truck gold-shimmer me-2"></i>Logistics
+                            {% else %}My Account{% endif %}
                             {% if user.profile.profile_picture %}
-                            <img src="{{ user.profile.profile_picture.url }}" alt="Profile" class="rounded-circle ms-1"
-                                style="width: 25px; height: 25px; object-fit: cover;">
-                            {% else %}
-                            <i class="fas fa-user-circle ms-1"></i>
+                            <img src="{{ user.profile.profile_picture.url }}" class="rounded-circle ms-2 shadow-sm" style="width: 28px; height: 28px; object-fit: cover; border: 1px solid var(--gold-primary);">
                             {% endif %}
                         </a>
-                        <ul class="dropdown-menu border-0 shadow">
-                            <li><a class="dropdown-item" href="{% url 'profile' %}">👤 My Profile</a></li>
-                            {% if user.profile.role == 'customer' %}
-                            <li><a class="dropdown-item" href="{% url 'cart' %}">🛒 Cart</a></li>
-                            <li><a class="dropdown-item" href="{% url 'my_orders' %}">📦 My Orders</a></li>
-                            <li><a class="dropdown-item" href="{% url 'my_custom_requests' %}">🎨 My Custom Requests</a>
-                            </li>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-2" style="background: rgba(30, 20, 40, 0.98); border: 1px solid var(--glass-border) !important;">
+                            {% if user.is_staff %}
+                                <li><a class="dropdown-item py-2" href="{% url 'admin_dashboard' %}"><i class="fas fa-tachometer-alt gold-shimmer me-3"></i>Dashboard</a></li>
+                                <li><a class="dropdown-item py-2" href="{% url 'admin_helpdesk' %}"><i class="fas fa-headset gold-shimmer me-3"></i>Help Desk</a></li>
+                                <li><a class="dropdown-item py-2" href="{% url 'admin_coupons' %}"><i class="fas fa-ticket-alt gold-shimmer me-3"></i>Coupons</a></li>
+                                <li><a class="dropdown-item py-2" href="{% url 'admin_analytics' %}"><i class="fas fa-chart-line gold-shimmer me-3"></i>Analytics</a></li>
+                            {% elif user.profile.role == 'baker' %}
+                                <li><a class="dropdown-item py-2" href="{% url 'baker_dashboard' %}"><i class="fas fa-chart-pie gold-shimmer me-3"></i>Overview</a></li>
+                                <li><a class="dropdown-item py-2" href="{% url 'baker_orders' %}"><i class="fas fa-clipboard-list gold-shimmer me-3"></i>Orders</a></li>
+                                <li><a class="dropdown-item py-2" href="{% url 'baker_cakes' %}"><i class="fas fa-birthday-cake gold-shimmer me-3"></i>Portfolio</a></li>
+                                <li><a class="dropdown-item py-2" href="{% url 'baker_custom_requests' %}"><i class="fas fa-wand-magic-sparkles gold-shimmer me-3"></i>Studio Requests</a></li>
+                                <li><a class="dropdown-item py-2" href="{% url 'baker_expenses' %}"><i class="fas fa-receipt gold-shimmer me-3"></i>Treasury</a></li>
+                            {% elif user.profile.role == 'customer' %}
+                                <li><a class="dropdown-item py-2" href="{% url 'customer_home' %}"><i class="fas fa-user-circle gold-shimmer me-3"></i>Profile Hub</a></li>
+                                <li><a class="dropdown-item py-2" href="{% url 'my_orders' %}"><i class="fas fa-shopping-bag gold-shimmer me-3"></i>My Orders</a></li>
+                                <li><a class="dropdown-item py-2" href="{% url 'my_custom_requests' %}"><i class="fas fa-wand-magic-sparkles gold-shimmer me-3"></i>Custom Requests</a></li>
+                                <li><a class="dropdown-item py-2" href="{% url 'cart' %}"><i class="fas fa-shopping-cart gold-shimmer me-3"></i>Cart</a></li>
+                                <li><a class="dropdown-item py-2" href="{% url 'wallet' %}"><i class="fas fa-wallet gold-shimmer me-3"></i>Wallet</a></li>
+                            {% elif user.profile.role == 'delivery_assistant' %}
+                                <li><a class="dropdown-item py-2" href="{% url 'delivery_dashboard' %}"><i class="fas fa-map-marked-alt gold-shimmer me-3"></i>Route Dashboard</a></li>
                             {% endif %}
-                            <li><a class="dropdown-item" href="{% url 'wallet' %}">💰 Wallet</a></li>
+                            <li><hr class="dropdown-divider bg-white opacity-10"></li>
+                            <li><a class="dropdown-item py-2" href="{% url 'profile' %}"><i class="fas fa-cog gold-shimmer me-3"></i>Settings</a></li>
                         </ul>
                     </li>
 
-                    <!-- Baker Dropdown (if baker) -->
-                    {% if user.profile.role == 'baker' %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-primary fw-bold" href="#" id="bakerDropdown"
-                            role="button" data-bs-toggle="dropdown">
-                            👨‍🍳 Baker Menu
-                        </a>
-                        <ul class="dropdown-menu border-0 shadow">
-                            <li><a class="dropdown-item" href="{% url 'baker_dashboard' %}">📊 Dashboard</a></li>
-                            <li><a class="dropdown-item" href="{% url 'baker_ai_analytics' %}">🚀 AI Analytics</a></li>
-                            <li><a class="dropdown-item" href="{% url 'baker_cakes' %}">🍰 Manage Cakes</a></li>
-                            <li><a class="dropdown-item" href="{% url 'baker_orders' %}">📝 Manage Orders</a></li>
-                            <li><a class="dropdown-item" href="{% url 'baker_custom_requests' %}">🎨 Custom Requests</a>
-                            </li>
-                            <li><a class="dropdown-item" href="{% url 'baker_expenses' %}">💸 Expenses</a></li>
-                        </ul>
+                    {% if user.profile.role == 'customer' %}
+                    <li class="nav-item"><a class="nav-link px-3 fw-bold gold-num" href="{% url 'services' %}"><i class="fas fa-headset gold-shimmer me-2"></i>Support</a></li>
+                    {% endif %}
+
+                    <li class="nav-item ms-lg-3">
+                        <a class="btn btn-premium-logout" href="{% url 'logout' %}">Logout</a>
                     </li>
                     {% endif %}
 
-                    <!-- Admin Link (if staff) -->
-                    {% if user.is_staff %}
-                    <li class="nav-item">
-                        <a class="nav-link text-danger fw-bold" href="{% url 'admin_dashboard' %}">
-                            🛡️ Admin Panel
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if '/helpdesk/' in request.path %}active{% else %}fw-bold text-warning{% endif %}" href="{% url 'admin_helpdesk' %}">
-                            🎧 Help Desk
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if '/coupons/' in request.path %}active{% else %}fw-bold text-success{% endif %}" href="{% url 'admin_coupons' %}">
-                            🎟️ Coupons
-                        </a>
-                    </li>
-                    {% endif %}
 
-                    <!-- Delivery Assistant Link -->
-                    {% if user.profile.role == 'delivery_assistant' %}
-                    <li class="nav-item">
-                        <a class="nav-link text-success fw-bold" href="{% url 'delivery_dashboard' %}">
-                            🚚 Delivery Dashboard
-                        </a>
-                    </li>
-                    {% elif not user.is_staff %}
-                    <li class="nav-item ms-2 me-1" style="display: flex; align-items: center;">
-                        <a class="nav-link {% if '/services/' in request.path %}active{% else %}fw-bold text-secondary{% endif %}" href="{% url 'services' %}">
-                            <i class="fas fa-headset me-1"></i>Services
-                        </a>
-                    </li>
-                    {% endif %}
-
-                    <li class="nav-item ms-2" style="display: flex; align-items: center;">
-                        <a class="btn btn-outline-danger btn-sm" href="{% url 'logout' %}">Logout</a>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-primary btn-sm ms-2" href="{% url 'register' %}">Register</a>
-                    </li>
-                    {% endif %}
-
-                    <li class="nav-item ms-3">
-                        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-                            <span id="themeIcon">🌙</span>
-                        </button>
-                    </li>
                 </ul>
             </div>
         </div>
@@ -650,23 +844,156 @@
     <!-- MAIN CONTENT -->
     <main class="container">
         <!-- Notification Alerts Container -->
-        <div id="alert-container" style="position: relative; z-index: 1050;">
-            {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-3 shadow-sm border-0 message-alert-custom" role="alert" data-tag="{{ message.tags }}">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <!-- ALERT NOTIFICATIONS -->
+    <div id="alert-container">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show message-alert-custom"
+            role="alert" data-tag="{{ message.tags }}">
+            <div class="d-flex align-items-center">
+                {% if message.tags == 'success' %}
+                    <i class="fas fa-check-circle me-3 gold-text" style="font-size: 1.2rem;"></i>
+                {% elif message.tags == 'error' or message.tags == 'danger' %}
+                    <i class="fas fa-exclamation-circle me-3 text-danger" style="font-size: 1.2rem;"></i>
+                {% else %}
+                    <i class="fas fa-info-circle me-3 text-info" style="font-size: 1.2rem;"></i>
+                {% endif %}
+                <span class="fw-medium">{{ message }}</span>
             </div>
-            {% endfor %}
-            {% endif %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
+        {% endfor %}
+        {% endif %}
+    </div>
         {% block content %}{% endblock %}
     </main>
 
     <!-- FOOTER -->
-    <footer class="text-center py-4 mt-auto border-top">
-        <div class="container">
-            <small class="text-muted">© 2026 Home Baker Cake System. All rights reserved.</small>
+    <!-- PREMIUM FOOTER -->
+    <footer class="footer-premium">
+        <div class="container position-relative z-1">
+            <div class="row mb-5">
+                <!-- Branding & Tagline -->
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-birthday-cake me-2" style="font-size: 1.5rem; color: #ebd197; filter: drop-shadow(0 0 10px rgba(235, 209, 151, 0.4));"></i>
+                        <span class="script-font" style="font-size: 1.8rem; color: #ebd197;">Home Baker</span>
+                    </div>
+                    <p class="text-white-50" style="font-size: 0.9rem; line-height: 1.6; max-width: 300px;">
+                        Crafting exquisite moments with artisanal cakes, delivered straight from the heart of our home bakers to your celebration.
+                    </p>
+                </div>
+
+                <!-- Quick Links (Hidden for Delivery Assistant) -->
+                {% if not request.user.is_authenticated or request.user.profile.role != 'delivery_assistant' %}
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h3 class="footer-heading">Quick Links</h3>
+                    <div class="row">
+                        {% if request.user.is_staff %}
+                        <div class="col-6">
+                            <ul class="list-unstyled">
+                                <li><a href="{% url 'admin_dashboard' %}" class="footer-link"><i class="fas fa-shield-alt me-1"></i> Admin Panel</a></li>
+                                <li><a href="{% url 'admin_letterbox' %}" class="footer-link"><i class="fas fa-envelope-open-text me-1"></i> Letterbox</a></li>
+                                <li><a href="{% url 'admin_helpdesk' %}" class="footer-link"><i class="fas fa-headset me-1"></i> Help Desk</a></li>
+                                <li><a href="{% url 'admin_coupons' %}" class="footer-link"><i class="fas fa-ticket-alt me-1"></i> Coupons</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <ul class="list-unstyled">
+                                <li><a href="{% url 'cakes' %}" class="footer-link"><i class="fas fa-birthday-cake me-1"></i> Cakes</a></li>
+                                <li><a href="{% url 'profile' %}" class="footer-link"><i class="fas fa-user me-1"></i> My Profile</a></li>
+                                <li><a href="{% url 'logout' %}" class="footer-link"><i class="fas fa-sign-out-alt me-1"></i> Logout</a></li>
+                            </ul>
+                        </div>
+                        {% elif request.user.profile.role == 'baker' %}
+                        <div class="col-6">
+                            <ul class="list-unstyled">
+                                <li><a href="{% url 'baker_dashboard' %}" class="footer-link">Overview</a></li>
+                                <li><a href="{% url 'baker_orders' %}" class="footer-link">Orders</a></li>
+                                <li><a href="{% url 'baker_cakes' %}" class="footer-link">Portfolio</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <ul class="list-unstyled">
+                                <li><a href="{% url 'baker_expenses' %}" class="footer-link">Treasury</a></li>
+                                <li><a href="{% url 'profile' %}" class="footer-link">Settings</a></li>
+                                <li><a href="{% url 'logout' %}" class="footer-link">Logout</a></li>
+                            </ul>
+                        </div>
+                        {% elif request.user.profile.role == 'customer' %}
+                        <div class="col-6">
+                            <ul class="list-unstyled">
+                                <li><a href="{% url 'customer_home' %}" class="footer-link">Home</a></li>
+                                <li><a href="{% url 'cakes' %}#cakes-section" class="footer-link">Cakes</a></li>
+                                <li><a href="{% url 'my_orders' %}" class="footer-link">My Orders</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <ul class="list-unstyled">
+                                <li><a href="{% url 'wallet' %}" class="footer-link">Wallet</a></li>
+                                <li><a href="{% url 'services' %}" class="footer-link">Support</a></li>
+                                <li><a href="{% url 'profile' %}" class="footer-link">Settings</a></li>
+                            </ul>
+                        </div>
+                        {% else %}
+                        <div class="col-6">
+                            <ul class="list-unstyled">
+                                <li><a href="{% url 'home' %}" class="footer-link">Home</a></li>
+                                <li><a href="{% url 'about_us' %}" class="footer-link">About Us</a></li>
+                                <li><a href="{% url 'faq' %}" class="footer-link">FAQ</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <ul class="list-unstyled">
+                                <li><a href="{% url 'cakes' %}#cakes-section" class="footer-link">Cakes</a></li>
+                                <li><a href="{% url 'register' %}" class="footer-link">Register</a></li>
+                                <li><a href="{% url 'login' %}" class="footer-link">Login</a></li>
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Newsletter (hidden for admin) -->
+                {% if not request.user.is_staff %}
+                <div class="col-lg-4">
+                    <h3 class="footer-heading">Newsletter</h3>
+                    <p class="text-white-50 mb-3" style="font-size: 0.95rem;">Join our sweet list for exclusive offers.</p>
+                    <form class="d-flex" id="newsletter-form">
+                        {% csrf_token %}
+                        <input type="email" id="newsletter-email" class="newsletter-input" placeholder="Enter email address" required>
+                        <button type="submit" class="newsletter-btn">Join</button>
+                    </form>
+                    <div class="mt-4">
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-lg-4">
+                    <h3 class="footer-heading">Connect</h3>
+                    <div class="mt-2">
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                    </div>
+                </div>
+                {% endif %}
+                {% else %}
+                <!-- Simplified Social for Delivery Assistant -->
+                <div class="col-lg-8 d-flex justify-content-lg-end align-items-center">
+                    <div class="me-4 text-white-50 small">CONNECT WITH US</div>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="text-center border-top pt-4" style="border-color: rgba(235, 209, 151, 0.1) !important;">
+                <small class="text-white-50" style="letter-spacing: 1px;">© 2026 HOMEBAKER. ALL RIGHTS RESERVED.</small>
+            </div>
         </div>
     </footer>
 
@@ -676,39 +1003,194 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Ultra-Luxury Sparkle Particle System -->
+    <script>
+    (function () {
+        const canvas = document.getElementById('sparkle-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = 100; }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Luxury gold/champagne palette
+        const PALETTE = [
+            [255,255,200], [255,230,100], [235,209,151],
+            [255,200,50],  [255,160,0],   [255,255,255],
+        ];
+
+        function randCol() { return PALETTE[Math.floor(Math.random()*PALETTE.length)]; }
+
+        // ---- Particle types: 'star', 'diamond', 'circle', 'streak' ----
+        class Particle {
+            constructor(ox, oy) { this.init(ox, oy); }
+            init(ox, oy) {
+                const spread = 160;
+                this.x  = ox + (Math.random()-0.5)*spread;
+                this.y  = oy + (Math.random()-0.5)*40;
+                const speed = Math.random()*2.2+0.5;
+                const angle = -Math.PI/2 + (Math.random()-0.5)*1.8;
+                this.vx = Math.cos(angle)*speed;
+                this.vy = Math.sin(angle)*speed;
+                this.ax = (Math.random()-0.5)*0.04;
+                this.ay = 0.022;
+                this.r  = Math.random()*0.7+0.3;
+                this.life = 1;
+                this.decay = Math.random()*0.018+0.010;
+                this.col = randCol();
+                this.phase = Math.random()*Math.PI*2;
+                this.phaseSpd = Math.random()*0.14+0.05;
+                const t = Math.random();
+                this.type = t<0.25?'star':'circle';
+                this.rot = Math.random()*Math.PI*2;
+                this.rotSpd = (Math.random()-0.5)*0.10;
+            }
+
+            update() {
+                this.x  += this.vx; this.y  += this.vy;
+                this.vx += this.ax; this.vy += this.ay;
+                this.life -= this.decay;
+                this.phase += this.phaseSpd;
+                this.rot   += this.rotSpd;
+            }
+
+            draw() {
+                const a = Math.max(0, this.life) * (0.65 + 0.35*Math.sin(this.phase));
+                const r = this.r * (0.75 + 0.45*Math.abs(Math.sin(this.phase)));
+                const [R,G,B] = this.col;
+                ctx.save();
+                ctx.globalAlpha = a;
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rot);
+
+                if (this.type === 'star') {
+                    drawStar(R,G,B,r*1.8,r*0.45,5);
+                } else if (this.type === 'diamond') {
+                    drawDiamond(R,G,B,r*1.5);
+                } else if (this.type === 'streak') {
+                    drawStreak(R,G,B,r);
+                } else {
+                    drawGlowCircle(R,G,B,r);
+                }
+                ctx.restore();
+            }
+            dead() { return this.life <= 0; }
+        }
+
+        function drawStar(R,G,B,outer,inner,pts) {
+            ctx.beginPath();
+            for (let i=0;i<pts*2;i++) {
+                const rad = i%2===0 ? outer : inner;
+                const a   = (i*Math.PI)/pts - Math.PI/2;
+                i===0 ? ctx.moveTo(Math.cos(a)*rad, Math.sin(a)*rad)
+                       : ctx.lineTo(Math.cos(a)*rad, Math.sin(a)*rad);
+            }
+            ctx.closePath();
+            ctx.shadowColor = `rgba(${R},${G},${B},1)`;
+            ctx.shadowBlur  = 14;
+            ctx.fillStyle   = `rgba(${R},${G},${B},0.98)`;
+            ctx.fill();
+        }
+
+        function drawDiamond(R,G,B,s) {
+            ctx.beginPath();
+            ctx.moveTo(0,-s); ctx.lineTo(s*0.55,0);
+            ctx.lineTo(0,s);  ctx.lineTo(-s*0.55,0);
+            ctx.closePath();
+            ctx.shadowColor = `rgba(${R},${G},${B},1)`;
+            ctx.shadowBlur  = 18;
+            const grd = ctx.createLinearGradient(0,-s,0,s);
+            grd.addColorStop(0,   `rgba(255,255,220,1)`);
+            grd.addColorStop(0.5, `rgba(${R},${G},${B},1)`);
+            grd.addColorStop(1,   `rgba(${Math.max(0,R-60)},${Math.max(0,G-60)},0,0.8)`);
+            ctx.fillStyle = grd;
+            ctx.fill();
+        }
+
+        function drawStreak(R,G,B,r) {
+            const len = r*5;
+            const grd = ctx.createLinearGradient(-len,0,len,0);
+            grd.addColorStop(0,   `rgba(${R},${G},${B},0)`);
+            grd.addColorStop(0.5, `rgba(${R},${G},${B},1)`);
+            grd.addColorStop(1,   `rgba(${R},${G},${B},0)`);
+            ctx.shadowColor = `rgba(${R},${G},${B},0.8)`;
+            ctx.shadowBlur  = 8;
+            ctx.strokeStyle = grd;
+            ctx.lineWidth   = r*0.55;
+            ctx.beginPath(); ctx.moveTo(-len,0); ctx.lineTo(len,0); ctx.stroke();
+        }
+
+        function drawGlowCircle(R,G,B,r) {
+            const grd = ctx.createRadialGradient(0,0,0,0,0,r*2.5);
+            grd.addColorStop(0,   `rgba(${R},${G},${B},1)`);
+            grd.addColorStop(0.4, `rgba(${R},${G},${B},0.7)`);
+            grd.addColorStop(1,   `rgba(${R},${G},${B},0)`);
+            ctx.shadowColor = `rgba(${R},${G},${B},1)`;
+            ctx.shadowBlur  = 16;
+            ctx.fillStyle   = grd;
+            ctx.beginPath(); ctx.arc(0,0,r*2.5,0,Math.PI*2); ctx.fill();
+        }
+
+        // ---- Get brand origin ----
+        function getBrandOrigin() {
+            const el = document.getElementById('navbar-brand-anchor');
+            if (!el) return { x: 100, y: 35 };
+            const rc = el.getBoundingClientRect();
+            return { x: rc.left + rc.width*0.45, y: rc.top + rc.height*0.5 };
+        }
+
+        // ---- Periodic luxury burst (every ~2s) ----
+        let lastBurst = 0;
+        function maybeBurst(now, ox, oy) {
+            if (now - lastBurst > 1800 + Math.random()*800) {
+                lastBurst = now;
+                for (let i=0;i<22;i++) pool.spawn(ox,oy);
+            }
+        }
+
+        // ---- Object pool ----
+        const pool = {
+            list: [],
+            MAX: 150,
+            spawn(x,y) {
+                if (this.list.length < this.MAX) { this.list.push(new Particle(x,y)); }
+                else {
+                    const d = this.list.findIndex(p=>p.dead());
+                    if (d>=0) this.list[d].init(x,y);
+                }
+            }
+        };
+
+        // ---- Animation loop ----
+        function loop(now) {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            const {x,y} = getBrandOrigin();
+
+            // Continuous gentle spawn
+            if (Math.random() < 0.7) { const n=Math.floor(Math.random()*4)+2; for(let i=0;i<n;i++) pool.spawn(x,y); }
+
+            // Periodic big burst
+            maybeBurst(now, x, y);
+
+            for (let i=pool.list.length-1;i>=0;i--) {
+                pool.list[i].update();
+                pool.list[i].draw();
+                if (pool.list[i].dead()) pool.list.splice(i,1);
+            }
+            requestAnimationFrame(loop);
+        }
+
+        // Pre-warm
+        const {x:ix,y:iy} = getBrandOrigin();
+        for (let i=0;i<50;i++) pool.spawn(ix,iy);
+        requestAnimationFrame(loop);
+    })();
+    </script>
+
     <!-- Options and UI Initialization Script -->
     <script>
         (function () {
-            // Get theme from localStorage or default to light
-            const currentTheme = localStorage.getItem('theme') || 'light';
-            const html = document.documentElement;
 
-            // Apply theme immediately to prevent flash
-            if (currentTheme === 'dark') {
-                html.setAttribute('data-theme', 'dark');
-                document.getElementById('themeIcon').textContent = '☀️';
-            } else {
-                html.setAttribute('data-theme', 'light');
-                document.getElementById('themeIcon').textContent = '🌙';
-            }
-
-            // Theme toggle function
-            function toggleTheme() {
-                const html = document.documentElement;
-                const currentTheme = html.getAttribute('data-theme');
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
-                html.setAttribute('data-theme', newTheme);
-                localStorage.setItem('theme', newTheme);
-
-                // Update icon
-                const icon = document.getElementById('themeIcon');
-                icon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
-            }
-
-            // Add event listener to toggle button
-            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-            
             // Auto fade-out alerts stylishly
             setTimeout(function() {
                 const alerts = document.querySelectorAll('.alert');
@@ -722,6 +1204,66 @@
         })();
     </script>
 
+    <!-- Newsletter AJAX -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const newsletterForm = document.getElementById('newsletter-form');
+            if (newsletterForm) {
+                newsletterForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const email = document.getElementById('newsletter-email').value;
+                    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                    const btn = this.querySelector('button');
+                    const originalText = btn.innerText;
+
+                    btn.disabled = true;
+                    btn.innerText = '...';
+
+                    fetch('{% url "subscribe_newsletter" %}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': csrfToken
+                        },
+                        body: `email=${encodeURIComponent(email)}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success' || data.status === 'info') {
+                            const alertHtml = `
+                                <div class="alert alert-success alert-dismissible fade show message-alert-custom" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-magic me-3 gold-text" style="font-size: 1.2rem;"></i>
+                                        <span class="fw-medium">${data.message}</span>
+                                    </div>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            `;
+                            document.body.insertAdjacentHTML('beforeend', alertHtml);
+                            document.getElementById('newsletter-email').value = '';
+                            
+                            // Auto remove after 5s
+                            setTimeout(() => {
+                                const newAlert = document.querySelector('.alert:last-child');
+                                if(newAlert) newAlert.remove();
+                            }, 5000);
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    })
+                    .finally(() => {
+                        btn.disabled = false;
+                        btn.innerText = originalText;
+                    });
+                });
+            }
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
 </body>
 
 </html>

@@ -1,120 +1,261 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Manage Expenses{% endblock %}
+
+{% block title %}Financial Treasury | HomeBaker Studio{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-md-12">
-        <h2 class="fw-bold">Expense Management</h2>
-        <p class="text-muted">Track and manage your bakery expenses.</p>
-    </div>
-</div>
+<style>
+    .treasury-bg {
+        background: radial-gradient(circle at top right, #1a1025 0%, #07030a 100%);
+        min-height: 100vh;
+        color: #fff;
+    }
 
-<!-- Summary Cards -->
-<div class="row mb-4">
-    <div class="col-md-6">
-        <div class="card bg-primary text-white border-0 shadow-sm h-100">
-            <div class="card-body">
-                <h6 class="card-title opacity-75">Total Expenses</h6>
-                <h3 class="fw-bold mb-0">₹{{ total_expenses }}</h3>
-            </div>
+    .stat-card-premium {
+        background: rgba(30, 20, 40, 0.5);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(235, 209, 151, 0.12);
+        border-radius: 28px;
+        padding: 2rem;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card-premium:hover {
+        transform: translateY(-8px);
+        border-color: rgba(235, 209, 151, 0.4);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .stat-card-premium::after {
+        content: '';
+        position: absolute;
+        top: -50%; left: -50%; width: 200%; height: 200%;
+        background: radial-gradient(circle, rgba(235, 209, 151, 0.03) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .luxury-input-group {
+        background: rgba(30, 20, 40, 0.6);
+        border: 1px solid rgba(235, 209, 151, 0.15);
+        border-radius: 30px;
+        padding: 2.5rem;
+    }
+
+    .form-control-luxury {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 15px !important;
+        color: #fff !important;
+        padding: 1rem 1.2rem !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .form-control-luxury:focus {
+        background: rgba(255, 255, 255, 0.08) !important;
+        border-color: #ebd197 !important;
+        box-shadow: 0 0 20px rgba(235, 209, 151, 0.1) !important;
+    }
+
+    .table-luxury {
+        background: transparent !important;
+        border-collapse: separate;
+        border-spacing: 0 10px;
+    }
+
+    .table-luxury thead th {
+        background: rgba(235, 209, 151, 0.03) !important;
+        border: none !important;
+        color: #ebd197 !important;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 2px;
+        font-weight: 800;
+        padding: 1.5rem 1.2rem;
+    }
+
+    .table-luxury tbody tr {
+        background: rgba(255, 255, 255, 0.02) !important;
+        transition: all 0.3s ease;
+    }
+
+    .table-luxury tbody tr:hover {
+        background: rgba(235, 209, 151, 0.05) !important;
+        transform: scale(1.005);
+    }
+
+    .table-luxury tbody td {
+        background: transparent !important;
+        border: none !important;
+        padding: 1.5rem 1.2rem;
+        color: #fff !important;
+    }
+
+    .btn-premium-commit {
+        background: linear-gradient(135deg, #ebd197, #c5a059);
+        color: #07030a !important;
+        border: none;
+        border-radius: 50px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        padding: 1.2rem 2.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 20px rgba(197, 160, 89, 0.2);
+    }
+
+    .btn-premium-commit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(197, 160, 89, 0.4);
+        filter: brightness(1.1);
+    }
+
+    .badge-category {
+        background: rgba(235, 209, 151, 0.1);
+        color: #ebd197;
+        border: 1px solid rgba(235, 209, 151, 0.3);
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+</style>
+
+<div class="treasury-bg py-5">
+    <div class="container mt-4">
+        <!-- Header -->
+        <div class="mb-5">
+            <h1 class="script-font gold-shimmer mb-1" style="font-size: 4.5rem; text-shadow: 0 0 20px rgba(235, 209, 151, 0.2);">Treasury Ledger</h1>
+            <p class="text-white-50 lead ms-2" style="letter-spacing: 1.5px; text-transform: uppercase; font-size: 0.85rem;">Managing your artisan business overheads with precision</p>
         </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card bg-info text-white border-0 shadow-sm h-100">
-            <div class="card-body">
-                <h6 class="card-title opacity-75">This Month</h6>
-                <h3 class="fw-bold mb-0">₹{{ monthly_expenses }}</h3>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="row">
-    <!-- Add Expense Form -->
-    <div class="col-md-4 mb-4">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white py-3">
-                <h5 class="fw-bold mb-0">Add Expense</h5>
-            </div>
-            <div class="card-body">
-                <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-
-                    {% for field in form %}
-                    <div class="mb-3">
-                        <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.help_text %}
-                        <div class="form-text">{{ field.help_text }}</div>
-                        {% endif %}
-                        {% for error in field.errors %}
-                        <div class="text-danger small">{{ error }}</div>
-                        {% endfor %}
+        <!-- Summary Section -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-6">
+                <div class="stat-card-premium d-flex align-items-center">
+                    <div class="me-4">
+                        <i class="fas fa-vault fa-3x gold-shimmer opacity-50"></i>
                     </div>
-                    {% endfor %}
-
-                    <button type="submit" class="btn btn-primary w-100">Add Expense</button>
-                </form>
+                    <div>
+                        <h6 class="text-white-50 xsmall text-uppercase fw-bold mb-1" style="letter-spacing: 1.5px;">Lifetime Expenditure</h6>
+                        <h2 class="gold-num text-white fw-extra-bold mb-0" style="font-size: 2.5rem;">₹{{ total_expenses }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="stat-card-premium d-flex align-items-center">
+                    <div class="me-4">
+                        <i class="fas fa-calendar-check fa-3x gold-shimmer opacity-50"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-white-50 xsmall text-uppercase fw-bold mb-1" style="letter-spacing: 1.5px;">Fiscal Month Total</h6>
+                        <h2 class="gold-num text-white fw-extra-bold mb-0" style="font-size: 2.5rem;">₹{{ monthly_expenses }}</h2>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Expenses List -->
-    <div class="col-md-8">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white py-3">
-                <h5 class="fw-bold mb-0">Recent Expenses</h5>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="bg-light">
-                            <tr>
-                                <th class="ps-4">Date</th>
-                                <th>Category</th>
-                                <th>Description</th>
-                                <th>Amount</th>
-                                <th>Receipt</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for expense in expenses %}
-                            <tr>
-                                <td class="ps-4">{{ expense.expense_date|date:"M d, Y" }}</td>
-                                <td>
-                                    <span class="badge bg-light text-dark border">
-                                        {{ expense.get_category_display }}
-                                    </span>
-                                </td>
-                                <td>{{ expense.description|truncatechars:30 }}</td>
-                                <td class="fw-bold text-danger">-₹{{ expense.amount }}</td>
-                                <td>
-                                    {% if expense.receipt %}
-                                    <a href="{{ expense.receipt.url }}" target="_blank"
-                                        class="btn btn-sm btn-outline-secondary">
-                                        <i class="fas fa-file-invoice"></i> View
-                                    </a>
-                                    {% else %}
-                                    <span class="text-muted">-</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="5" class="text-center py-5">
-                                    <div class="text-muted">
-                                        <i class="fas fa-receipt fa-3x mb-3"></i>
-                                        <p>No expenses recorded yet.</p>
-                                    </div>
-                                </td>
-                            </tr>
+        <div class="row g-5">
+            <!-- Recording Form -->
+            <div class="col-lg-4">
+                <div class="luxury-input-group">
+                    <h3 class="script-font gold-shimmer mb-4" style="font-size: 2.5rem;">Record Outlay</h3>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        {% for field in form %}
+                        <div class="mb-4">
+                            <label for="{{ field.id_for_label }}" class="text-white-50 xsmall text-uppercase fw-bold d-block mb-2" style="letter-spacing: 1px;">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                            <div class="form-text text-white-50 small opacity-50">{{ field.help_text }}</div>
+                            {% endif %}
+                            {% for error in field.errors %}
+                            <div class="text-danger xsmall mt-1">{{ error }}</div>
                             {% endfor %}
-                        </tbody>
-                    </table>
+                        </div>
+                        {% endfor %}
+
+                        <button type="submit" class="btn-premium-commit w-100 mt-2">
+                            <i class="fas fa-signature me-2"></i>Commit Entry
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Ledger Table -->
+            <div class="col-lg-8">
+                <div class="stat-card-premium p-0 overflow-hidden">
+                    <div class="p-4 border-bottom border-white border-opacity-10 d-flex justify-content-between align-items-center">
+                        <h5 class="script-font gold-shimmer mb-0" style="font-size: 2rem;">Ledger Chronology</h5>
+                        <span class="badge-luxury py-1 px-3">Verified Financials</span>
+                    </div>
+                    <div class="table-responsive p-3">
+                        <table class="table table-luxury align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">Timestamp</th>
+                                    <th>Category</th>
+                                    <th>Designation</th>
+                                    <th>Valuation</th>
+                                    <th class="text-end pe-4">Manifest</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for expense in expenses %}
+                                <tr>
+                                    <td class="ps-4 gold-num text-white-50">{{ expense.expense_date|date:"M d, Y" }}</td>
+                                    <td>
+                                        <span class="badge-category">
+                                            {{ expense.get_category_display }}
+                                        </span>
+                                    </td>
+                                    <td class="text-white opacity-75 fw-bold">{{ expense.description|truncatechars:30 }}</td>
+                                    <td class="gold-num fw-bold" style="color: #ef4444; font-size: 1.1rem;">-₹{{ expense.amount }}</td>
+                                    <td class="text-end pe-4">
+                                        {% if expense.receipt %}
+                                        <a href="{{ expense.receipt.url }}" target="_blank"
+                                            class="btn-studio-outline py-1 px-3" style="font-size: 0.75rem; border-radius: 50px;">
+                                            <i class="fas fa-eye me-1"></i> Manifest
+                                        </a>
+                                        {% else %}
+                                        <span class="text-white-50 small opacity-25">UNAVAILABLE</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-5">
+                                        <div class="text-white-50 opacity-25 py-5">
+                                            <i class="fas fa-receipt fa-5x mb-4 gold-shimmer"></i>
+                                            <h3 class="script-font gold-shimmer" style="font-size: 3rem;">Treasury Vacant</h3>
+                                            <p class="lead">The ledger is currently clear. No outlays recorded.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    // Inject luxury classes into Django form widgets
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('input, select, textarea');
+        inputs.forEach(el => {
+            if (el.type !== 'checkbox' && el.type !== 'radio') {
+                el.classList.add('form-control-luxury');
+                el.classList.add('w-100');
+            }
+        });
+    });
+</script>
 {% endblock %}

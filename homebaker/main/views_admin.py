@@ -13,12 +13,12 @@ from datetime import timedelta, date
 from decimal import Decimal
 from .models import (
     User, UserProfile, BakerProfile, Cake, Order, Expense, Review,
-    Wallet, Notification, AuditLog, Coupon
+    Wallet, Notification, AuditLog, Coupon, Letter, NewsletterSubscriber
 )
 from .ai_utils import BusinessInsights
 from chatbot.service import ChatbotService
 from .views_auth import log_audit
-from .utils import send_approval_email, send_coupon_announcement
+from .utils import send_approval_email, send_coupon_announcement, send_ultra_premium_letter
 
 
 def is_admin(user):
@@ -776,3 +776,51 @@ def admin_delete_coupon(request, coupon_id):
         messages.error(request, 'This coupon does not exist or has already been deleted.')
     
     return redirect('admin_coupons')
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_letterbox(request):
+    """View sent letters and subscriber count"""
+    letters = Letter.objects.all().order_by('-sent_at')
+    subscribers_count = NewsletterSubscriber.objects.filter(is_active=True).count()
+    
+    context = {
+        'letters': letters,
+        'subscribers_count': subscribers_count,
+    }
+    return render(request, 'admin_letterbox.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_send_letter(request):
+    """Compose and broadcast a new letter to all subscribers"""
+    if request.method == 'POST':
+        subject = request.POST.get('subject')
+        content = request.POST.get('content')
+        
+        if not subject or not content:
+            messages.error(request, 'Subject and content are required.')
+            return redirect('admin_letterbox')
+            
+        try:
+            # Save to history
+            letter = Letter.objects.create(subject=subject, content=content)
+            
+            # Get active subscribers
+            subscribers = NewsletterSubscriber.objects.filter(is_active=True)
+            recipient_list = [s.email for s in subscribers]
+            
+            if recipient_list:
+                # Send premium email
+                send_ultra_premium_letter(recipient_list, subject, content)
+                messages.success(request, f'Premium Letter "{subject}" broadcasted to {len(recipient_list)} subscribers!')
+                log_audit(request.user, 'update', 'Letter', letter.id, f'Sent letter: {subject}', request)
+            else:
+                messages.warning(request, 'No active subscribers found. Letter saved to history but not sent.')
+                
+        except Exception as e:
+            messages.error(request, f'Error broadcasting letter: {str(e)}')
+            
+    return redirect('admin_letterbox')

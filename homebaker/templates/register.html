@@ -2,206 +2,345 @@
 {% block title %}Register{% endblock %}
 
 {% block content %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="text-center mb-4">
-            <h2 class="fw-bold mb-2" style="color: var(--text-primary);">Create Account</h2>
-            <p class="text-muted">Join us and start ordering delicious cakes</p>
-        </div>
+    .script-font {
+        font-family: 'Great Vibes', cursive;
+        font-weight: normal;
+        letter-spacing: 1px;
+    }
 
-        <div class="card border-0 shadow-sm p-4 p-md-5">
+    /* Background Globs matching Home */
+    .bg-glob-1 {
+        position: fixed;
+        top: -10%;
+        left: -10%;
+        width: 800px;
+        height: 800px;
+        background: radial-gradient(circle, rgba(108, 30, 180, 0.2) 0%, rgba(7, 3, 10, 0) 60%);
+        border-radius: 50%;
+        z-index: 0;
+        pointer-events: none;
+    }
 
-            <form method="POST" id="registerForm" enctype="multipart/form-data">
-                {% csrf_token %}
+    .bg-glob-2 {
+        position: fixed;
+        top: 40%;
+        right: -20%;
+        width: 900px;
+        height: 900px;
+        background: radial-gradient(circle, rgba(108, 30, 180, 0.15) 0%, rgba(7, 3, 10, 0) 60%);
+        border-radius: 50%;
+        z-index: 0;
+        pointer-events: none;
+    }
 
-                {% if form.non_field_errors %}
-                <div class="alert alert-danger">
-                    {% for error in form.non_field_errors %}
-                    {{ error }}
-                    {% endfor %}
-                </div>
-                {% endif %}
+    .content-wrapper {
+        position: relative;
+        z-index: 1;
+        padding-bottom: 5rem;
+    }
 
-                <!-- Full Name -->
-                <div class="mb-3">
-                    <label class="form-label fw-semibold mb-2">Full Name</label>
-                    {{ form.full_name }}
-                    {% if form.full_name.errors %}
-                    <div class="text-danger small">{{ form.full_name.errors }}</div>
-                    {% endif %}
-                </div>
+    .gold-text { color: #ebd197 !important; }
+    .text-muted-premium { color: #94a3b8 !important; }
 
+    /* Force dark theme */
+    body {
+        background-color: #07030a !important;
+        color: #ffffff !important;
+    }
 
-                <!-- Email -->
-                <div class="mb-3">
-                    <label class="form-label fw-semibold mb-2">Email Address</label>
-                    {{ form.email }}
-                    {% if form.email.errors %}
-                    <div class="text-danger small">{{ form.email.errors }}</div>
-                    {% endif %}
-                </div>
+    /* Premium Cards */
+    .premium-card {
+        background-color: rgba(30, 20, 40, 0.4) !important;
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(235, 209, 151, 0.15) !important;
+        border-radius: 20px;
+        color: #ffffff;
+        box-shadow: 0 15px 45px rgba(0,0,0,0.4);
+    }
 
-                <!-- Phone Number -->
-                <div class="mb-3">
-                    <label class="form-label fw-semibold mb-2">Phone Number</label>
-                    {{ form.phone_number }}
-                    {% if form.phone_number.errors %}
-                    <div class="text-danger small">{{ form.phone_number.errors }}</div>
-                    {% endif %}
-                </div>
+    /* Form Controls Override */
+    .form-control, .form-select {
+        background-color: rgba(0, 0, 0, 0.3) !important;
+        border: 1px solid rgba(235, 209, 151, 0.1) !important;
+        color: #ffffff !important;
+        padding: 0.75rem 1.25rem;
+        border-radius: 12px;
+    }
+    .form-control:focus, .form-select:focus {
+        background-color: rgba(0, 0, 0, 0.5) !important;
+        border-color: #ebd197 !important;
+        box-shadow: 0 0 0 0.25rem rgba(235, 209, 151, 0.1) !important;
+    }
+    .form-label {
+        color: #ebd197;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
 
-                <!-- Password -->
-                <div class="mb-3">
-                    <label class="form-label fw-semibold mb-2">Password</label>
-                    <div class="input-group">
-                        {{ form.password1 }}
-                        <button class="btn btn-outline-secondary d-flex align-items-center justify-content-center" type="button" id="togglePassword1" style="width: 45px;">
-                            <svg class="eye-open" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                <circle cx="12" cy="12" r="3"></circle>
-                                <line x1="12" y1="5" x2="12" y2="2"></line>
-                                <line x1="17.3" y1="6.7" x2="19" y2="4"></line>
-                                <line x1="6.7" y1="6.7" x2="5" y2="4"></line>
-                            </svg>
-                            <svg class="eye-closed" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                <line x1="3" y1="3" x2="21" y2="21"></line>
-                                <line x1="8" y1="16" x2="6" y2="19"></line>
-                                <line x1="12" y1="17" x2="12" y2="20"></line>
-                                <line x1="16" y1="16" x2="18" y2="19"></line>
-                            </svg>
-                        </button>
-                    </div>
-                    {% if form.password1.errors %}
-                    <div class="text-danger small">{{ form.password1.errors }}</div>
-                    {% endif %}
-                </div>
+    .btn-theme-purple {
+        background: linear-gradient(135deg, #4a1c6a, #2b1040);
+        color: white;
+        border: 1px solid rgba(235, 209, 151, 0.3);
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(74, 28, 106, 0.4);
+        font-weight: 600;
+        padding: 0.8rem;
+    }
+    .btn-theme-purple:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(74, 28, 106, 0.6);
+        border-color: #ebd197;
+        color: white;
+    }
+    .btn-theme-purple:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
 
-                <div class="mb-3">
-                    <label class="form-label fw-semibold mb-2">Confirm Password</label>
-                    <div class="input-group">
-                        {{ form.password2 }}
-                        <button class="btn btn-outline-secondary" type="button" id="togglePassword2">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                    {% if form.password2.errors %}
-                    <div class="text-danger small">{{ form.password2.errors }}</div>
-                    {% endif %}
-                </div>
+    .btn-outline-gold {
+        background: transparent;
+        color: #ebd197;
+        border: 1px solid #ebd197;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+    }
+    .btn-outline-gold:hover {
+        background: rgba(235, 209, 151, 0.1);
+        color: #ffffff;
+    }
 
-                <!-- Role -->
-                <div class="mb-4">
-                    <label class="form-label fw-semibold mb-2">Register As</label>
-                    <div class="d-flex gap-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="role" id="role_customer" value="customer"
-                                checked>
-                            <label class="form-check-label" for="role_customer">
-                                Customer
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="role" id="role_baker" value="baker">
-                            <label class="form-check-label" for="role_baker">
-                                Baker
-                            </label>
-                        </div>
-                    </div>
-                    {% if form.role.errors %}
-                    <div class="text-danger small">{{ form.role.errors }}</div>
-                    {% endif %}
-                </div>
+    .form-check-input:checked {
+        background-color: #4a1c6a;
+        border-color: #ebd197;
+    }
 
-                <!-- Baker Fields (Hidden by default) -->
-                <div id="bakerFields" style="display: none;">
-                    <h5 class="mb-3 text-primary border-bottom pb-2">Baker Details</h5>
+    .baker-fields-wrapper {
+        background: rgba(235, 209, 151, 0.03);
+        border: 1px solid rgba(235, 209, 151, 0.1);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
 
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold mb-2">Shop Name</label>
-                        {{ form.shop_name }}
-                        {% if form.shop_name.errors %}
-                        <div class="text-danger small">{{ form.shop_name.errors }}</div>
-                        {% endif %}
-                    </div>
+    .baker-details-header {
+        color: #ebd197;
+        font-family: 'Great Vibes', cursive;
+        font-size: 2.5rem;
+        border-bottom: 1px solid rgba(235, 209, 151, 0.1);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .btn-toggle-eye {
+        background-color: rgba(235, 209, 151, 0.1) !important;
+        border-color: rgba(235, 209, 151, 0.1) !important;
+        color: #ebd197 !important;
+        border-radius: 0 12px 12px 0 !important;
+        border-left: none !important;
+    }
+</style>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold mb-2">Shop Address</label>
-                        {{ form.address }}
-                        {% if form.address.errors %}
-                        <div class="text-danger small">{{ form.address.errors }}</div>
-                        {% endif %}
-                    </div>
+<div class="bg-glob-1"></div>
+<div class="bg-glob-2"></div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold mb-2">City</label>
-                            {{ form.city }}
-                            {% if form.city.errors %}
-                            <div class="text-danger small">{{ form.city.errors }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold mb-2">Pincode</label>
-                            {{ form.pincode }}
-                            {% if form.pincode.errors %}
-                            <div class="text-danger small">{{ form.pincode.errors }}</div>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold mb-2">FSSAI License Number</label>
-                        {{ form.license_number }}
-                        {% if form.license_number.errors %}
-                        <div class="text-danger small">{{ form.license_number.errors }}</div>
-                        {% endif %}
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold mb-2">FSSAI Certificate Image</label>
-                        {{ form.fssai_certificate }}
-                        {% if form.fssai_certificate.errors %}
-                        <div class="text-danger small">{{ form.fssai_certificate.errors }}</div>
-                        {% endif %}
-                        <div class="form-text text-muted mb-3">Upload your FSSAI certificate (Image only)</div>
-                        
-                        <!-- Verify Button -->
-                        <div class="d-flex align-items-center gap-3">
-                            <button type="button" id="btnVerifyFssai" class="btn btn-outline-primary btn-sm px-4">
-                                <i class="fas fa-check-circle me-1"></i> Verify Certificate
-                            </button>
-                            <div id="fssaiStatus" class="small fw-semibold"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Submit -->
-                <button type="submit" id="btnRegister" class="btn btn-primary w-100 btn-lg">
-                    Register
-                </button>
-            </form>
-
-            <div class="text-center mt-4">
-                <small class="text-muted">
-                    Already have an account? <a href="{% url 'login' %}" class="text-decoration-none">Login here</a>
-                </small>
+<div class="content-wrapper">
+    <div class="row justify-content-center pt-5">
+        <div class="col-md-7">
+            <div class="text-center mb-5">
+                <h2 class="script-font gold-text" style="font-size: 4rem; text-shadow: 0 0 15px rgba(235, 209, 151, 0.2);">Create Account</h2>
+                <p class="text-muted-premium" style="letter-spacing: 1px;">JOIN US AND START ORDERING DELICIOUS CAKES</p>
             </div>
 
+            <div class="card premium-card border-0 p-4 p-md-5">
+                <form method="POST" id="registerForm" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger bg-danger bg-opacity-25 border-0 text-white mb-4">
+                        {% for error in form.non_field_errors %}
+                        <i class="fas fa-exclamation-circle me-2"></i> {{ error }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="row g-4">
+                        <!-- Full Name -->
+                        <div class="col-md-6">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="full_name" class="form-control" placeholder="Enter your full name" required value="{{ form.full_name.value|default:'' }}">
+                            {% if form.full_name.errors %}
+                            <div class="text-danger small mt-1">{{ form.full_name.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Email -->
+                        <div class="col-md-6">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" name="email" class="form-control" placeholder="Enter your email" required value="{{ form.email.value|default:'' }}">
+                            {% if form.email.errors %}
+                            <div class="text-danger small mt-1">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div class="col-md-12">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" name="phone_number" class="form-control" placeholder="Enter phone number" required value="{{ form.phone_number.value|default:'' }}">
+                            {% if form.phone_number.errors %}
+                            <div class="text-danger small mt-1">{{ form.phone_number.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Password -->
+                        <div class="col-md-6">
+                            <label class="form-label">Password</label>
+                            <div class="input-group">
+                                <input type="password" name="password1" id="id_password1" class="form-control" style="border-radius: 12px 0 0 12px !important;" required>
+                                <button class="btn btn-toggle-eye d-flex align-items-center justify-content-center" type="button" id="togglePassword1" style="width: 45px;">
+                                    <i class="fas fa-eye eye-open"></i>
+                                    <i class="fas fa-eye-slash eye-closed" style="display:none;"></i>
+                                </button>
+                            </div>
+                            {% if form.password1.errors %}
+                            <div class="text-danger small mt-1">{{ form.password1.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Confirm Password</label>
+                            <div class="input-group">
+                                <input type="password" name="password2" id="id_password2" class="form-control" style="border-radius: 12px 0 0 12px !important;" required>
+                                <button class="btn btn-toggle-eye d-flex align-items-center justify-content-center" type="button" id="togglePassword2" style="width: 45px;">
+                                    <i class="fas fa-eye eye-open"></i>
+                                    <i class="fas fa-eye-slash eye-closed" style="display:none;"></i>
+                                </button>
+                            </div>
+                            {% if form.password2.errors %}
+                            <div class="text-danger small mt-1">{{ form.password2.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Role -->
+                        <div class="col-md-12">
+                            <label class="form-label gold-text d-block mb-3">Register As</label>
+                            <div class="d-flex gap-5">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="role" id="role_customer" value="customer"
+                                        checked>
+                                    <label class="form-check-label text-white" for="role_customer">
+                                        Customer
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="role" id="role_baker" value="baker">
+                                    <label class="form-check-label text-white" for="role_baker">
+                                        Baker
+                                    </label>
+                                </div>
+                            </div>
+                            {% if form.role.errors %}
+                            <div class="text-danger small mt-1">{{ form.role.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Baker Fields (Hidden by default) -->
+                    <div id="bakerFields" style="display: none;">
+                        <div class="baker-fields-wrapper">
+                            <h5 class="baker-details-header">Baker Details</h5>
+
+                            <div class="mb-4">
+                                <label class="form-label">Shop Name</label>
+                                <input type="text" name="shop_name" class="form-control" placeholder="Enter shop name" value="{{ form.shop_name.value|default:'' }}">
+                                {% if form.shop_name.errors %}
+                                <div class="text-danger small mt-1">{{ form.shop_name.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">Shop Address</label>
+                                <textarea name="address" class="form-control" placeholder="Enter shop address" rows="2">{{ form.address.value|default:'' }}</textarea>
+                                {% if form.address.errors %}
+                                <div class="text-danger small mt-1">{{ form.address.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="row g-4 mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label">City</label>
+                                    <input type="text" name="city" class="form-control" placeholder="Enter city" value="{{ form.city.value|default:'' }}">
+                                    {% if form.city.errors %}
+                                    <div class="text-danger small mt-1">{{ form.city.errors }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Pincode</label>
+                                    <input type="text" name="pincode" class="form-control" placeholder="Enter pincode" value="{{ form.pincode.value|default:'' }}">
+                                    {% if form.pincode.errors %}
+                                    <div class="text-danger small mt-1">{{ form.pincode.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">FSSAI License Number</label>
+                                <input type="text" name="license_number" class="form-control" placeholder="Enter 14-digit license number" value="{{ form.license_number.value|default:'' }}">
+                                {% if form.license_number.errors %}
+                                <div class="text-danger small mt-1">{{ form.license_number.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">FSSAI Certificate Image</label>
+                                <div class="custom-file-upload">
+                                    <input type="file" name="fssai_certificate" class="form-control" accept="image/*">
+                                </div>
+                                {% if form.fssai_certificate.errors %}
+                                <div class="text-danger small mt-1">{{ form.fssai_certificate.errors }}</div>
+                                {% endif %}
+                                <div class="form-text text-muted-premium small mb-4 mt-2">Upload your FSSAI certificate (Image only)</div>
+                                
+                                <!-- Verify Button -->
+                                <div class="d-flex align-items-center flex-wrap gap-3">
+                                    <button type="button" id="btnVerifyFssai" class="btn btn-outline-gold btn-sm px-4 py-2">
+                                        <i class="fas fa-check-circle me-1"></i> Verify Certificate
+                                    </button>
+                                    <div id="fssaiStatus" class="small fw-semibold"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit" id="btnRegister" class="btn btn-theme-purple w-100 btn-lg mt-4">
+                        <i class="fas fa-user-plus me-2"></i> Register
+                    </button>
+                </form>
+
+                <div class="text-center mt-5">
+                    <p class="text-muted-premium mb-0">
+                        Already have an account? <a href="{% url 'login' %}" class="gold-text fw-bold text-decoration-none ms-1">Login here</a>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Role toggle logic
         const roleRadios = document.querySelectorAll('input[name="role"]');
         const bakerFields = document.getElementById('bakerFields');
         const btnRegister = document.getElementById('btnRegister');
+        const licenseInput = document.querySelector('input[name="license_number"]');
+        const certInput = document.querySelector('input[name="fssai_certificate"]');
         
-        // Verification State
         let isFssaiVerified = false;
 
         function updateSubmitButton() {
@@ -220,14 +359,12 @@
         }
 
         function toggleBakerFields() {
-            if (bakerFields) {
-                // Find checked radio
-                const checkedRadio = document.querySelector('input[name="role"]:checked');
-                if (checkedRadio && checkedRadio.value === 'baker') {
-                    bakerFields.style.display = 'block';
-                } else {
-                    bakerFields.style.display = 'none';
-                }
+            const checkedRadio = document.querySelector('input[name="role"]:checked');
+            if (checkedRadio && checkedRadio.value === 'baker') {
+                bakerFields.style.display = 'block';
+                bakerFields.style.animation = 'fadeIn 0.5s ease-out';
+            } else {
+                bakerFields.style.display = 'none';
             }
             updateSubmitButton();
         }
@@ -236,30 +373,23 @@
             radio.addEventListener('change', toggleBakerFields);
         });
 
-        // Run on load
         toggleBakerFields();
 
-        // Reset verification if inputs change
-        const licenseInput = document.querySelector('input[name="license_number"]');
-        const certInput = document.querySelector('input[name="fssai_certificate"]');
-        
         [licenseInput, certInput].forEach(input => {
             if (input) {
                 input.addEventListener('change', () => {
                     isFssaiVerified = false;
                     const fssaiStatus = document.getElementById('fssaiStatus');
                     if (fssaiStatus && fssaiStatus.innerText.includes('Completed')) {
-                        fssaiStatus.innerHTML = '<span class="text-warning small">Details changed. Please re-verify.</span>';
+                        fssaiStatus.innerHTML = '<span class="text-warning small"><i class="fas fa-exclamation-triangle me-1"></i> Details changed. Re-verify.</span>';
                     }
                     updateSubmitButton();
                 });
             }
         });
 
-        // Password toggle logic
         function setupPasswordToggle(inputId, toggleId) {
             const toggleBtn = document.getElementById(toggleId);
-            // Django renders the input with id="id_<fieldname>"
             const passwordInput = document.getElementById(inputId);
 
             if (toggleBtn && passwordInput) {
@@ -284,21 +414,19 @@
         setupPasswordToggle('id_password1', 'togglePassword1');
         setupPasswordToggle('id_password2', 'togglePassword2');
 
-        // FSSAI AJAX Verification
         const btnVerify = document.getElementById('btnVerifyFssai');
         const fssaiStatus = document.getElementById('fssaiStatus');
 
         if (btnVerify) {
             btnVerify.addEventListener('click', async function() {
                 if (!licenseInput.value || certInput.files.length === 0) {
-                    fssaiStatus.innerHTML = '<span class="text-warning">Please enter license number and upload image first.</span>';
+                    fssaiStatus.innerHTML = '<span class="text-warning small"><i class="fas fa-info-circle me-1"></i> Enter license and upload image.</span>';
                     return;
                 }
 
-                // UI Loading State
                 btnVerify.disabled = true;
-                btnVerify.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Verifying...';
-                fssaiStatus.innerHTML = '<span class="text-muted">Analyzing certificate with AI...</span>';
+                btnVerify.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Verifying...';
+                fssaiStatus.innerHTML = '<span class="text-muted-premium small">Analyzing with AI...</span>';
 
                 const formData = new FormData();
                 formData.append('license_number', licenseInput.value);
@@ -308,23 +436,20 @@
                     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
                     const response = await fetch('/ajax-verify-fssai/', {
                         method: 'POST',
-                        headers: {
-                            'X-CSRFToken': csrfToken
-                        },
+                        headers: { 'X-CSRFToken': csrfToken },
                         body: formData
                     });
                     const data = await response.json();
 
                     if (data.status === 'success') {
-                        fssaiStatus.innerHTML = '<span class="text-success"><i class="fas fa-check-double me-1"></i> ' + data.message + '</span>';
+                        fssaiStatus.innerHTML = '<span class="text-success small"><i class="fas fa-check-double me-1"></i> ' + data.message + '</span>';
                         isFssaiVerified = true;
                     } else {
-                        // Display the exact message passed from backend for debugging
-                        fssaiStatus.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle me-1"></i> ' + data.message + '</span>';
+                        fssaiStatus.innerHTML = '<span class="text-danger small"><i class="fas fa-times-circle me-1"></i> ' + data.message + '</span>';
                         isFssaiVerified = false;
                     }
                 } catch (error) {
-                    fssaiStatus.innerHTML = '<span class="text-danger">Error connecting to server. Detail: ' + error.message + '</span>';
+                    fssaiStatus.innerHTML = '<span class="text-danger small">Error: ' + error.message + '</span>';
                     isFssaiVerified = false;
                 } finally {
                     btnVerify.disabled = false;
@@ -335,4 +460,10 @@
         }
     });
 </script>
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
 {% endblock %}

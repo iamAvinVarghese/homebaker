@@ -4,6 +4,7 @@ Includes: Home, Cake listing, Cart, Order placement, Tracking, Reviews, Wallet
 """
 
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q, Count, Avg
@@ -18,13 +19,27 @@ from datetime import date, timedelta, datetime
 from decimal import Decimal
 from .models import (
     Cake, Order, OrderItem, UserProfile, Review, Wallet, Notification,
-    CakeSize, CustomCakeRequest, BakerProfile, Coupon
+    CakeSize, CustomCakeRequest, BakerProfile, Coupon, NewsletterSubscriber
 )
 from .forms import CakeSearchForm, ReviewForm, WalletRechargeForm, WalletWithdrawForm
 from .ai_utils import RecommendationEngine
 from . import ml_pricing
 
 
+def subscribe_newsletter(request):
+    """AJAX view to subscribe to the newsletter/letterbox"""
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        if email:
+            subscriber, created = NewsletterSubscriber.objects.get_or_create(email=email)
+            if created:
+                return JsonResponse({'status': 'success', 'message': 'Successfully subscribed to the Letterbox! 💌'})
+            else:
+                return JsonResponse({'status': 'info', 'message': 'You are already on our sweet list! ✨'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request.'})
+
+
+@ensure_csrf_cookie
 def home(request):
     """Home page with featured cakes and recommendations"""
     # Redirect authenticated customers to their dedicated home page
@@ -82,6 +97,7 @@ def faq(request):
 
 
 
+@ensure_csrf_cookie
 @login_required
 def customer_home(request):
     """Personalized home page for logged-in customers"""

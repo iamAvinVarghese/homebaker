@@ -507,6 +507,34 @@ class Notification(models.Model):
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     
+    def get_target_url(self):
+        """Returns the appropriate URL for this notification based on user role and context"""
+        from django.urls import reverse
+        
+        # Priority 1: Specific Order links
+        if self.order:
+            if self.user.profile.role == 'baker':
+                return reverse('baker_orders')
+            elif self.user.profile.role == 'delivery_assistant':
+                return reverse('delivery_dashboard')
+            else:
+                return reverse('order_tracking', kwargs={'order_id': self.order.order_id})
+        
+        # Priority 2: Custom Request links
+        if "custom_request" in self.notification_type:
+            if self.user.profile.role == 'baker':
+                return reverse('baker_custom_requests')
+            else:
+                return reverse('my_custom_requests')
+        
+        # Priority 3: Fallback based on role
+        if self.user.profile.role == 'baker':
+            return reverse('baker_dashboard')
+        elif self.user.profile.role == 'customer':
+            return reverse('my_orders')
+        
+        return reverse('notifications')
+
     def __str__(self):
         return f"{self.user.username} - {self.title}"
     
@@ -592,7 +620,7 @@ class CustomCakeRequest(models.Model):
     request_type = models.CharField(max_length=10, choices=REQUEST_TYPES)
     
     # Common fields
-    reference_image = models.ImageField(upload_to='custom_requests/') 
+    reference_image = models.ImageField(upload_to='custom_requests/', blank=True, null=True) 
     description = models.TextField()
     flavor = models.CharField(max_length=100, blank=True, null=True)
     size = models.CharField(max_length=100, blank=True, null=True)
@@ -706,4 +734,33 @@ class Coupon(models.Model):
     class Meta:
         verbose_name = "Coupon"
         verbose_name_plural = "Coupons"
+
+
+# Newsletter Subscriber Model
+class NewsletterSubscriber(models.Model):
+    email = models.EmailField(unique=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.email
+
+    class Meta:
+        verbose_name = "Newsletter Subscriber"
+        verbose_name_plural = "Newsletter Subscribers"
+
+
+# Letter Model (Admin Announcements)
+class Letter(models.Model):
+    subject = models.CharField(max_length=200)
+    content = models.TextField()
+    sent_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.subject
+
+    class Meta:
+        verbose_name = "Admin Letter"
+        verbose_name_plural = "Admin Letters"
+        ordering = ['-sent_at']
 

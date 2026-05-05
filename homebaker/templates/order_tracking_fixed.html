@@ -1,162 +1,304 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Order Tracking #{{ order.order_id }}{% endblock %}
+{% block title %}Order Manifesto | #{{ order.order_id }}{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold mb-0">Order Tracking</h2>
-            <span class="badge bg-primary fs-6">{{ order.get_status_display }}</span>
+<div class="tracking-premium-wrapper py-5">
+    <div class="container">
+        <!-- Header -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5 gap-3">
+            <div>
+                <h1 class="script-font gold-shimmer display-4 mb-0">Order Manifesto</h1>
+                <p class="text-white-50 text-uppercase letter-spacing-2 small mb-0">Tracing the Artisan Journey of #{{ order.order_id }}</p>
+            </div>
+            <div class="status-badge-luxury px-4 py-2">
+                <span class="gold-shimmer fw-bold text-uppercase xsmall">{{ order.get_status_display }}</span>
+            </div>
         </div>
 
-        <!-- Order Status Timeline -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body p-4">
-                <h5 class="card-title fw-bold mb-4">Status Timeline</h5>
-                <div class="timeline">
-                    {% for event in timeline %}
-                    <div class="timeline-item pb-4 ps-4 border-start {% if forloop.last %}border-start-0{% endif %} position-relative">
-                        <div class="position-absolute top-0 start-0 translate-middle rounded-circle 
-                            {% if event.is_error %}bg-danger
-                            {% elif event.is_current %}bg-primary pulse-animation
-                            {% elif event.is_completed %}bg-success
-                            {% else %}bg-light border{% endif %}"
-                            style="width: 16px; height: 16px; z-index: 2;">
-                            {% if event.is_completed and not event.is_current and not event.is_error %}
-                            <i class="fas fa-check text-white" style="font-size: 8px; position: absolute; top: 4px; left: 4px;"></i>
+        <div class="row g-4">
+            <!-- Left: Timeline -->
+            <div class="col-lg-7">
+                <div class="luxury-card p-4 p-md-5 h-100">
+                    <h3 class="script-font gold-shimmer mb-5"><i class="fas fa-stream me-3 small"></i>Status Chronology</h3>
+                    
+                    <div class="luxury-timeline ps-2">
+                        {% for event in timeline %}
+                        <div class="timeline-entry position-relative pb-5 ps-5">
+                            <!-- Timeline Line -->
+                            {% if not forloop.last %}
+                            <div class="timeline-connector"></div>
                             {% endif %}
-                        </div>
-                        <div class="{% if not event.is_completed %}text-muted{% endif %}">
-                            <p class="mb-1 fw-bold">
-                                {{ event.status }}
-                                {% if event.is_current %}
-                                <span class="badge rounded-pill bg-primary ms-2" style="font-size: 0.6rem;">Current</span>
+
+                            <!-- Timeline Node -->
+                            <div class="timeline-node {% if event.is_completed %}completed{% endif %} {% if event.is_current %}active{% endif %}">
+                                {% if event.is_completed and not event.is_current %}
+                                <i class="fas fa-check"></i>
+                                {% elif event.status == 'Order Placed' %}
+                                <i class="fas fa-receipt"></i>
+                                {% elif event.status == 'Confirmed' %}
+                                <i class="fas fa-check-circle"></i>
+                                {% elif event.status == 'Baking' %}
+                                <i class="fas fa-mortar-pestle"></i>
+                                {% elif event.status == 'Packing' %}
+                                <i class="fas fa-box-open"></i>
+                                {% elif event.status == 'Out for Delivery' %}
+                                <i class="fas fa-shipping-fast"></i>
+                                {% elif event.status == 'Delivered' %}
+                                <i class="fas fa-home"></i>
+                                {% else %}
+                                <i class="fas fa-dot-circle"></i>
                                 {% endif %}
-                            </p>
-                            {% if event.time %}
-                            <small class="{% if event.is_completed %}text-muted{% else %}text-muted-light{% endif %}">
-                                {{ event.time|date:"M d, Y, h:i A" }}
-                            </small>
-                            {% else %}
-                            <small class="text-muted opacity-50 italic">Awaiting completion...</small>
-                            {% endif %}
+                            </div>
+
+                            <div class="entry-content">
+                                <h5 class="mb-1 {% if event.is_completed %}text-white{% else %}text-white-50{% endif %} fw-bold">
+                                    {{ event.status }}
+                                    {% if event.is_current %}
+                                    <span class="badge-active-glow ms-2">Current Stage</span>
+                                    {% endif %}
+                                </h5>
+                                {% if event.time %}
+                                <p class="gold-shimmer xsmall mb-0 opacity-75">
+                                    <i class="far fa-clock me-1"></i> {{ event.time|date:"M d, Y" }} | {{ event.time|date:"h:i A" }}
+                                </p>
+                                {% else %}
+                                <p class="text-white-50 xsmall italic mb-0 opacity-50">Awaiting artisan completion...</p>
+                                {% endif %}
+                            </div>
                         </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
-                </div>
-
-                <style>
-                .timeline-item.border-start {
-                    border-left: 2px solid #e9ecef !important;
-                }
-                .bg-success { background-color: #28a745 !important; }
-                .bg-light.border { border: 2px solid #dee2e6 !important; }
-                
-                @keyframes pulse {
-                    0% { box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.4); }
-                    70% { box-shadow: 0 0 0 10px rgba(13, 110, 253, 0); }
-                    100% { box-shadow: 0 0 0 0 rgba(13, 110, 253, 0); }
-                }
-                .pulse-animation {
-                    animation: pulse 2s infinite;
-                }
-                .italic { font-style: italic; }
-                </style>
-            </div>
-        </div>
-
-        <!-- Order Details -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-header bg-white py-3">
-                <div class="d-flex justify-content-between">
-                    <span class="fw-bold text-dark">Order ID: {{ order.order_id }}</span>
-                    <span class="text-muted">{{ order.created_at|date:"M d, Y" }}</span>
                 </div>
             </div>
-            <div class="card-body p-4">
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <h6 class="fw-bold mb-2">Delivery Address</h6>
-                        <p class="text-muted mb-0">{{ order.delivery_address }}</p>
-                    </div>
-                    <div class="col-md-6 text-md-end">
-                        <h6 class="fw-bold mb-2">Payment Info</h6>
-                        <p class="text-muted mb-1">Method: {{ order.get_payment_method_display }}</p>
-                        <p class="text-muted mb-0">Status:
-                            <span
-                                class="badge {% if order.payment_status == 'paid' %}bg-success{% else %}bg-warning{% endif %}">
+
+            <!-- Right: Details -->
+            <div class="col-lg-5">
+                <div class="luxury-card p-4 mb-4">
+                    <h3 class="script-font gold-shimmer mb-4 border-bottom border-gold-subtle pb-3">Artisan Details</h3>
+                    
+                    <div class="row g-4 mb-4">
+                        <div class="col-6">
+                            <span class="d-block xsmall text-uppercase letter-spacing-1 text-white-50 mb-1">Dispatch To</span>
+                            <p class="text-white small mb-0">{{ order.delivery_address }}</p>
+                        </div>
+                        <div class="col-6 text-end">
+                            <span class="d-block xsmall text-uppercase letter-spacing-1 text-white-50 mb-1">Treasury Status</span>
+                            <span class="badge-luxury-status {% if order.payment_status == 'paid' %}paid{% else %}pending{% endif %}">
                                 {{ order.get_payment_status_display }}
                             </span>
-                        </p>
+                        </div>
+                    </div>
+
+                    <div class="manifesto-items border-top border-gold-subtle pt-4">
+                        <h6 class="gold-shimmer xsmall text-uppercase fw-bold mb-3 letter-spacing-2">Selection Manifesto</h6>
+                        {% for item in order.items.all %}
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="item-visual me-3">
+                                {% if item.cake.image %}
+                                <img src="{{ item.cake.image.url }}" alt="{{ item.cake.name }}">
+                                {% elif item.cake.image_url %}
+                                <img src="{{ item.cake.image_url }}" alt="{{ item.cake.name }}">
+                                {% else %}
+                                <div class="placeholder-visual"><i class="fas fa-birthday-cake"></i></div>
+                                {% endif %}
+                            </div>
+                            <div class="flex-grow-1">
+                                <span class="d-block text-white fw-bold mb-1">{{ item.cake.name }}</span>
+                                <div class="d-flex gap-3 text-white-50 xsmall">
+                                    <span><i class="fas fa-weight-hanging me-1 gold-shimmer"></i>{{ item.quantity }} kg</span>
+                                    <span><i class="fas fa-utensils me-1 gold-shimmer"></i>{{ item.cake.flavor|title }}</span>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <span class="gold-shimmer fw-bold">₹{{ item.subtotal }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="financial-manifesto border-top border-gold-subtle pt-3 mt-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-white-50 xsmall">Creation Subtotal</span>
+                            <span class="text-white small">₹{{ order.subtotal }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-white-50 xsmall">Concierge Dispatch</span>
+                            <span class="text-white small">₹{{ order.delivery_charge }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mt-4 pt-3 border-top border-gold border-2">
+                            <span class="h5 gold-shimmer script-font">Total Investment</span>
+                            <span class="h5 gold-shimmer fw-bold">₹{{ order.total_amount }}</span>
+                        </div>
                     </div>
                 </div>
 
-                <hr>
-
-                <h6 class="fw-bold mb-3">Order Items</h6>
-                {% for item in order.items.all %}
-                <div class="d-flex align-items-center mb-3">
-                    <div style="width: 60px; height: 60px;" class="flex-shrink-0 rounded overflow-hidden">
-                        {% if item.cake.image %}
-                        <img src="{{ item.cake.image.url }}" class="w-100 h-100 object-fit-cover"
-                            alt="{{ item.cake.name }}">
-                        {% elif item.cake.image_url %}
-                        <img src="{{ item.cake.image_url }}" class="w-100 h-100 object-fit-cover"
-                            alt="{{ item.cake.name }}">
-                        {% else %}
-                        <div class="w-100 h-100 bg-light d-flex align-items-center justify-content-center">
-                            <i class="fas fa-birthday-cake text-muted"></i>
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="ms-3 flex-grow-1">
-                        <h6 class="mb-0 fw-bold">{{ item.cake.name }}</h6>
-                        <div class="small text-muted mt-1">
-                            <span class="me-2"><i class="fas fa-utensils me-1 text-primary"></i> {{ item.cake.flavor|title }}</span>
-                            <span><i class="fas fa-weight-hanging me-1 text-primary"></i> {{ item.quantity }} kg</span>
-                        </div>
-                        {% if item.message_on_cake %}
-                        <div class="small text-primary mt-1">
-                            <i class="fas fa-quote-left me-1 opacity-50"></i> {{ item.message_on_cake }}
-                        </div>
-                        {% endif %}
-                        {% if item.cake.name|slice:":21" == "Custom Cake Request #" %}
-                        <div class="mt-2 p-2 bg-light rounded small text-secondary border-start border-3 border-primary">
-                            <strong><i class="fas fa-info-circle me-1"></i> Special Instructions:</strong><br>
-                            {{ item.cake.description }}
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="text-end">
-                        <span class="fw-bold">₹{{ item.subtotal }}</span>
-                    </div>
-                </div>
-                {% endfor %}
-
-                <hr>
-
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="text-muted">Subtotal</span>
-                    <span>₹{{ order.subtotal }}</span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="text-muted">Delivery Charge</span>
-                    <span>₹{{ order.delivery_charge }}</span>
-                </div>
-                <div class="d-flex justify-content-between fw-bold fs-5 mt-3 pt-3 border-top">
-                    <span>Total Amount</span>
-                    <span class="text-primary">₹{{ order.total_amount }}</span>
+                <!-- Actions -->
+                <div class="d-flex gap-3">
+                    <a href="{% url 'cakes' %}" class="btn-luxury-outline flex-grow-1 text-center py-3">
+                        <i class="fas fa-shopping-bag me-2"></i> Gallery
+                    </a>
+                    {% if order.status == 'delivered' %}
+                    <a href="{% url 'add_review' order.order_id %}" class="btn-luxury-gold flex-grow-1 text-center py-3">
+                        <i class="fas fa-star me-2"></i> Review
+                    </a>
+                    {% endif %}
                 </div>
             </div>
-        </div>
-
-        <div class="text-center">
-            <a href="{% url 'cakes' %}" class="btn btn-outline-primary">Continue Shopping</a>
-            {% if order.status == 'delivered' %}
-            <a href="{% url 'add_review' order.order_id %}" class="btn btn-primary ms-2">Write a Review</a>
-            {% endif %}
         </div>
     </div>
 </div>
+
+<style>
+    .tracking-premium-wrapper {
+        background: #07030a;
+        min-height: 100vh;
+        color: #fff;
+    }
+
+    .luxury-card {
+        background: rgba(15, 10, 20, 0.65);
+        backdrop-filter: blur(45px);
+        -webkit-backdrop-filter: blur(45px);
+        border: 1px solid rgba(235, 209, 151, 0.2);
+        border-radius: 35px;
+        box-shadow: 0 25px 80px rgba(0,0,0,0.8);
+    }
+
+    .border-gold-subtle { border-color: rgba(235, 209, 151, 0.1) !important; }
+
+    /* Badges */
+    .status-badge-luxury {
+        background: rgba(235, 209, 151, 0.1);
+        border: 1px solid rgba(235, 209, 151, 0.3);
+        border-radius: 50px;
+        box-shadow: inset 0 0 15px rgba(235, 209, 151, 0.05);
+    }
+
+    .badge-active-glow {
+        background: rgba(235, 209, 151, 0.2);
+        color: #ebd197;
+        font-size: 0.6rem;
+        padding: 2px 8px;
+        border-radius: 50px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border: 1px solid rgba(235, 209, 151, 0.4);
+        animation: active-pulse 2s infinite;
+    }
+
+    @keyframes active-pulse {
+        0% { box-shadow: 0 0 0 0 rgba(235, 209, 151, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(235, 209, 151, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(235, 209, 151, 0); }
+    }
+
+    .badge-luxury-status {
+        padding: 4px 12px;
+        border-radius: 8px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+    .badge-luxury-status.paid { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+    .badge-luxury-status.pending { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2); }
+
+    /* Timeline */
+    .luxury-timeline { position: relative; }
+    
+    .timeline-connector {
+        position: absolute;
+        left: 17px;
+        top: 40px;
+        width: 2px;
+        height: 100%;
+        background: linear-gradient(180deg, #ebd197 0%, rgba(235, 209, 151, 0.1) 100%);
+        z-index: 1;
+    }
+
+    .timeline-node {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 36px;
+        height: 36px;
+        background: rgba(15, 10, 20, 0.8);
+        border: 2px solid rgba(235, 209, 151, 0.3);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(235, 209, 151, 0.4);
+        z-index: 2;
+        font-size: 0.9rem;
+        transition: all 0.4s ease;
+    }
+
+    .timeline-node.completed {
+        background: #ebd197;
+        color: #07030a;
+        border-color: #ebd197;
+        box-shadow: 0 0 15px rgba(235, 209, 151, 0.4);
+    }
+
+    .timeline-node.active {
+        border-color: #ebd197;
+        color: #ebd197;
+        background: rgba(235, 209, 151, 0.1);
+        box-shadow: 0 0 25px rgba(235, 209, 151, 0.3);
+        animation: node-pulse 2s infinite;
+    }
+
+    @keyframes node-pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    /* Items */
+    .item-visual {
+        width: 55px;
+        height: 55px;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid rgba(235, 209, 151, 0.2);
+    }
+    .item-visual img { width: 100%; height: 100%; object-fit: cover; }
+    .placeholder-visual {
+        width: 100%; height: 100%; background: rgba(255, 255, 255, 0.05);
+        display: flex; align-items: center; justify-content: center; color: #ebd197;
+    }
+
+    /* Buttons */
+    .btn-luxury-outline {
+        border: 1px solid rgba(235, 209, 151, 0.4);
+        color: #ebd197;
+        border-radius: 15px;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    .btn-luxury-outline:hover {
+        background: rgba(235, 209, 151, 0.1);
+        border-color: #ebd197;
+    }
+
+    .btn-luxury-gold {
+        background: linear-gradient(135deg, #ebd197, #c5a059);
+        color: #07030a;
+        border-radius: 15px;
+        font-weight: 800;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        border: none;
+    }
+    .btn-luxury-gold:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(235, 209, 151, 0.3); }
+
+    .italic { font-style: italic; }
+</style>
 {% endblock %}

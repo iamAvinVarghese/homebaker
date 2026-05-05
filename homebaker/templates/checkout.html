@@ -1,137 +1,156 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Checkout{% endblock %}
+{% block title %}Elite Checkout | HomeBaker{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <h2 class="mb-4">Checkout</h2>
+<div class="checkout-premium-wrapper py-5">
+    <div class="container">
+        <!-- Page Title -->
+        <div class="text-center mb-5">
+            <h1 class="script-font gold-shimmer display-3">Artisan Checkout</h1>
+            <p class="text-white-50 letter-spacing-2 text-uppercase small">Finalizing Your Culinary Masterpiece</p>
+        </div>
 
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Delivery Details</h5>
+        <div class="row g-4">
+            <!-- Left Column: Details -->
+            <div class="col-lg-8">
+                <div class="luxury-card checkout-glass-panel p-4 p-md-5">
                     <form method="POST" id="checkoutForm">
                         {% csrf_token %}
                         <input type="hidden" name="cart_type" value="{{ cart_type }}">
                         <input type="hidden" name="coupon_code" id="hiddenCouponCode" value="">
-                        <div class="mb-3">
-                            <label class="form-label">Delivery Date</label>
-                            <input type="date" name="delivery_date" class="form-control" required
-                                min="{% now 'Y-m-d' %}">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Delivery Address</label>
 
-                            <!-- Saved Address Option -->
-                            {% if default_address %}
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="address_option" id="addr_saved"
-                                    value="saved" checked onchange="toggleAddressField()">
-                                <label class="form-check-label" for="addr_saved">
-                                    <strong>Use Default Address:</strong><br>
-                                    {{ default_address }}
-                                </label>
-                            </div>
-                            {% endif %}
+                        <!-- Section: Delivery -->
+                        <div class="checkout-section mb-5" id="date-section">
+                            <h3 class="script-font gold-shimmer mb-4"><i class="fas fa-shipping-fast me-3 small"></i>Delivery Studio</h3>
+                            
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label class="luxury-label mb-2">Preferred Delivery Date</label>
+                                    <div class="input-luxury-wrapper cursor-pointer" onclick="this.querySelector('input').showPicker ? this.querySelector('input').showPicker() : this.querySelector('input').focus()">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <input type="date" name="delivery_date" class="input-luxury" required min="{% now 'Y-m-d' %}">
+                                    </div>
+                                </div>
+                                <div class="col-12 mt-4">
+                                    <label class="luxury-label mb-3">Dispatch Destination</label>
+                                    
+                                    <div class="address-options">
+                                        {% if default_address %}
+                                        <label class="address-option-card mb-3 p-3 d-flex align-items-center" for="addr_saved">
+                                            <input type="radio" name="address_option" id="addr_saved" value="saved" checked onchange="toggleAddressField()">
+                                            <span class="custom-radio me-3"></span>
+                                            <div class="address-details">
+                                                <span class="d-block fw-bold gold-shimmer xsmall text-uppercase mb-1">Saved Address</span>
+                                                <span class="address-text">{{ default_address }}</span>
+                                            </div>
+                                        </label>
+                                        {% endif %}
 
-                            <!-- New Address Option -->
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="radio" name="address_option" id="addr_new"
-                                    value="new" {% if not default_address %}checked{% endif %}
-                                    onchange="toggleAddressField()">
-                                <label class="form-check-label" for="addr_new">
-                                    Use Different Address
-                                </label>
-                            </div>
+                                        <label class="address-option-card mb-3 p-3 d-flex align-items-center" for="addr_new">
+                                            <input type="radio" name="address_option" id="addr_new" value="new" {% if not default_address %}checked{% endif %} onchange="toggleAddressField()">
+                                            <span class="custom-radio me-3"></span>
+                                            <div class="address-details">
+                                                <span class="d-block fw-bold gold-shimmer xsmall text-uppercase">New Destination</span>
+                                            </div>
+                                        </label>
+                                    </div>
 
-                            <!-- New Address Field (Hidden if Saved is selected) -->
-                            <div id="newAddressField" {% if default_address %}style="display: none;"{% endif %}>
-                                <textarea name="new_address" class="form-control mb-2" rows="3"
-                                    placeholder="Enter delivery address"></textarea>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="save_as_default"
-                                        id="saveDefault">
-                                    <label class="form-check-label text-muted" for="saveDefault">
-                                        Save as default address
-                                    </label>
+                                    <div id="newAddressField" class="mt-3" {% if default_address %}style="display: none;"{% endif %}>
+                                        <div class="input-luxury-wrapper">
+                                            <textarea name="new_address" class="input-luxury" rows="3" placeholder="Specify your delivery coordinates..."></textarea>
+                                        </div>
+                                        <div class="mt-3 custom-checkbox-wrapper">
+                                            <label class="custom-checkbox d-flex align-items-center">
+                                                <input type="checkbox" name="save_as_default" id="saveDefault">
+                                                <span class="checkmark me-2"></span>
+                                                <span class="text-white-50 xsmall">Establish as my default artisan destination</span>
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Coupon Code -->
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Coupon Code</label>
-                            <div class="input-group">
-                                <input type="text" id="couponInput" class="form-control text-uppercase"
-                                    placeholder="Enter coupon code">
-                                <button type="button" class="btn btn-outline-primary" id="applyCouponBtn">Apply</button>
+                        <!-- Section: Financials -->
+                        <div class="checkout-section mb-5">
+                            <h3 class="script-font gold-shimmer mb-4"><i class="fas fa-ticket-alt me-3 small"></i>Promotional Boutique</h3>
+                            <div class="input-luxury-wrapper coupon-input-group">
+                                <i class="fas fa-tag"></i>
+                                <input type="text" id="couponInput" class="input-luxury text-uppercase" placeholder="Enter Privilege Code">
+                                <button type="button" class="btn-luxury-outline py-2 px-4" id="applyCouponBtn">Apply</button>
                             </div>
-                            <div id="couponMsg" class="form-text mt-1"></div>
+                            <div id="couponMsg" class="form-text mt-2 ps-2"></div>
                         </div>
 
-                        <script>
-                            function toggleAddressField() {
-                                const newAddrRadio = document.getElementById('addr_new');
-                                const field = document.getElementById('newAddressField');
-                                if (newAddrRadio.checked) {
-                                    field.style.display = 'block';
-                                    field.querySelector('textarea').required = true;
-                                } else {
-                                    field.style.display = 'none';
-                                    field.querySelector('textarea').required = false;
-                                }
-                            }
-                            // Run on load to set initial state
-                            document.addEventListener('DOMContentLoaded', toggleAddressField);
-                        </script>
-                        <div class="mb-3">
-                            <label class="form-label">Payment Method</label>
+                        <!-- Section: Payment -->
+                        <div class="checkout-section mb-5">
+                            <h3 class="script-font gold-shimmer mb-4"><i class="fas fa-wallet me-3 small"></i>Treasury Settlement</h3>
                             <input type="hidden" name="payment_method" value="wallet">
-                            <div class="form-control bg-light text-muted" style="cursor: default;">
-                                <i class="fas fa-wallet me-2 text-primary"></i> Wallet (Balance: ₹{{ wallet_balance|floatformat:2 }})
+                            <div class="payment-method-card p-4 d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="wallet-icon-luxury me-3">
+                                        <i class="fas fa-crown"></i>
+                                    </div>
+                                    <div>
+                                        <span class="d-block fw-bold gold-shimmer text-uppercase xsmall">Artisan Wallet</span>
+                                        <span class="text-white opacity-75">Secure Balance: ₹{{ wallet_balance|floatformat:2 }}</span>
+                                    </div>
+                                </div>
+                                <div class="text-success small">
+                                    <i class="fas fa-shield-check me-1"></i> Trusted
+                                </div>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100" id="placeOrderBtn">Place Order</button>
+
+                        <button type="submit" class="btn-luxury-gold w-100 py-3" id="placeOrderBtn">Confirm Artisan Order</button>
                     </form>
                 </div>
             </div>
-        </div>
 
-        <script>
-            document.querySelector('form').addEventListener('submit', function(e) {
-                const btn = document.getElementById('placeOrderBtn');
-                btn.disabled = true;
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
-            });
-        </script>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Order Summary</h5>
-                    {% for item in cart_items %}
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>{{ item.cake.name }} x{{ item.quantity }}</span>
-                        <span>₹{{ item.total|floatformat:2 }}</span>
+            <!-- Right Column: Summary -->
+            <div class="col-lg-4">
+                <div class="luxury-card summary-glass-panel p-4">
+                    <h3 class="script-font gold-shimmer mb-4 border-bottom border-gold-subtle pb-3">Order Manifesto</h3>
+                    
+                    <div class="manifesto-items mb-4">
+                        {% for item in cart_items %}
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="item-info">
+                                <span class="d-block text-white fw-bold">{{ item.cake.name }}</span>
+                                <span class="text-white-50 xsmall">Quantity: {{ item.quantity }}</span>
+                            </div>
+                            <span class="gold-shimmer fw-bold">₹{{ item.total|floatformat:2 }}</span>
+                        </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
-                    <hr>
-                    <div class="d-flex justify-content-between">
-                        <span>Subtotal:</span>
-                        <span>₹{{ subtotal|floatformat:2 }}</span>
+
+                    <div class="summary-breakdown pt-3 border-top border-gold-subtle">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-white-50">Artisan Subtotal</span>
+                            <span class="text-white">₹{{ subtotal|floatformat:2 }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-white-50">Delivery Concierge</span>
+                            <span class="text-white">₹{{ delivery_charge|floatformat:2 }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between text-success mb-2" id="discountRow" style="display:none !important;">
+                            <span>Privilege Discount</span>
+                            <span>- ₹<span id="discountDisplay">0.00</span></span>
+                        </div>
+                        <div class="d-flex justify-content-between mt-4 pt-3 border-top border-gold border-2">
+                            <span class="h5 gold-shimmer script-font">Total Investment</span>
+                            <span class="h5 gold-shimmer fw-bold">₹<span id="grandTotalDisplay">{{ grand_total|floatformat:2 }}</span></span>
+                        </div>
                     </div>
-                    <div class="d-flex justify-content-between">
-                        <span>Delivery:</span>
-                        <span>₹{{ delivery_charge|floatformat:2 }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between text-success" id="discountRow" style="display:none !important;">
-                        <span>Discount:</span>
-                        <span>- ₹<span id="discountDisplay">0.00</span></span>
-                    </div>
-                    <hr>
-                    <div class="d-flex justify-content-between fw-bold">
-                        <span>Total:</span>
-                        <span>₹<span id="grandTotalDisplay">{{ grand_total|floatformat:2 }}</span></span>
+
+                    <div class="mt-4 p-3 bg-white-5 rounded-3 border border-white-1">
+                        <small class="text-white-50 d-block text-center mb-2 xsmall">Guaranteed Freshness & Quality</small>
+                        <div class="d-flex justify-content-center gap-3 text-white-50">
+                            <i class="fas fa-certificate"></i>
+                            <i class="fas fa-utensils"></i>
+                            <i class="fas fa-hand-holding-heart"></i>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -139,7 +158,204 @@
     </div>
 </div>
 
+<style>
+    .checkout-premium-wrapper {
+        background: #07030a;
+        min-height: 100vh;
+        color: #fff;
+    }
+
+    /* Luxury Card & Glassmorphism */
+    .luxury-card {
+        background: rgba(15, 10, 20, 0.6);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid rgba(235, 209, 151, 0.2);
+        border-radius: 30px;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        transition: all 0.3s ease;
+    }
+
+    .border-gold-subtle { border-color: rgba(235, 209, 151, 0.1) !important; }
+    .bg-white-5 { background: rgba(255, 255, 255, 0.05); }
+    .border-white-1 { border: 1px solid rgba(255, 255, 255, 0.1); }
+
+    /* Inputs */
+    .luxury-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #ebd197;
+        font-weight: 700;
+        display: block;
+    }
+
+    .input-luxury-wrapper {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(235, 209, 151, 0.3);
+        border-radius: 15px;
+        padding: 10px 18px;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
+
+    .input-luxury-wrapper:focus-within {
+        border-color: #ebd197;
+        box-shadow: 0 0 15px rgba(235, 209, 151, 0.1);
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .input-luxury-wrapper i {
+        color: #ebd197;
+        margin-right: 15px;
+        font-size: 1.1rem;
+    }
+
+    .input-luxury {
+        background: transparent;
+        border: none;
+        color: #fff;
+        width: 100%;
+        outline: none;
+        font-size: 0.95rem;
+    }
+
+    .input-luxury::placeholder { color: rgba(255, 255, 255, 0.3); }
+
+    /* Custom Radio & Checkbox */
+    .address-option-card {
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 18px;
+        transition: all 0.3s ease;
+    }
+
+    .address-option-card:hover {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(235, 209, 151, 0.4);
+    }
+
+    .address-option-card input[type="radio"] { display: none; }
+
+    .custom-radio {
+        width: 22px;
+        height: 22px;
+        border: 2px solid rgba(235, 209, 151, 0.5);
+        border-radius: 50%;
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .address-option-card input[type="radio"]:checked + .custom-radio {
+        border-color: #ebd197;
+        box-shadow: 0 0 10px rgba(235, 209, 151, 0.3);
+    }
+
+    .address-option-card input[type="radio"]:checked + .custom-radio::after {
+        content: '';
+        width: 12px;
+        height: 12px;
+        background: #ebd197;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .payment-method-card {
+        background: linear-gradient(135deg, rgba(235, 209, 151, 0.1), rgba(255, 255, 255, 0.05));
+        border: 1px solid rgba(235, 209, 151, 0.3);
+        border-radius: 20px;
+    }
+
+    .wallet-icon-luxury {
+        width: 45px;
+        height: 45px;
+        background: #ebd197;
+        color: #07030a;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    /* Buttons */
+    .btn-luxury-outline {
+        background: transparent;
+        border: 1px solid #ebd197;
+        color: #ebd197;
+        border-radius: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-luxury-outline:hover {
+        background: #ebd197;
+        color: #07030a;
+        box-shadow: 0 0 15px rgba(235, 209, 151, 0.3);
+    }
+
+    .btn-luxury-gold {
+        background: linear-gradient(135deg, #ebd197, #c5a059);
+        border: none;
+        color: #07030a;
+        border-radius: 18px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 1rem;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+
+    .btn-luxury-gold:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(235, 209, 151, 0.3);
+    }
+
+    /* Date Picker Custom Styling */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1) sepia(100%) saturate(500%) hue-rotate(1deg) brightness(100%) contrast(100%);
+        cursor: pointer;
+    }
+
+    .cursor-pointer { cursor: pointer; }
+
+    @media (max-width: 768px) {
+        .checkout-glass-panel { padding: 30px 20px; }
+        .display-3 { font-size: 2.5rem; }
+    }
+</style>
+
 <script>
+    function toggleAddressField() {
+        const newAddrRadio = document.getElementById('addr_new');
+        const field = document.getElementById('newAddressField');
+        if (newAddrRadio.checked) {
+            field.style.display = 'block';
+            field.querySelector('textarea').required = true;
+        } else {
+            field.style.display = 'none';
+            field.querySelector('textarea').required = false;
+        }
+    }
+    document.addEventListener('DOMContentLoaded', toggleAddressField);
+
+    // Form Submission Glow
+    document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+        const btn = document.getElementById('placeOrderBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Processing Sovereignty...';
+    });
+
+    // Coupon Logic
     const subtotal = parseFloat("{{ subtotal }}");
     const deliveryCharge = parseFloat("{{ delivery_charge }}");
     const csrfToken = "{{ csrf_token }}";
@@ -153,12 +369,11 @@
         const hiddenCoupon = document.getElementById('hiddenCouponCode');
         const couponInput = document.getElementById('couponInput');
 
-        // If currently applied, then "Remove"
         if (applyBtn.textContent === 'Remove') {
             couponInput.value = '';
             couponInput.disabled = false;
             applyBtn.textContent = 'Apply';
-            applyBtn.className = 'btn btn-outline-primary';
+            applyBtn.className = 'btn-luxury-outline py-2 px-4';
             discountRow.style.setProperty('display', 'none', 'important');
             grandTotalDisplay.textContent = (subtotal + deliveryCharge).toFixed(2);
             hiddenCoupon.value = '';
@@ -168,8 +383,8 @@
 
         const code = couponInput.value.trim().toUpperCase();
         if (!code) {
-            msgEl.className = 'form-text text-danger mt-1';
-            msgEl.textContent = 'Please enter a coupon code.';
+            msgEl.className = 'form-text text-danger mt-1 small';
+            msgEl.textContent = 'Please enter a privilege code.';
             return;
         }
 
@@ -188,25 +403,24 @@
                     discountRow.style.setProperty('display', 'flex', 'important');
                     grandTotalDisplay.textContent = newTotal.toFixed(2);
                     hiddenCoupon.value = code;
-                    msgEl.className = 'form-text text-success mt-1';
-                    msgEl.textContent = data.message;
+                    msgEl.className = 'form-text text-success mt-1 small';
+                    msgEl.textContent = 'Privilege code accepted: ' + data.message;
                     
-                    // Toggle to Remove Button
                     applyBtn.textContent = 'Remove';
-                    applyBtn.className = 'btn btn-outline-danger';
+                    applyBtn.className = 'btn-luxury-outline py-2 px-4 border-danger text-danger';
                     couponInput.disabled = true;
                 } else {
                     discountRow.style.setProperty('display', 'none', 'important');
                     grandTotalDisplay.textContent = (subtotal + deliveryCharge).toFixed(2);
                     hiddenCoupon.value = '';
-                    msgEl.className = 'form-text text-danger mt-1';
+                    msgEl.className = 'form-text text-danger mt-1 small';
                     msgEl.textContent = data.message;
                 }
             })
             .catch(() => {
-                msgEl.className = 'form-text text-danger mt-1';
-                msgEl.textContent = 'Error checking coupon. Please try again.';
+                msgEl.className = 'form-text text-danger mt-1 small';
+                msgEl.textContent = 'Error verifying privilege.';
             });
     });
 </script>
-{% endblock %}
+{% endblock %}

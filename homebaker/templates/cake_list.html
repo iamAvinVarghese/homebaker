@@ -3,243 +3,483 @@
 {% block title %}Cakes{% endblock %}
 
 {% block content %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
 
-<div class="d-flex justify-content-between align-items-center mb-5">
-    <h2 class="fw-bold mb-0" style="color: var(--text-primary);">Available Cakes</h2>
+    .script-font {
+        font-family: 'Great Vibes', cursive;
+        font-weight: normal;
+        letter-spacing: 1px;
+    }
+
+    /* Background Globs matching Home */
+    .bg-glob-1 {
+        position: fixed;
+        top: -10%;
+        left: -10%;
+        width: 800px;
+        height: 800px;
+        background: radial-gradient(circle, rgba(108, 30, 180, 0.2) 0%, rgba(7, 3, 10, 0) 60%);
+        border-radius: 50%;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .bg-glob-2 {
+        position: fixed;
+        top: 40%;
+        right: -20%;
+        width: 900px;
+        height: 900px;
+        background: radial-gradient(circle, rgba(108, 30, 180, 0.15) 0%, rgba(7, 3, 10, 0) 60%);
+        border-radius: 50%;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .content-wrapper {
+        position: relative;
+        z-index: 1;
+    }
+
+    .gold-text { color: #ebd197 !important; }
+    .text-muted-premium { color: #94a3b8 !important; }
+
+    /* Star and rating number — same size */
+    a.gold-text.small {
+        font-size: 0.82rem !important;
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+    }
+    a.gold-text.small .fa-star {
+        font-size: 0.82rem;
+    }
+
+    /* Force dark theme */
+    body {
+        background-color: #07030a !important;
+        color: #ffffff !important;
+    }
+
+    /* Premium Cards */
+    .premium-card {
+        background-color: rgba(30, 20, 40, 0.4) !important;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(235, 209, 151, 0.15) !important;
+        border-radius: 16px;
+        color: #ffffff;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+    }
+
+    .premium-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.5), 0 0 20px rgba(235, 209, 151, 0.1);
+        border-color: rgba(235, 209, 151, 0.3) !important;
+    }
+
+    /* Form Controls Override */
+    .form-control, .form-select {
+        background-color: rgba(0, 0, 0, 0.4) !important;
+        border: 1px solid rgba(235, 209, 151, 0.2) !important;
+        color: #ffffff !important;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #ebd197 !important;
+        box-shadow: 0 0 0 0.25rem rgba(235, 209, 151, 0.1) !important;
+    }
+    .form-label {
+        color: #ebd197;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+    .input-group-text {
+        background-color: rgba(235, 209, 151, 0.1) !important;
+        border: 1px solid rgba(235, 209, 151, 0.2) !important;
+        color: #ebd197 !important;
+    }
+
+    .btn-theme-purple {
+        background: linear-gradient(135deg, #4a1c6a, #2b1040);
+        color: white;
+        border: 1px solid rgba(235, 209, 151, 0.3);
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 10px rgba(74, 28, 106, 0.4);
+    }
+    .btn-theme-purple:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(74, 28, 106, 0.6);
+        border-color: #ebd197;
+        color: white;
+    }
+
+    /* Luxury Switch Styling */
+    .form-check-input:checked {
+        background-color: #ebd197 !important;
+        border-color: #ebd197 !important;
+    }
+    .form-check-input {
+        background-color: rgba(255,255,255,0.1) !important;
+        border-color: rgba(235, 209, 151, 0.3) !important;
+    }
+    .form-check-label {
+        background: transparent !important;
+        cursor: pointer;
+    }
+    
+    .btn-outline-gold {
+        background: transparent;
+        color: #ebd197;
+        border: 1px solid #ebd197;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+    }
+    .btn-outline-gold:hover {
+        background: rgba(235, 209, 151, 0.1);
+        color: #ffffff;
+        transform: translateY(-2px);
+    }
+
+    .cake-price {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #ebd197;
+    }
+
+    .custom-section-bg {
+        background: linear-gradient(135deg, rgba(74, 28, 106, 0.2), rgba(21, 13, 30, 0.4));
+        border: 1px solid rgba(235, 209, 151, 0.1);
+    }
+    /* Filter Widget Styling */
+    .filter-toggle-btn {
+        position: fixed;
+        bottom: 100px; /* Above chatbot widget */
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ebd197, #c5a059);
+        color: #07030a;
+        border: none;
+        box-shadow: 0 4px 15px rgba(235, 209, 151, 0.4);
+        font-size: 1.5rem;
+        z-index: 1050;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: pulseGlowFilter 2s infinite;
+    }
+    
+    .filter-toggle-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(235, 209, 151, 0.6);
+    }
+    
+    @keyframes pulseGlowFilter {
+        0% { box-shadow: 0 0 0 0 rgba(235, 209, 151, 0.4); }
+        70% { box-shadow: 0 0 0 15px rgba(235, 209, 151, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(235, 209, 151, 0); }
+    }
+
+    .filter-widget {
+        position: fixed;
+        bottom: 170px;
+        right: 30px;
+        width: 320px;
+        max-height: calc(100vh - 190px);
+        overflow-y: auto;
+        z-index: 1040;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(20px) scale(0.95);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transform-origin: bottom right;
+    }
+
+    .filter-widget.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+    }
+    
+    /* Scrollbar for filter widget */
+    .filter-widget::-webkit-scrollbar {
+        width: 6px;
+    }
+    .filter-widget::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+    }
+    .filter-widget::-webkit-scrollbar-thumb {
+        background: rgba(235, 209, 151, 0.3);
+        border-radius: 10px;
+    }
+    .filter-widget::-webkit-scrollbar-thumb:hover {
+        background: rgba(235, 209, 151, 0.5);
+    }
+</style>
+
+<div class="bg-glob-1"></div>
+<div class="bg-glob-2"></div>
+
+<!-- Floating Filter Button -->
+<button class="filter-toggle-btn" id="filterToggleBtn" title="Filter Cakes">
+    <i class="fas fa-sliders-h"></i>
+</button>
+
+<!-- Floating Filter Widget -->
+<div class="filter-widget premium-card p-4 shadow-lg" id="filterWidget">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2" style="border-color: rgba(235, 209, 151, 0.1) !important;">
+        <h5 class="fw-bold gold-text mb-0"><i class="fas fa-filter me-2"></i> Filter Cakes</h5>
+        <button type="button" class="btn-close btn-close-white" id="filterCloseBtn"></button>
+    </div>
+    
+    <form method="GET" class="filter-form">
+        <div class="mb-3">
+            <label class="form-label small text-uppercase">Search</label>
+            {{ form.query }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label small text-uppercase">Sort By</label>
+            {{ form.sort_by }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label small text-uppercase">Category</label>
+            {{ form.flavor }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label small text-uppercase">Occasion</label>
+            {{ form.occasion }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label small text-uppercase">Price Range</label>
+            <div class="d-flex gap-2">
+                <div class="input-group">
+                    <span class="input-group-text">₹</span>
+                    {{ form.min_price }}
+                </div>
+                <div class="input-group">
+                    <span class="input-group-text">₹</span>
+                    {{ form.max_price }}
+                </div>
+            </div>
+        </div>
+        <div class="mb-4 form-check form-switch mt-3 fs-6">
+            {{ form.top_rated }}
+            <label class="form-check-label gold-text ms-2 mt-1" for="{{ form.top_rated.id_for_label }}">
+                <i class="fas fa-star me-1"></i> Top Rated Only
+            </label>
+        </div>
+        
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-theme-purple py-2"><i class="fas fa-check me-1"></i> Apply Filters</button>
+            <a href="{% url 'cakes' %}" class="btn btn-outline-gold py-2"><i class="fas fa-redo me-1"></i> Reset</a>
+        </div>
+    </form>
 </div>
 
-<div class="row">
-    <!-- Filter Sidebar -->
-    <div class="col-lg-3 mb-4">
-        <div class="card border-0 shadow-sm p-3 sticky-top" style="top: 100px; z-index: 1000; max-height: calc(100vh - 120px); overflow-y: auto;">
-            <h5 class="fw-bold mb-3">Filters</h5>
-            <form method="GET">
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-uppercase text-secondary">Search</label>
-                    {{ form.query }}
-                </div>
+<div class="content-wrapper container pb-5">
+    
 
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-uppercase text-secondary">Sort By</label>
-                    {{ form.sort_by }}
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-uppercase text-secondary">Price Range</label>
-                    <div class="input-group mb-2">
-                        <span class="input-group-text">₹</span>
-                        {{ form.min_price }}
-                    </div>
-                    <div class="input-group">
-                        <span class="input-group-text">₹</span>
-                        {{ form.max_price }}
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-uppercase text-secondary">Category</label>
-                    {{ form.flavor }}
-                    <div class="mt-2">
-                        {{ form.occasion }}
-                    </div>
-                </div>
-
-                <div class="mb-3 form-check">
-                    {{ form.top_rated }}
-                    <label class="form-check-label" for="{{ form.top_rated.id_for_label }}">
-                        Top Rated Bakers (4.0+)
-                    </label>
-                </div>
-
-                <button type="submit" class="btn btn-primary w-100 mb-2">Apply Filters</button>
-                <a href="{% url 'cakes' %}" class="btn btn-outline-secondary w-100">Reset</a>
-            </form>
-        </div>
-    </div>
-
-    <!-- Cake Grid -->
-    <div class="col-lg-9">
-        {% if user.profile.role == 'customer' %}
-        <!-- CUSTOM ORDERS SECTION -->
-        <div class="mb-5 p-4 rounded-4 shadow-sm"
-            style="background: linear-gradient(135deg, rgba(111, 66, 193, 0.05), rgba(214, 51, 132, 0.05)), #ffffff; border: 1px solid rgba(111, 66, 193, 0.1);">
-            <div class="d-flex align-items-center mb-4">
-                <div class="bg-primary text-white rounded-circle p-2 me-3">
-                    <i class="fas fa-magic fa-fw"></i>
-                </div>
-                <div>
-                    <h3 class="fw-bold mb-0">Custom Creation Studio</h3>
-                    <p class="text-muted small mb-0">Design your own masterpiece or upload a reference.</p>
-                </div>
+    <!-- CUSTOM ORDERS SECTION -->
+    {% if user.profile.role == 'customer' %}
+    <style>
+        .custom-luxury-card:hover {
+            box-shadow: 0 0 40px rgba(235, 209, 151, 0.2) !important;
+            border-color: rgba(235, 209, 151, 0.4) !important;
+            transform: translateY(-5px);
+        }
+        .glowing-title {
+            font-family: 'Great Vibes', cursive !important;
+            text-shadow: 0 0 15px rgba(235, 209, 151, 0.6), 0 0 30px rgba(235, 209, 151, 0.4), 0 0 45px rgba(235, 209, 151, 0.2);
+            line-height: 1.1;
+        }
+    </style>
+    <div class="mb-5 p-4 p-md-5" style="background: rgba(30, 20, 40, 0.52); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(235, 209, 151, 0.12); border-radius: 28px; box-shadow: 0 20px 55px rgba(0,0,0,0.4); animation: fadeIn 0.8s ease-out;">
+        <div class="d-flex align-items-center mb-5 pb-3 border-bottom" style="border-color: rgba(235, 209, 151, 0.1) !important;">
+            <div class="rounded-circle p-3 me-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background: rgba(235, 209, 151, 0.1); border: 1px solid rgba(235, 209, 151, 0.15); filter: drop-shadow(0 0 15px rgba(235, 209, 151, 0.5));">
+                <i class="fas fa-wand-magic-sparkles fa-fw" style="color: #ebd197; font-size: 1.4rem;"></i>
             </div>
-
-            <div class="row g-4">
-                <!-- Custom Cake Card (AI Design) -->
-                <div class="col-md-6">
-                    <div
-                        class="card h-100 border-0 shadow-sm overflow-hidden border-top border-primary border-4 transition-hover">
-                        <div style="height: 180px; overflow: hidden; position: relative;">
-                            <img src="/media/branding/ai_designer_banner.jpg" class="card-img-top w-100 h-100"
-                                alt="Innovative AI Cake Design" style="object-fit: cover;">
-                            <span class="badge bg-primary position-absolute top-0 end-0 m-2 shadow-sm">
-                                AI POWERED
-                            </span>
-                        </div>
-                        <div class="card-body d-flex flex-column p-4">
-                            <h5 class="card-title fw-bold mb-1">AI Cake Designer</h5>
-                            <p class="text-muted small mb-3">Describe your dream cake and let AI generate the design
-                                specifications and visuals.</p>
-
-                            <div class="mt-auto">
-                                {% if user.is_authenticated %}
-                                <a href="{% url 'custom_cake' %}" class="btn btn-primary w-100">
-                                    <i class="fas fa-magic me-2"></i> Design with AI
-                                </a>
-                                {% else %}
-                                <a href="{% url 'login' %}?next={% url 'custom_cake' %}" class="btn btn-outline-primary w-100">
-                                    <i class="fas fa-lock me-2"></i> Login to Design
-                                </a>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Custom Cake Card (Photo Upload) -->
-                <div class="col-md-6">
-                    <div
-                        class="card h-100 border-0 shadow-sm overflow-hidden border-top border-secondary border-4 transition-hover">
-                        <div style="height: 180px; overflow: hidden; position: relative;">
-                            <img src="/media/branding/photo_upload_banner.jpg" class="card-img-top w-100 h-100"
-                                alt="Professional Custom Cake Portfolio" style="object-fit: cover;">
-                            <span class="badge bg-secondary position-absolute top-0 end-0 m-2 shadow-sm">
-                                PHOTO UPLOAD
-                            </span>
-                        </div>
-                        <div class="card-body d-flex flex-column p-4">
-                            <h5 class="card-title fw-bold mb-1">Order with Reference</h5>
-                            <p class="text-muted small mb-3">Have a photo of a cake you love? Upload it and get quotes
-                                from our partner bakers.</p>
-
-                            <div class="mt-auto">
-                                {% if user.is_authenticated %}
-                                <a href="{% url 'photo_custom_cake' %}" class="btn btn-outline-secondary w-100">
-                                    <i class="fas fa-camera me-2"></i> Upload & Order
-                                </a>
-                                {% else %}
-                                <a href="{% url 'login' %}?next={% url 'photo_custom_cake' %}" class="btn btn-outline-secondary w-100">
-                                    <i class="fas fa-lock me-2"></i> Login to Upload
-                                </a>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div>
+                <h3 class="mb-0 script-font glowing-title" style="font-size: 4.2rem; color: #ebd197; font-weight: normal;">Custom Creation Studio</h3>
+                <p class="small mb-0 mt-2" style="font-size: 0.95rem; color: rgba(255,255,255,0.4); letter-spacing: 1.5px; text-transform: uppercase;">Design your own masterpiece or upload a reference.</p>
             </div>
         </div>
-        <hr class="my-5 opacity-10">
-        {% endif %}
 
-        <!-- AVAILABLE CAKES SECTION -->
-        <h3 id="cakes-section" class="fw-bold mb-4">
-            <i class="fas fa-store me-2 text-primary"></i> Explore Available Cakes
-        </h3>
-
-        {% if cakes %}
         <div class="row g-4">
-            {% for cake in cakes %}
-            <div class="col-md-6 col-xl-4">
-                <div class="card h-100 border-0 shadow-sm overflow-hidden transition-hover">
-                    <div style="height: 200px; overflow: hidden; position: relative;">
-                        {% if cake.image %}
-                        <img src="{{ cake.image.url }}" class="card-img-top w-100 h-100" alt="{{ cake.name }}"
-                            style="object-fit: cover;">
-                        {% elif cake.image_url %}
-                        <img src="{{ cake.image_url }}" class="card-img-top w-100 h-100" alt="{{ cake.name }}"
-                            style="object-fit: cover;">
-                        {% else %}
-                        <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800"
-                            class="card-img-top w-100 h-100" alt="{{ cake.name }}" style="object-fit: cover;">
-                        {% endif %}
-                        {% if cake.average_rating >= 4.0 %}
-                        <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2 shadow-sm">
-                            <i class="fas fa-star me-1"></i> Top Rated
-                        </span>
-                        {% endif %}
-                    </div>
-                    <div class="card-body d-flex flex-column p-4">
-                        <h5 class="card-title fw-bold mb-1 text-truncate">{{ cake.name }}</h5>
-                        <small class="text-muted mb-3 d-block">
-                            <a href="{% url 'baker_public_profile' cake.baker.profile.baker_profile.id %}"
-                                class="text-decoration-none text-muted transition-color">
-                                {{ cake.baker.profile.baker_profile.shop_name|default:cake.baker.username }}
-                                {% if cake.baker.profile.profile_picture %}
-                                <img src="{{ cake.baker.profile.profile_picture.url }}" alt="{{ cake.baker.username }}"
-                                    class="rounded-circle ms-1 border"
-                                    style="width: 20px; height: 20px; object-fit: cover; vertical-align: text-bottom;">
-                                {% else %}
-                                <i class="fas fa-user-circle ms-1 text-secondary"></i>
-                                {% endif %}
-                            </a>
-                            {% with bp=cake.baker.profile.baker_profile %}
-                            <a href="{% url 'baker_reviews' bp.id %}"
-                                class="text-decoration-none text-warning transition-color ms-1">
-                                <i class="fas fa-star"></i> {{ bp.average_rating|floatformat:1 }}
-                                <span class="text-muted small">({{ bp.total_reviews }})</span>
-                            </a>
-                            {% endwith %}
-                        </small>
-
-                        <div class="mb-3">
-                            <span class="badge bg-secondary border">{{ cake.get_flavor_display }}</span>
-                            <span class="badge bg-secondary border">{{ cake.get_occasion_display }}</span>
+            <!-- Custom Cake Card (AI Design) -->
+            <div class="col-md-6">
+                <div class="custom-luxury-card h-100 overflow-hidden d-flex flex-column" style="background: rgba(15, 10, 25, 0.6); border: 1px solid rgba(235, 209, 151, 0.15); border-radius: 20px; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);">
+                    <div style="height: 250px; overflow: hidden; position: relative;">
+                        <img src="/media/branding/luxury_ai_cake.png" class="w-100 h-100"
+                            alt="Innovative AI Cake Design" style="object-fit: cover; transition: transform 0.6s ease; filter: brightness(0.9);">
+                        <div class="position-absolute top-0 end-0 m-3 px-3 py-1" style="background: rgba(30, 20, 40, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(235, 209, 151, 0.4); border-radius: 50px; color: #ebd197; font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; box-shadow: 0 0 15px rgba(235, 209, 151, 0.3);">
+                            <i class="fas fa-robot me-1"></i> AI POWERED
                         </div>
+                    </div>
+                    <div class="d-flex flex-column p-4 flex-grow-1">
+                        <h4 class="mb-2 script-font glowing-title" style="font-size: 2.8rem; color: #ebd197; font-weight: normal;">AI Cake Designer</h4>
+                        <p class="small mb-4" style="color: rgba(255,255,255,0.5); font-size: 0.95rem; line-height: 1.6;">Describe your dream cake and let our advanced AI generate exquisite design specifications and photorealistic visuals.</p>
 
-                        <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
-                            <span class="h5 fw-bold text-primary mb-0">₹{{ cake.price }}/kg</span>
+                        <div class="mt-auto">
                             {% if user.is_authenticated %}
-                                {% if user.profile.role == 'customer' %}
-                                <a href="{% url 'add_to_cart' cake.id %}" class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-cart-plus"></i> Add
-                                </a>
-                                {% endif %}
+                            <a href="{% url 'custom_cake' %}" class="btn w-100 py-3 text-center" style="background: linear-gradient(135deg, #ebd197, #c5a059); color: #07030a !important; font-weight: 800; border-radius: 50px; box-shadow: 0 0 20px rgba(235, 209, 151, 0.5); transition: all 0.3s ease;">
+                                <i class="fas fa-magic me-2"></i> Design with AI
+                            </a>
                             {% else %}
-                            <a href="{% url 'login' %}" class="btn btn-sm btn-outline-primary">
-                                Login
+                            <a href="{% url 'login' %}?next={% url 'custom_cake' %}" class="btn w-100 py-3 text-center" style="background: transparent; color: #ebd197; border: 1px solid rgba(235, 209, 151, 0.5); border-radius: 50px; font-weight: 700; text-shadow: 0 0 10px rgba(235, 209, 151, 0.5); box-shadow: inset 0 0 15px rgba(235, 209, 151, 0.1); transition: all 0.3s ease;">
+                                <i class="fas fa-lock me-2"></i> Login to Design
                             </a>
                             {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
-            {% endfor %}
+
+            <!-- Custom Cake Card (Photo Upload) -->
+            <div class="col-md-6">
+                <div class="custom-luxury-card h-100 overflow-hidden d-flex flex-column" style="background: rgba(15, 10, 25, 0.6); border: 1px solid rgba(235, 209, 151, 0.15); border-radius: 20px; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);">
+                    <div style="height: 250px; overflow: hidden; position: relative;">
+                        <img src="/media/branding/luxury_reference_cake.png" class="w-100 h-100"
+                            alt="Professional Custom Cake Portfolio" style="object-fit: cover; transition: transform 0.6s ease; filter: brightness(0.9);">
+                        <div class="position-absolute top-0 end-0 m-3 px-3 py-1" style="background: rgba(30, 20, 40, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 50px; color: #fff; font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);">
+                            <i class="fas fa-camera me-1"></i> PHOTO UPLOAD
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column p-4 flex-grow-1">
+                        <h4 class="mb-2 script-font glowing-title" style="font-size: 2.8rem; color: #fff; font-weight: normal; text-shadow: 0 0 15px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.4), 0 0 45px rgba(255, 255, 255, 0.2);">Order with Reference</h4>
+                        <p class="small mb-4" style="color: rgba(255,255,255,0.5); font-size: 0.95rem; line-height: 1.6;">Have a photo of a stunning cake you love? Upload it and receive personalized quotes from our elite partner bakers.</p>
+
+                        <div class="mt-auto">
+                            {% if user.is_authenticated %}
+                            <a href="{% url 'photo_custom_cake' %}" class="btn w-100 py-3 text-center" style="background: transparent; color: #fff; border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 50px; font-weight: 700; box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.1); text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); transition: all 0.3s ease;">
+                                <i class="fas fa-camera me-2"></i> Upload & Order
+                            </a>
+                            {% else %}
+                            <a href="{% url 'login' %}?next={% url 'photo_custom_cake' %}" class="btn w-100 py-3 text-center" style="background: transparent; color: #fff; border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 50px; font-weight: 700; box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.1); text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); transition: all 0.3s ease;">
+                                <i class="fas fa-lock me-2"></i> Login to Upload
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        {% else %}
-        <div class="alert alert-info text-center py-5">
-            <i class="fas fa-search fa-3x mb-3 text-muted"></i>
-            <h5>No cakes found matching your filters.</h5>
-            <p class="text-muted">Try adjusting your price range or clearing filters.</p>
-            <a href="{% url 'cakes' %}" class="btn btn-primary mt-3">View All Cakes</a>
-        </div>
-        {% endif %}
     </div>
+    {% endif %}
+
+    <!-- CAKE GRID -->
+    <h3 id="cakes-section" class="script-font glowing-title mb-5 mt-4 text-center" style="font-size: 4rem; color: #ebd197;">
+        Curated Bakes
+    </h3>
+
+    {% if cakes %}
+    <div class="row g-4 mb-5 pb-5">
+        {% for cake in cakes %}
+        <div class="col-md-6 col-xl-3 col-lg-4" style="animation: fadeIn 1s ease-out;">
+            <div class="premium-card h-100 overflow-hidden d-flex flex-column">
+                <div style="height: 220px; overflow: hidden; position: relative;">
+                    {% if cake.image %}
+                    <img src="{{ cake.image.url }}" class="card-img-top w-100 h-100" alt="{{ cake.name }}"
+                        style="object-fit: cover;">
+                    {% elif cake.image_url %}
+                    <img src="{{ cake.image_url }}" class="card-img-top w-100 h-100" alt="{{ cake.name }}"
+                        style="object-fit: cover;">
+                    {% else %}
+                    <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800"
+                        class="card-img-top w-100 h-100" alt="{{ cake.name }}" style="object-fit: cover;">
+                    {% endif %}
+                    
+                    {% if cake.average_rating >= 4.0 %}
+                    <span class="badge position-absolute top-0 end-0 m-2 shadow" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); border: 1px solid #ebd197; color: #ebd197;">
+                        <i class="fas fa-star me-1"></i> Top Rated
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="card-body d-flex flex-column p-4">
+                    <h5 class="card-title fw-bold text-white mb-2" style="font-size: 1.15rem; line-height: 1.4;">{{ cake.name }}</h5>
+                    
+                    <div class="mb-3 d-flex align-items-center">
+                        <a href="{% url 'baker_public_profile' cake.baker.profile.baker_profile.id %}"
+                            class="text-decoration-none text-muted-premium small d-flex align-items-center" style="transition: color 0.3s;">
+                            {% if cake.baker.profile.profile_picture %}
+                            <img src="{{ cake.baker.profile.profile_picture.url }}" alt="{{ cake.baker.username }}"
+                                class="rounded-circle me-2 border border-secondary"
+                                style="width: 24px; height: 24px; object-fit: cover;">
+                            {% else %}
+                            <i class="fas fa-user-circle me-2 fs-5 text-secondary"></i>
+                            {% endif %}
+                            <span class="text-truncate" style="max-width: 120px;">{{ cake.baker.profile.baker_profile.shop_name|default:cake.baker.username }}</span>
+                        </a>
+                        
+                        {% with bp=cake.baker.profile.baker_profile %}
+                        <a href="{% url 'baker_reviews' bp.id %}"
+                            class="text-decoration-none ms-auto d-flex align-items-center small">
+                            <i class="fas fa-star gold-glow-text me-1"></i> 
+                            <span class="gold-glow-text">{{ bp.average_rating|floatformat:1 }}</span>
+                        </a>
+                        {% endwith %}
+                    </div>
+
+                    <div class="mb-4">
+                        <span class="badge bg-dark border me-1" style="border-color: rgba(255,255,255,0.1) !important; color: #cbd5e1;">{{ cake.get_flavor_display }}</span>
+                        <span class="badge bg-dark border" style="border-color: rgba(255,255,255,0.1) !important; color: #cbd5e1;">{{ cake.get_occasion_display }}</span>
+                    </div>
+
+                    <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center" style="border-color: rgba(235, 209, 151, 0.1) !important;">
+                        <span class="gold-num fw-extra-bold fs-4 mb-0">₹{{ cake.price }}<span style="font-size: 0.8rem; font-weight: normal; color: #94a3b8; -webkit-text-fill-color: #94a3b8;">/kg</span></span>
+                        {% if user.is_authenticated %}
+                            {% if user.profile.role == 'customer' %}
+                            <a href="{% url 'add_to_cart' cake.id %}" class="btn btn-sm btn-outline-gold" style="padding: 0.4rem 1rem;">
+                                <i class="fas fa-plus"></i> Add
+                            </a>
+                            {% endif %}
+                        {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-sm btn-outline-gold" style="padding: 0.4rem 1rem;">
+                            Login
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="premium-card text-center py-5 my-5 shadow-lg">
+        <i class="fas fa-search fa-3x mb-4 gold-text" style="opacity: 0.5;"></i>
+        <h4 class="text-white">No cakes found matching your filters.</h4>
+        <p class="text-muted-premium">Try adjusting your price range or clearing filters.</p>
+        <a href="{% url 'cakes' %}" class="btn btn-theme-purple mt-3 px-4 py-2">View All Cakes</a>
+    </div>
+    {% endif %}
 </div>
 
 <style>
-    .transition-hover {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .transition-hover:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 </style>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        // Add form styling to Django rendered fields
+        document.querySelectorAll('input[type="text"], input[type="number"], select').forEach(el => {
+            if(!el.classList.contains('form-control') && !el.classList.contains('form-select')) {
+                if(el.tagName === 'SELECT') el.classList.add('form-select');
+                else el.classList.add('form-control');
+            }
+        });
+
         // Find the filter form
-        const filterForm = document.querySelector('.card form');
+        const filterForm = document.querySelector('form');
         
         // Add submit event listener to set a flag in sessionStorage
         if (filterForm) {
@@ -252,13 +492,28 @@
         if (sessionStorage.getItem('filterApplied') === 'true') {
             // Clear the flag immediately so it only scrolls once
             sessionStorage.removeItem('filterApplied');
+        }
             
-            setTimeout(function () {
-                const cakesSection = document.getElementById("cakes-section");
-                if (cakesSection) {
-                    cakesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Filter Widget Toggle Logic
+        const filterBtn = document.getElementById('filterToggleBtn');
+        const filterWidget = document.getElementById('filterWidget');
+        const filterCloseBtn = document.getElementById('filterCloseBtn');
+        
+        if(filterBtn && filterWidget && filterCloseBtn) {
+            filterBtn.addEventListener('click', () => {
+                filterWidget.classList.toggle('show');
+            });
+            
+            filterCloseBtn.addEventListener('click', () => {
+                filterWidget.classList.remove('show');
+            });
+            
+            // Close widget when clicking outside
+            document.addEventListener('click', (e) => {
+                if(!filterWidget.contains(e.target) && !filterBtn.contains(e.target) && filterWidget.classList.contains('show')) {
+                    filterWidget.classList.remove('show');
                 }
-            }, 100); 
+            });
         }
     });
 </script>

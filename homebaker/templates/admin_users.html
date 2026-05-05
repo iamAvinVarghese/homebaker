@@ -1,197 +1,327 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Manage Users{% endblock %}
+
+{% block title %}Manage Users | Admin Panel{% endblock %}
 
 {% block content %}
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="mb-0">Manage Users</h1>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Dashboard</a></li>
-                <li class="breadcrumb-item active">Users</li>
-            </ol>
-        </nav>
+<style>
+    :root {
+        --gold-primary: #ebd197;
+        --gold-dark: #c5a66a;
+        --glass-bg: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(235, 209, 151, 0.1);
+        --purple-bg: #07030a;
+    }
+
+    body {
+        background-color: var(--purple-bg);
+    }
+
+    .glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    }
+
+    .gold-text {
+        background: linear-gradient(135deg, #ebd197 0%, #f5d97a 50%, #ebd197 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: bold;
+    }
+
+    .form-control-premium {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(235, 209, 151, 0.15) !important;
+        color: white !important;
+        border-radius: 12px;
+        padding: 0.8rem 1.2rem;
+    }
+
+    .form-control-premium:focus {
+        border-color: var(--gold-primary) !important;
+        box-shadow: 0 0 15px rgba(235, 209, 151, 0.1) !important;
+    }
+
+    .table-premium {
+        color: white;
+        border-collapse: separate;
+        border-spacing: 0 10px;
+        background: transparent !important;
+        --bs-table-bg: transparent !important;
+        --bs-table-color: white !important;
+    }
+
+    .table-premium thead th {
+        border: none;
+        color: rgba(235, 209, 151, 0.6);
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1.5px;
+        padding: 1.2rem 1.5rem;
+    }
+
+    .table-premium tbody tr {
+        background: rgba(255, 255, 255, 0.03) !important;
+        transition: all 0.3s ease;
+    }
+
+    .table-premium tbody tr:hover {
+        background: rgba(255, 255, 255, 0.06) !important;
+        transform: translateY(-2px);
+    }
+
+    .table-premium tbody td {
+        border: none !important;
+        padding: 1.2rem 1.5rem;
+        vertical-align: middle;
+        background: transparent !important;
+    }
+
+    .table-premium tbody tr td:first-child { border-radius: 15px 0 0 15px; }
+    .table-premium tbody tr td:last-child { border-radius: 0 15px 15px 0; }
+
+    .role-badge {
+        font-family: 'Inter', sans-serif;
+        padding: 0.4rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .badge-customer { background: rgba(0, 200, 255, 0.1); color: #00c8ff; border: 1px solid rgba(0, 200, 255, 0.2); }
+    .badge-baker { background: rgba(255, 170, 0, 0.1); color: #ffaa00; border: 1px solid rgba(255, 170, 0, 0.2); }
+    .badge-delivery { background: rgba(150, 150, 150, 0.1); color: #969696; border: 1px solid rgba(150, 150, 150, 0.2); }
+    .badge-admin { background: rgba(235, 209, 151, 0.1); color: var(--gold-primary); border: 1px solid rgba(235, 209, 151, 0.2); }
+
+    .status-badge {
+        font-family: 'Inter', sans-serif;
+        padding: 0.3rem 0.7rem;
+        border-radius: 50px;
+        font-size: 0.65rem;
+        font-weight: 700;
+    }
+
+    .status-active { background: rgba(111, 219, 159, 0.1); color: #6fdb9f; border: 1px solid rgba(111, 219, 159, 0.2); }
+    .status-suspended { background: rgba(220, 53, 69, 0.1); color: #dc3545; border: 1px solid rgba(220, 53, 69, 0.2); }
+
+    .btn-premium-gold {
+        background: linear-gradient(135deg, #ebd197, #c5a66a);
+        color: #000 !important;
+        font-weight: 700;
+        border-radius: 50px;
+        padding: 0.5rem 1.2rem;
+        border: none;
+        font-size: 0.85rem;
+    }
+
+    .btn-premium-gold:hover {
+        transform: scale(1.03);
+        box-shadow: 0 5px 15px rgba(235, 209, 151, 0.2);
+    }
+
+    .profile-avatar {
+        width: 42px;
+        height: 42px;
+        border: 2px solid rgba(235, 209, 151, 0.2);
+        padding: 2px;
+        transition: all 0.3s ease;
+    }
+
+    .table-premium tr:hover .profile-avatar {
+        border-color: var(--gold-primary);
+        box-shadow: 0 0 10px rgba(235, 209, 151, 0.3);
+    }
+</style>
+
+<div class="container py-5 mt-4">
+    <div class="section-header d-flex justify-content-between align-items-end mb-5">
+        <div>
+            <h1 class="display-4 gold-text fw-extra-bold mb-1">User Management</h1>
+            <p class="text-white-50 lead">Oversee the elite HomeBaker community</p>
+        </div>
+        <div class="text-end">
+            <span class="text-white-50 small text-uppercase fw-bold" style="letter-spacing: 1px;">Community Registry:</span>
+            <span class="gold-num fw-extra-bold fs-4 ms-2">{{ users.count }}</span>
+        </div>
     </div>
 
-    <div class="card shadow-sm">
-        <div class="card-header bg-white py-3">
-            <form method="get" class="row g-3 align-items-center">
-                <div class="col-md-4">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-search"></i></span>
-                        <input type="text" name="search" class="form-control" placeholder="Name, Email or Username"
-                            value="{{ search_query }}">
-                    </div>
+    <!-- Glass Filter Bar -->
+    <div class="glass-card p-4 mb-5">
+        <form method="get" class="row g-3 align-items-center">
+            <div class="col-lg-5 col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-0 text-white-50 pe-0">
+                        <i class="fas fa-search"></i>
+                    </span>
+                    <input type="text" name="search" class="form-control form-control-premium" placeholder="Name, email, or identity..." value="{{ search_query }}">
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label visually-hidden">Role Filter</label>
-                    <select name="role" class="form-select" onchange="this.form.submit()">
-                        <option value="" {% if not role_filter %}selected{% endif %}>All Roles</option>
-                        <option value="customer" {% if role_filter == 'customer' %}selected{% endif %}>Customers</option>
-                        <option value="baker" {% if role_filter == 'baker' %}selected{% endif %}>Bakers</option>
-                        <option value="delivery_assistant" {% if role_filter == 'delivery_assistant' %}selected{% endif %}>Delivery Assistants</option>
-                        <option value="admin" {% if role_filter == 'admin' %}selected{% endif %}>Admins</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">Filter</button>
-                </div>
-                <div class="col-md-3 text-end">
-                    <span class="text-muted">Total: {{ users.count }} users</span>
-                </div>
-            </form>
-        </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light">
-                        <tr>
-                            <th>User</th>
-                            <th>Role</th>
-                            <th>Contact</th>
-                            <th>Joined</th>
-                            <th>Status</th>
-                            <th class="text-end pe-4">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for user_obj in users %}
-                        <tr>
-                            <td>
-                                    <a href="{% url 'admin_user_detail' user_obj.id %}" class="d-flex align-items-center text-decoration-none">
-                                        {% if user_obj.profile.profile_picture %}
-                                        <img src="{{ user_obj.profile.profile_picture.url }}" class="rounded-circle me-3"
-                                            width="40" height="40" style="object-fit: cover;">
-                                        {% else %}
-                                        <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-3"
-                                            style="width: 40px; height: 40px;">
+            </div>
+            <div class="col-lg-3 col-md-3">
+                <select name="role" class="form-select form-control-premium" onchange="this.form.submit()">
+                    <option value="" {% if not role_filter %}selected{% endif %}>All Roles</option>
+                    <option value="customer" {% if role_filter == 'customer' %}selected{% endif %}>Customers</option>
+                    <option value="baker" {% if role_filter == 'baker' %}selected{% endif %}>Bakers</option>
+                    <option value="delivery_assistant" {% if role_filter == 'delivery_assistant' %}selected{% endif %}>Delivery Team</option>
+                    <option value="admin" {% if role_filter == 'admin' %}selected{% endif %}>Admins</option>
+                </select>
+            </div>
+            <div class="col-lg-4 col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-premium-gold flex-grow-1">Filter Registry</button>
+                <a href="{% url 'admin_users' %}" class="btn btn-outline-secondary rounded-pill px-4">Reset</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- User Registry Table -->
+    <div class="glass-card p-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-premium">
+                <thead>
+                    <tr>
+                        <th>Identity</th>
+                        <th>Role</th>
+                        <th>Contact Portfolio</th>
+                        <th>Registered</th>
+                        <th>Standing</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user_obj in users %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'admin_user_detail' user_obj.id %}" class="d-flex align-items-center text-decoration-none">
+                                <div class="profile-avatar rounded-circle me-3">
+                                    {% if user_obj.profile.profile_picture %}
+                                        <img src="{{ user_obj.profile.profile_picture.url }}" class="w-100 h-100 rounded-circle object-fit-cover">
+                                    {% else %}
+                                        <div class="w-100 h-100 rounded-circle bg-dark d-flex align-items-center justify-content-center text-white-50 fw-bold">
                                             {{ user_obj.username|make_list|first|upper }}
                                         </div>
-                                        {% endif %}
-                                        <div>
-                                            <div class="fw-bold text-dark">
-                                                {{ user_obj.get_full_name|default:user_obj.username }}
-                                            </div>
-                                            {% if user_obj.profile.role == 'baker' and user_obj.profile.baker_profile %}
-                                            <div class="text-muted small">
-                                                {{ user_obj.profile.baker_profile.shop_name }}
-                                            </div>
-                                            {% endif %}
-                                        </div>
-                                    </a>
-                            </td>
-                            <td>
-                                {% if user_obj.profile.role == 'customer' %}
-                                <span class="badge bg-info text-dark">Customer</span>
-                                {% elif user_obj.profile.role == 'baker' %}
-                                <span class="badge bg-warning text-dark">Baker</span>
-                                {% elif user_obj.profile.role == 'delivery_assistant' %}
-                                <span class="badge bg-dark bg-opacity-75">Delivery Assistant</span>
-                                {% elif user_obj.profile.role == 'admin' %}
-                                <span class="badge bg-primary">Admin</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                <div class="small">
-                                    <div>{{ user_obj.email }}</div>
-                                    <div>{{ user_obj.profile.phone_number }}</div>
-                                </div>
-                            </td>
-                            <td>{{ user_obj.date_joined|date:"M d, Y" }}</td>
-                            <td>
-                                {% if user_obj.profile.is_suspended %}
-                                <span class="badge bg-danger">Suspended</span>
-                                {% elif user_obj.profile.is_account_locked %}
-                                <span class="badge bg-warning text-dark">Blocked (Temp)</span>
-                                {% else %}
-                                <span class="badge bg-success">Active</span>
-                                {% endif %}
-                            </td>
-                            <td class="text-end pe-4">
-                                {% if user_obj != request.user %}
-                                <div class="btn-group">
-                                    {% if user_obj.profile.is_suspended or user_obj.profile.is_account_locked %}
-                                    <form action="{% url 'admin_unsuspend_user' user_obj.id %}" method="post">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-sm btn-success" title="Unsuspend/Unblock">
-                                            <i class="fas fa-unlock"></i> Activate
-                                        </button>
-                                    </form>
-                                    {% else %}
-                                    <button type="button" class="btn btn-sm btn-outline-danger dropdown-toggle"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-ban"></i> Block/Suspend
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <form action="{% url 'admin_block_user_temp' user_obj.id %}" method="post">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="duration" value="24">
-                                                <button type="submit" class="dropdown-item">
-                                                    <i class="fas fa-clock me-2"></i>Block for 24 Hours
-                                                </button>
-                                            </form>
-                                        </li>
-                                        <li>
-                                            <form action="{% url 'admin_block_user_temp' user_obj.id %}" method="post">
-                                                {% csrf_token %}
-                                                <input type="hidden" name="duration" value="168">
-                                                <button type="submit" class="dropdown-item">
-                                                    <i class="fas fa-calendar-week me-2"></i>Block for 7 Days
-                                                </button>
-                                            </form>
-                                        </li>
-                                        <li>
-                                            <hr class="dropdown-divider">
-                                        </li>
-                                        <li>
-                                            <form action="{% url 'admin_suspend_user' user_obj.id %}" method="post">
-                                                {% csrf_token %}
-                                                <button type="submit" class="dropdown-item text-danger"
-                                                    onclick="return confirm('Are you sure you want to suspend this user indefinitely?')">
-                                                    <i class="fas fa-ban me-2"></i>Suspend Indefinitely
-                                                </button>
-                                            </form>
-                                        </li>
-                                    </ul>
                                     {% endif %}
                                 </div>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="6" class="text-center py-4">No users found.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% if users.paginator.num_pages > 1 %}
-            <div class="card-footer bg-white py-3">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center mb-0">
-                        {% if users.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link"
-                                href="?page={{ users.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if role_filter %}&role={{ role_filter }}{% endif %}">Previous</a>
-                        </li>
-                        {% endif %}
-                        <li class="page-item disabled">
-                            <span class="page-link">Page {{ users.number }} of {{ users.paginator.num_pages }}</span>
-                        </li>
-                        {% if users.has_next %}
-                        <li class="page-item">
-                            <a class="page-link"
-                                href="?page={{ users.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if role_filter %}&role={{ role_filter }}{% endif %}">Next</a>
-                        </li>
-                        {% endif %}
-                    </ul>
-                </nav>
-            </div>
-            {% endif %}
+                                <div>
+                                    <div class="text-white fw-bold">{{ user_obj.get_full_name|default:user_obj.username }}</div>
+                                    {% if user_obj.profile.role == 'baker' and user_obj.profile.baker_profile %}
+                                        <div class="text-white-50" style="font-size: 0.75rem;">{{ user_obj.profile.baker_profile.shop_name }}</div>
+                                    {% endif %}
+                                </div>
+                            </a>
+                        </td>
+                        <td>
+                            {% if user_obj.profile.role == 'customer' %}
+                                <span class="role-badge badge-customer">Customer</span>
+                            {% elif user_obj.profile.role == 'baker' %}
+                                <span class="role-badge badge-baker">Baker</span>
+                            {% elif user_obj.profile.role == 'delivery_assistant' %}
+                                <span class="role-badge badge-delivery">Delivery</span>
+                            {% elif user_obj.profile.role == 'admin' %}
+                                <span class="role-badge badge-admin">Admin</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="text-white-50 small">
+                                <div class="mb-1"><i class="fas fa-envelope-open me-2 gold-shimmer"></i>{{ user_obj.email }}</div>
+                                <div><i class="fas fa-phone-alt me-2 gold-shimmer"></i>{{ user_obj.profile.phone_number }}</div>
+                            </div>
+                        </td>
+                        <td><span class="gold-num text-white-50 small">{{ user_obj.date_joined|date:"M d, Y" }}</span></td>
+                        <td>
+                            {% if user_obj.profile.is_suspended %}
+                                <span class="status-badge status-suspended">Suspended</span>
+                            {% elif user_obj.profile.is_account_locked %}
+                                <span class="status-badge status-suspended">Blocked (Temp)</span>
+                            {% else %}
+                                <span class="status-badge status-active">Active</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            {% if user_obj != request.user %}
+                                <div class="btn-group">
+                                    {% if user_obj.profile.is_suspended or user_obj.profile.is_account_locked %}
+                                        <form action="{% url 'admin_unsuspend_user' user_obj.id %}" method="post">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-premium-gold btn-sm">
+                                                <i class="fas fa-unlock me-2"></i>Reactivate
+                                            </button>
+                                        </form>
+                                    {% else %}
+                                        <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3 dropdown-toggle" data-bs-toggle="dropdown">
+                                            Manage Account
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg" style="background: rgba(30, 20, 40, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(235, 209, 151, 0.1) !important;">
+                                            <li>
+                                                <form action="{% url 'admin_block_user_temp' user_obj.id %}" method="post">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="duration" value="24">
+                                                    <button type="submit" class="dropdown-item text-white py-2"><i class="fas fa-clock me-2 text-warning"></i>Block 24h</button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form action="{% url 'admin_block_user_temp' user_obj.id %}" method="post">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="duration" value="168">
+                                                    <button type="submit" class="dropdown-item text-white py-2"><i class="fas fa-calendar-week me-2 text-warning"></i>Block 7d</button>
+                                                </form>
+                                            </li>
+                                            <li><hr class="dropdown-divider bg-white opacity-10"></li>
+                                            <li>
+                                                <form action="{% url 'admin_suspend_user' user_obj.id %}" method="post">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="dropdown-item text-danger py-2" onclick="return confirm('Suspend indefinitely?')">
+                                                        <i class="fas fa-ban me-2"></i>Indefinite Suspension
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5">
+                            <i class="fas fa-user-slash fa-3x gold-text opacity-25 mb-3"></i>
+                            <p class="text-white-50">No identities match your search.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
+
+        {% if users.paginator.num_pages > 1 %}
+        <div class="mt-4 pt-4 border-top border-white border-opacity-10">
+            <nav>
+                <ul class="pagination justify-content-center">
+                    {% if users.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link bg-transparent border-0 gold-num text-white-50" href="?page={{ users.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if role_filter %}&role={{ role_filter }}{% endif %}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li class="page-item disabled">
+                        <span class="page-link bg-transparent border-0 gold-num text-white">Page {{ users.number }} of {{ users.paginator.num_pages }}</span>
+                    </li>
+                    {% if users.has_next %}
+                    <li class="page-item">
+                        <a class="page-link bg-transparent border-0 gold-num text-white-50" href="?page={{ users.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if role_filter %}&role={{ role_filter }}{% endif %}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
     </div>
 </div>
+
 {% endblock %}

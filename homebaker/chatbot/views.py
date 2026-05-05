@@ -22,8 +22,8 @@ def chat_api(request):
         if not message:
             return JsonResponse({'error': 'Message is required'}, status=400)
             
-        # Get AI response
-        response_text = ChatbotService.get_response(message, history)
+        # Get AI response with user context
+        response_text = ChatbotService.get_response(message, history, user=request.user)
         
         return JsonResponse({
             'response': response_text

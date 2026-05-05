@@ -3,248 +3,389 @@
 {% block title %}Baker Dashboard{% endblock %}
 
 {% block content %}
+<style>
+    .dashboard-header-glow {
+        font-family: 'Great Vibes', cursive !important;
+        font-size: 4rem;
+        color: #ebd197;
+        text-shadow: 0 0 20px rgba(235, 209, 151, 0.4);
+    }
+    
+    .luxury-stat-card {
+        background: rgba(30, 20, 40, 0.52);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1px solid rgba(235, 209, 151, 0.12);
+        border-radius: 24px;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        overflow: hidden;
+        position: relative;
+        perspective: 1000px;
+    }
+    
+    .luxury-stat-card:hover {
+        transform: translateY(-8px) rotateX(2deg) rotateY(1deg);
+        border-color: rgba(235, 209, 151, 0.4);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6), 0 0 20px rgba(235, 209, 151, 0.1);
+    }
 
-<div class="container-fluid py-4">
+    .chart-container-3d {
+        position: relative;
+        transition: transform 0.3s ease;
+    }
 
-    <div class="d-flex align-items-center mb-4">
+    .luxury-stat-card:hover .chart-container-3d {
+        transform: translateZ(20px);
+    }
+
+    @keyframes gold-shimmer-bg {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+
+    .premium-badge {
+        background: linear-gradient(90deg, rgba(235, 209, 151, 0.1), rgba(235, 209, 151, 0.2), rgba(235, 209, 151, 0.1));
+        background-size: 200% auto;
+        animation: gold-shimmer-bg 4s linear infinite;
+        border: 1px solid rgba(235, 209, 151, 0.3);
+        border-radius: 50px;
+        padding: 4px 12px;
+        font-size: 0.7rem;
+        color: #ebd197;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+    }
+
+    .stat-label {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 0.75rem;
+    }
+
+    .stat-value-gold {
+        font-family: 'Inter', sans-serif;
+        font-weight: 800;
+        background: linear-gradient(135deg, #ebd197, #c5a059);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 2.8rem;
+        line-height: 1;
+    }
+
+    .ai-insights-banner {
+        background: linear-gradient(135deg, rgba(30, 20, 40, 0.6) 0%, rgba(7, 3, 10, 0.8) 100%);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(235, 209, 151, 0.15);
+        border-radius: 30px;
+        padding: 2.5rem;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.5s ease;
+    }
+
+    .ai-insights-banner::after {
+        content: '';
+        position: absolute;
+        top: -50%; left: -50%; width: 200%; height: 200%;
+        background: radial-gradient(circle, rgba(235, 209, 151, 0.03) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .ai-insights-banner:hover {
+        border-color: rgba(235, 209, 151, 0.4);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+        transform: scale(1.01);
+    }
+
+    .btn-reveal-strategy {
+        background: linear-gradient(135deg, #c8963e, #f5d97a) !important;
+        color: #07030a !important;
+        border: none !important;
+        border-radius: 50px !important;
+        padding: 0.8rem 2rem !important;
+        font-weight: 800 !important;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 10px 20px rgba(235, 209, 151, 0.2);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    }
+
+    .btn-reveal-strategy:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 15px 30px rgba(235, 209, 151, 0.4);
+        filter: brightness(1.1);
+    }
+
+    .brain-glow-container {
+        width: 70px; height: 70px;
+        background: rgba(235, 209, 151, 0.05);
+        border: 1px solid rgba(235, 209, 151, 0.2);
+        box-shadow: 0 0 20px rgba(235, 209, 151, 0.1);
+        transition: all 0.4s ease;
+    }
+
+    .ai-insights-banner:hover .brain-glow-container {
+        transform: rotate(10deg) scale(1.1);
+        border-color: rgba(235, 209, 151, 0.5);
+        box-shadow: 0 0 30px rgba(235, 209, 151, 0.2);
+    }
+
+    .shimmer-border {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(235, 209, 151, 0.6), transparent);
+        animation: shimmer-horizontal 3s linear infinite;
+    }
+
+    @keyframes shimmer-horizontal {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    .profile-ring {
+        padding: 4px;
+        background: linear-gradient(135deg, #ebd197, #c5a059);
+        border-radius: 50%;
+        display: inline-block;
+        box-shadow: 0 0 25px rgba(235, 209, 151, 0.3);
+    }
+
+</style>
+
+<div class="container-fluid py-5 px-md-5" style="animation: fadeIn 0.8s ease-out;">
+
+    <div class="d-flex align-items-center mb-5 pb-4 border-bottom" style="border-color: rgba(235, 209, 151, 0.1) !important;">
         {% if user.profile.profile_picture %}
-        <img src="{{ user.profile.profile_picture.url }}" alt="Profile" class="rounded-circle me-3 shadow-sm"
-            style="width: 64px; height: 64px; object-fit: cover;">
+        <div class="profile-ring me-4">
+            <img src="{{ user.profile.profile_picture.url }}" alt="Profile" class="rounded-circle"
+                style="width: 85px; height: 85px; object-fit: cover; border: 3px solid #07030a;">
+        </div>
         {% endif %}
-        <h1 class="fw-bold mb-0">Baker Dashboard</h1>
+        <div>
+            <h1 class="dashboard-header-glow mb-1 script-font">Artisan Hub</h1>
+            <p class="small text-uppercase mb-0" style="color: rgba(255,255,255,0.4); letter-spacing: 2.5px;">Refining the art of digital baking</p>
+        </div>
     </div>
 
     {% if user.profile.baker_profile.status != 'approved' %}
-    <div class="alert alert-warning shadow-sm border-0 mb-4" role="alert">
+    <div class="alert px-4 py-3 mb-5" role="alert" style="background: rgba(255, 193, 7, 0.05); border: 1px solid rgba(255, 193, 7, 0.2); border-radius: 18px; color: #ffc107;">
         <div class="d-flex align-items-center">
-            <i class="fas fa-exclamation-triangle me-3 fs-4"></i>
+            <i class="fas fa-crown me-3 fs-3"></i>
             <div>
-                <h5 class="alert-heading fw-bold mb-1">Approval Pending</h5>
-                <p class="mb-0">Your baker account is currently pending admin approval. You can view your dashboard and
-                    existing cakes, but <strong>cake uploading and editing are restricted</strong> until you are
-                    approved.</p>
+                <h5 class="fw-bold mb-1 script-font" style="font-size: 1.8rem;">Approval in Progress</h5>
+                <p class="small mb-0 opacity-75">Your elite status is being verified. Full artisan privileges will be granted shortly.</p>
             </div>
         </div>
     </div>
     {% endif %}
 
-    <!-- KPI Cards -->
+    <!-- KPI Cards Row 1 -->
     <div class="row g-4 mb-4">
-        <!-- Pending Requests - Blue -->
         <div class="col-md-3">
-            <div class="card shadow-sm border-primary h-100" style="border-width: 2px;">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <h6 class="text-primary small text-uppercase fw-bold">Pending Custom Requests</h6>
-                    <h2 class="fw-bold mb-2">{{ pending_custom_requests }}</h2>
-                    <a href="{% url 'baker_custom_requests' %}" class="btn btn-sm btn-primary mt-auto">View Requests</a>
-                </div>
+            <div class="luxury-stat-card h-100 p-4 d-flex flex-column justify-content-center align-items-center text-center">
+                <span class="stat-label">Pending Requests</span>
+                <span class="stat-value-gold mb-3">{{ pending_custom_requests }}</span>
+                <a href="{% url 'baker_custom_requests' %}" class="btn btn-sm px-4 py-2" style="background: rgba(235, 209, 151, 0.1); color: #ebd197; border: 1px solid rgba(235, 209, 151, 0.3); border-radius: 50px; font-weight: 700; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">
+                    Review Studio
+                </a>
             </div>
         </div>
 
-        <!-- Total Orders - Indigo -->
         <div class="col-md-3">
-            <div class="card shadow-sm h-100" style="border: 2px solid #6610f2;">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <h6 class="small text-uppercase fw-bold" style="color: #6610f2;">Total Orders</h6>
-                    <h2 class="fw-bold mb-0">{{ total_orders }}</h2>
-                </div>
+            <div class="luxury-stat-card h-100 p-4 d-flex flex-column justify-content-center align-items-center text-center">
+                <span class="stat-label">Total Portfolio</span>
+                <span class="stat-value-gold">{{ total_orders }}</span>
             </div>
         </div>
 
-        <!-- Delivered Orders - Green -->
         <div class="col-md-3">
-            <div class="card shadow-sm h-100" style="border: 2px solid #059669;">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <h6 class="small text-uppercase fw-bold" style="color: #059669;">Delivered</h6>
-                    <h2 class="fw-bold mb-0">{{ total_delivered }}</h2>
-                </div>
+            <div class="luxury-stat-card h-100 p-4 d-flex flex-column justify-content-center align-items-center text-center">
+                <span class="stat-label">Exquisite Sales</span>
+                <span class="stat-value-gold">{{ total_delivered }}</span>
             </div>
         </div>
 
-        <!-- Rating - Warning Orange -->
         <div class="col-md-3">
-            <div class="card shadow-sm border-warning h-100" style="border-width: 2px;">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <h6 class="text-warning small text-uppercase fw-bold">Rating</h6>
-                    <h3 class="fw-bold mb-0">
-                        {{ average_rating|floatformat:1 }} <small class="fs-6">★</small>
-                    </h3>
+            <div class="luxury-stat-card h-100 p-4 d-flex flex-column justify-content-center align-items-center text-center">
+                <span class="stat-label">Artisan Rating</span>
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-star me-2" style="color: #ebd197; filter: drop-shadow(0 0 10px rgba(235, 209, 151, 0.5));"></i>
+                    <span class="stat-value-gold">{{ average_rating|floatformat:1 }}</span>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Financial KPIs -->
-    <div class="row g-4 mb-4">
-        <!-- Revenue - Success Green -->
+    <div class="row g-4 mb-5">
         <div class="col-md-4">
-            <div class="card shadow-sm border-success h-100" style="border-width: 2px;">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <h6 class="text-success small text-uppercase fw-bold">Total Revenue</h6>
-                    <h3 class="fw-bold mb-0">₹{{ total_revenue|floatformat:0 }}</h3>
-                </div>
+            <div class="luxury-stat-card h-100 p-4 d-flex flex-column justify-content-center align-items-center text-center" style="border-bottom: 2px solid rgba(16, 185, 129, 0.3);">
+                <span class="stat-label">Gross Revenue</span>
+                <span class="stat-value-gold" style="background: linear-gradient(135deg, #10b981, #34d399); -webkit-background-clip: text;">₹{{ total_revenue|floatformat:0 }}</span>
             </div>
         </div>
 
-        <!-- Expenses - Danger Red -->
         <div class="col-md-4">
-            <div class="card shadow-sm border-danger h-100" style="border-width: 2px;">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <h6 class="text-danger small text-uppercase fw-bold">Total Expenses</h6>
-                    <h3 class="fw-bold mb-0">₹{{ total_expenses|floatformat:0 }}</h3>
-                </div>
+            <div class="luxury-stat-card h-100 p-4 d-flex flex-column justify-content-center align-items-center text-center" style="border-bottom: 2px solid rgba(239, 68, 68, 0.3);">
+                <span class="stat-label">Operational Costs</span>
+                <span class="stat-value-gold" style="background: linear-gradient(135deg, #ef4444, #f87171); -webkit-background-clip: text;">₹{{ total_expenses|floatformat:0 }}</span>
             </div>
         </div>
 
-        <!-- Profit - Info Blue -->
         <div class="col-md-4">
-            <div class="card shadow-sm border-info h-100" style="border-width: 2px;">
-                <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <h6 class="text-info small text-uppercase fw-bold">Profit</h6>
-                    <h3 class="fw-bold mb-0">₹{{ total_profit|floatformat:0 }}</h3>
-                </div>
+            <div class="luxury-stat-card h-100 p-4 d-flex flex-column justify-content-center align-items-center text-center" style="border-bottom: 2px solid rgba(59, 130, 246, 0.3);">
+                <span class="stat-label">Net Treasury</span>
+                <span class="stat-value-gold" style="background: linear-gradient(135deg, #3b82f6, #60a5fa); -webkit-background-clip: text;">₹{{ total_profit|floatformat:0 }}</span>
             </div>
         </div>
     </div>
 
-    <!-- AI ANALYTICS SHORTCUT -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm overflow-hidden" 
-                 style="background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);">
-                <div class="card-body p-3 d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center">
-                        <div class="bg-primary text-white rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                        <div>
-                            <h6 class="fw-bold mb-0">AI Business Insights Ready</h6>
-                            <p class="text-muted small mb-0">Explore deep-dive growth analysis and smart recommendations.</p>
-                        </div>
-                    </div>
-                    <a href="{% url 'baker_ai_analytics' %}" class="btn btn-primary btn-sm px-4 rounded-pill shadow-sm">
-                        View Full Analysis <i class="fas fa-arrow-right ms-1"></i>
-                    </a>
-                </div>
+    <!-- AI Insights Banner -->
+    <div class="ai-insights-banner mb-5 d-flex flex-column flex-md-row align-items-center justify-content-between">
+        <div class="shimmer-border"></div>
+        <div class="d-flex align-items-center mb-3 mb-md-0">
+            <div class="rounded-circle d-flex align-items-center justify-content-center me-4 brain-glow-container">
+                <i class="fas fa-brain gold-shimmer" style="font-size: 1.8rem;"></i>
+            </div>
+            <div>
+                <h4 class="fw-bold mb-1 script-font" style="font-size: 2.2rem; color: #ebd197 !important; text-shadow: 0 0 15px rgba(235, 209, 151, 0.3);">AI Business Intelligence</h4>
+                <p class="text-white-50 mb-0">Sophisticated growth analysis and demand predictions are ready for review.</p>
             </div>
         </div>
-    </div>
+        <a href="{% url 'baker_ai_analytics' %}" class="btn btn-reveal-strategy">
+            Reveal Strategy <i class="fas fa-chevron-right ms-2 small"></i>
+        </a>
+    </div></div>
 
 
     <!-- Charts -->
     <div class="row g-4 mb-4">
-
         <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title text-muted small text-uppercase fw-bold mb-3">Monthly Revenue</h5>
-                    <div style="height: 300px; position: relative;">
-                        <canvas id="revenueChart"></canvas>
-                    </div>
+            <div class="luxury-stat-card p-4">
+                <h5 class="stat-label mb-4" style="color: #ebd197;"><i class="fas fa-chart-line me-2"></i>Monthly Revenue</h5>
+                <div class="chart-container-3d" style="height: 320px;">
+                    <canvas id="revenueChart"></canvas>
                 </div>
             </div>
         </div>
 
         <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title text-muted small text-uppercase fw-bold mb-3">Monthly Expenses</h5>
-                    <div style="height: 300px; position: relative;">
-                        <canvas id="expensesChart"></canvas>
-                    </div>
+            <div class="luxury-stat-card p-4">
+                <h5 class="stat-label mb-4" style="color: #ef4444;"><i class="fas fa-chart-area me-2"></i>Monthly Expenses</h5>
+                <div class="chart-container-3d" style="height: 320px;">
+                    <canvas id="expensesChart"></canvas>
                 </div>
             </div>
         </div>
-
     </div>
-
 
     <div class="row g-4 mb-4">
-
         <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title text-muted small text-uppercase fw-bold mb-3">Monthly Profit</h5>
-                    <div style="height: 300px; position: relative;">
-                        <canvas id="profitChart"></canvas>
-                    </div>
+            <div class="luxury-stat-card p-4">
+                <h5 class="stat-label mb-4" style="color: #3b82f6;"><i class="fas fa-hand-holding-usd me-2"></i>Monthly Profit</h5>
+                <div class="chart-container-3d" style="height: 320px;">
+                    <canvas id="profitChart"></canvas>
                 </div>
             </div>
         </div>
 
         <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title text-muted small text-uppercase fw-bold mb-3">Popular Cakes</h5>
-                    <div style="height: 300px; position: relative;">
-                        <canvas id="popularCakesChart"></canvas>
-                    </div>
+            <div class="luxury-stat-card p-4">
+                <h5 class="stat-label mb-4" style="color: #6c5ce7;"><i class="fas fa-birthday-cake me-2"></i>Popular Creations</h5>
+                <div class="chart-container-3d" style="height: 320px;">
+                    <canvas id="popularCakesChart"></canvas>
                 </div>
             </div>
         </div>
-
     </div>
 
 
-    <!-- Recent Orders -->
-    <div class="card shadow-sm mt-4">
-
-        <div class="card-header fw-bold">
-            Recent Orders
-        </div>
-
-        <div class="card-body">
-
-            <div class="table-responsive">
-
-                <table class="table table-hover">
-
-                    <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Customer</th>
-                            <th>Items</th>
-                            <th>Amount</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-
-                        {% for order in recent_orders %}
-
-                        <tr>
-                            <td>{{ order.order_id }}</td>
-                            <td>{{ order.customer.get_full_name|default:order.customer.username }}</td>
-                            <td>{{ order.items.count }}</td>
-                            <td>₹{{ order.total_amount }}</td>
-                            <td>
-                                <span class="badge bg-primary">
-                                    {{ order.get_status_display }}
-                                </span>
-                            </td>
-                            <td>{{ order.created_at|date:"d M Y" }}</td>
-                        </tr>
-
-                        {% empty %}
-
-                        <tr>
-                            <td colspan="6" class="text-center text-muted">
-                                No recent orders
-                            </td>
-                        </tr>
-
-                        {% endfor %}
-
-                    </tbody>
-
-                </table>
-
+    <!-- Recent Commissions -->
+    <div class="row g-5 mt-4">
+        <div class="col-lg-7">
+            <div class="luxury-stat-card h-100">
+                <div class="card-header border-bottom py-4 px-4" style="border-color: rgba(235, 209, 151, 0.1) !important;">
+                    <h4 class="mb-0 script-font gold-shimmer" style="color: #ebd197; font-size: 2.6rem; line-height: 1.2;">Recent Commissions</h4>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover mb-0" style="background: transparent;">
+                            <thead>
+                                <tr style="background: rgba(235, 209, 151, 0.03);">
+                                    <th class="ps-4 py-3 text-uppercase small" style="color: #ebd197; border: none; font-weight: 700; letter-spacing: 1px;">ID</th>
+                                    <th class="py-3 text-uppercase small" style="color: #ebd197; border: none; font-weight: 700; letter-spacing: 1px;">Patron</th>
+                                    <th class="py-3 text-uppercase small" style="color: #ebd197; border: none; font-weight: 700; letter-spacing: 1px;">Valuation</th>
+                                    <th class="pe-4 py-3 text-uppercase small text-end" style="color: #ebd197; border: none; font-weight: 700; letter-spacing: 1px;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody style="border-top: 1px solid rgba(235, 209, 151, 0.1);">
+                                {% for order in recent_orders %}
+                                <tr style="transition: background 0.3s ease; background: transparent;">
+                                    <td class="ps-4 py-3 fw-bold" style="color: #fff; border: none;">#{{ order.order_id }}</td>
+                                    <td class="py-3" style="color: rgba(255,255,255,0.7); border: none;">{{ order.customer.get_full_name|default:order.customer.username }}</td>
+                                    <td class="py-3 fw-bold" style="color: #ebd197; border: none;">₹{{ order.total_amount }}</td>
+                                    <td class="pe-4 py-3 text-end" style="border: none;">
+                                        <span class="badge" style="background: rgba(235, 209, 151, 0.1); color: #ebd197; border: 1px solid rgba(235, 209, 151, 0.2); font-size: 0.65rem;">
+                                            {{ order.get_status_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr style="background: transparent;">
+                                    <td colspan="4" class="text-center py-5" style="border: none;">
+                                        <i class="fas fa-receipt d-block mb-3 opacity-25" style="font-size: 3rem; color: #ebd197;"></i>
+                                        <span class="text-white-50" style="letter-spacing: 1px; font-weight: 300;">No recent commissions.</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-
         </div>
 
+        <div class="col-lg-5">
+            <div class="luxury-stat-card h-100">
+                <div class="card-header border-bottom py-4 px-4" style="border-color: rgba(235, 209, 151, 0.1) !important;">
+                    <h4 class="mb-0 script-font gold-shimmer" style="color: #ebd197; font-size: 2.6rem; line-height: 1.2;">Treasury Outlays</h4>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover mb-0" style="background: transparent;">
+                            <thead>
+                                <tr style="background: rgba(235, 209, 151, 0.03);">
+                                    <th class="ps-4 py-3 text-uppercase small" style="color: #ebd197; border: none; font-weight: 700; letter-spacing: 1px;">Log</th>
+                                    <th class="py-3 text-uppercase small" style="color: #ebd197; border: none; font-weight: 700; letter-spacing: 1px;">Valuation</th>
+                                    <th class="pe-4 py-3 text-uppercase small text-end" style="color: #ebd197; border: none; font-weight: 700; letter-spacing: 1px;">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody style="border-top: 1px solid rgba(235, 209, 151, 0.1);">
+                                {% for expense in recent_expenses %}
+                                <tr style="transition: background 0.3s ease; background: transparent;">
+                                    <td class="ps-4 py-3" style="color: rgba(255,255,255,0.7); border: none;">{{ expense.description|truncatechars:18 }}</td>
+                                    <td class="py-3 fw-bold" style="color: #ff4d4d; border: none;">-₹{{ expense.amount }}</td>
+                                    <td class="pe-4 py-3 text-end" style="color: rgba(255,255,255,0.5); border: none; font-size: 0.8rem;">{{ expense.expense_date|date:"d M" }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr style="background: transparent;">
+                                    <td colspan="3" class="text-center py-5" style="border: none;">
+                                        <i class="fas fa-vault d-block mb-3 opacity-25" style="font-size: 3rem; color: #ebd197;"></i>
+                                        <span class="text-white-50" style="letter-spacing: 1px; font-weight: 300;">Treasury manifest is clear.</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>
@@ -260,59 +401,111 @@
 
 
 <script>
+    // Global Chart Defaults for Luxury Aesthetics
+    Chart.defaults.color = 'rgba(255, 255, 255, 0.4)';
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.scale.grid.color = 'rgba(255, 255, 255, 0.03)';
+    Chart.defaults.elements.point.radius = 0;
+    Chart.defaults.elements.point.hoverRadius = 6;
+    Chart.defaults.elements.point.hoverBorderWidth = 3;
+    Chart.defaults.elements.point.hoverBackgroundColor = '#07030a';
+    Chart.defaults.elements.line.borderWidth = 4;
+    Chart.defaults.elements.line.capBezierPoints = true;
 
     // Parse Django JSON safely
     const chartData = JSON.parse(
         document.getElementById('chartData').textContent
     );
 
+    function createLinearGradient(ctx, colorStart, colorEnd) {
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, colorStart);
+        gradient.addColorStop(1, colorEnd);
+        return gradient;
+    }
 
-    /* Revenue Chart */
+    // Plugin to add shadow and glow for 3D effect
+    const shadowPlugin = {
+        id: 'shadowPlugin',
+        beforeDraw: (chart) => {
+            const ctx = chart.ctx;
+            ctx.save();
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+            ctx.shadowBlur = 15;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 10;
+        },
+        afterDraw: (chart) => {
+            chart.ctx.restore();
+        }
+    };
 
-    const revenueCtx = document
-        .getElementById('revenueChart')
-        .getContext('2d');
-
+    /* Revenue Chart (Gold 3D) */
+    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
     new Chart(revenueCtx, {
         type: 'line',
+        plugins: [shadowPlugin],
         data: {
             labels: chartData.monthly_revenue.map(x => x.month),
             datasets: [{
-                label: 'Revenue ₹',
+                label: 'Revenue',
                 data: chartData.monthly_revenue.map(x => x.revenue),
-                borderColor: '#7c3aed',
-                backgroundColor: 'rgba(124,58,237,0.2)',
-                tension: 0.3
+                borderColor: '#ebd197',
+                borderWidth: 5,
+                pointHoverRadius: 8,
+                pointHoverBorderColor: '#ebd197',
+                backgroundColor: createLinearGradient(revenueCtx, 'rgba(235, 209, 151, 0.15)', 'transparent'),
+                fill: true,
+                tension: 0.4
             }]
         },
         options: {
             maintainAspectRatio: false,
             responsive: true,
-            plugins: { legend: { display: false } },
+            plugins: { 
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(7, 3, 10, 0.9)',
+                    titleColor: '#ebd197',
+                    bodyColor: '#fff',
+                    borderColor: 'rgba(235, 209, 151, 0.2)',
+                    borderWidth: 1,
+                    padding: 15,
+                    displayColors: false,
+                    cornerRadius: 12,
+                    backdropFilter: 'blur(10px)'
+                }
+            },
             scales: {
-                y: { beginAtZero: true, grid: { borderDash: [2, 4] } },
+                y: { 
+                    beginAtZero: true,
+                    grid: { display: true },
+                    ticks: { 
+                        callback: value => '₹' + value.toLocaleString(),
+                        font: { size: 10 }
+                    }
+                },
                 x: { grid: { display: false } }
-            }
+            },
+            interaction: { intersect: false, mode: 'index' }
         }
     });
 
-
-    /* Expenses Chart */
-
-    const expensesCtx = document
-        .getElementById('expensesChart')
-        .getContext('2d');
-
+    /* Expenses Chart (Red 3D) */
+    const expensesCtx = document.getElementById('expensesChart').getContext('2d');
     new Chart(expensesCtx, {
         type: 'line',
+        plugins: [shadowPlugin],
         data: {
             labels: chartData.monthly_expenses.map(x => x.month),
             datasets: [{
-                label: 'Expenses ₹',
+                label: 'Expenses',
                 data: chartData.monthly_expenses.map(x => x.expenses),
                 borderColor: '#ef4444',
-                backgroundColor: 'rgba(239,68,68,0.2)',
-                tension: 0.3
+                borderWidth: 5,
+                backgroundColor: createLinearGradient(expensesCtx, 'rgba(239, 68, 68, 0.12)', 'transparent'),
+                fill: true,
+                tension: 0.4
             }]
         },
         options: {
@@ -320,29 +513,27 @@
             responsive: true,
             plugins: { legend: { display: false } },
             scales: {
-                y: { beginAtZero: true, grid: { borderDash: [2, 4] } },
+                y: { beginAtZero: true, ticks: { font: { size: 10 } } },
                 x: { grid: { display: false } }
             }
         }
     });
 
-
-    /* Profit Chart */
-
-    const profitCtx = document
-        .getElementById('profitChart')
-        .getContext('2d');
-
+    /* Profit Chart (Blue 3D) */
+    const profitCtx = document.getElementById('profitChart').getContext('2d');
     new Chart(profitCtx, {
         type: 'line',
+        plugins: [shadowPlugin],
         data: {
             labels: chartData.monthly_profit.map(x => x.month),
             datasets: [{
-                label: 'Profit ₹',
+                label: 'Profit',
                 data: chartData.monthly_profit.map(x => x.profit),
-                borderColor: '#22c55e',
-                backgroundColor: 'rgba(34,197,94,0.2)',
-                tension: 0.3
+                borderColor: '#3b82f6',
+                borderWidth: 5,
+                backgroundColor: createLinearGradient(profitCtx, 'rgba(59, 130, 246, 0.12)', 'transparent'),
+                fill: true,
+                tension: 0.4
             }]
         },
         options: {
@@ -350,19 +541,14 @@
             responsive: true,
             plugins: { legend: { display: false } },
             scales: {
-                y: { beginAtZero: true, grid: { borderDash: [2, 4] } },
+                y: { beginAtZero: true, ticks: { font: { size: 10 } } },
                 x: { grid: { display: false } }
             }
         }
     });
 
-
-    /* Popular Cakes Chart */
-
-    const popularCtx = document
-        .getElementById('popularCakesChart')
-        .getContext('2d');
-
+    /* Popular Cakes Chart (Metallic Ring 3D) */
+    const popularCtx = document.getElementById('popularCakesChart').getContext('2d');
     new Chart(popularCtx, {
         type: 'doughnut',
         data: {
@@ -370,23 +556,46 @@
             datasets: [{
                 data: chartData.popular_cakes.map(x => x.orders),
                 backgroundColor: [
-                    '#7c3aed',
-                    '#2563eb',
-                    '#22c55e',
-                    '#f59e0b',
-                    '#ef4444'
-                ]
+                    '#ebd197',
+                    '#c5a059',
+                    '#c8963e',
+                    '#f5d97a',
+                    '#fff5c0'
+                ],
+                borderWidth: 5,
+                borderColor: '#07030a',
+                hoverOffset: 30,
+                borderRadius: 5
             }]
         },
         options: {
             maintainAspectRatio: false,
             responsive: true,
+            cutout: '82%',
             plugins: {
-                legend: { position: 'right' }
+                legend: { 
+                    position: 'right',
+                    labels: {
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        padding: 20,
+                        usePointStyle: true,
+                        pointStyle: 'rectRounded',
+                        font: { size: 11 }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(7, 3, 10, 0.9)',
+                    padding: 15,
+                    cornerRadius: 12,
+                    displayColors: true
+                }
+            },
+            animation: {
+                animateScale: true,
+                animateRotate: true
             }
         }
     });
-
 </script>
 
 {% endblock %}

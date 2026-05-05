@@ -4,166 +4,99 @@
 {% block title %}FAQ - HomeBaker{% endblock %}
 
 {% block content %}
-<div class="faq-container py-5">
-    <div class="text-center mb-5">
-        <h1 class="display-4 fw-bold text-primary">Frequently Asked Questions</h1>
-        <p class="lead text-muted">Everything you need to know about ordering your perfect cake.</p>
-    </div>
-
-    <div class="row justify-content-center">
-        <div class="col-lg-10 col-xl-8">
-            <div class="accordion accordion-flush shadow-sm rounded border overflow-hidden" id="faqAccordion">
-                
-                <!-- Q1: How do I order a cake? -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q1">
-                           1. How do I place an order for a cake?
-                        </button>
-                    </h2>
-                    <div id="q1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            Ordering is simple! Browse our collection of cakes, select your favorite, choose the size (0.5kg to 3kg), and click "Add to Cart". Once you're ready, proceed to checkout, provide your delivery details, and pay using your HomeBaker wallet.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Q2: Can I customize my cake? -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q2">
-                            2. Can I get a custom cake with my own design?
-                        </button>
-                    </h2>
-                    <div id="q2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            Yes! We specialize in custom designs. You can upload an image of the design you want or use our AI-powered designer to generate a unique concept. Our bakers will review your request and provide a quote.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Q3: How do I pay? -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q3">
-                            3. What payment methods are accepted?
-                        </button>
-                    </h2>
-                    <div id="q3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            We use a secure wallet-based system. You can recharge your HomeBaker wallet using standard payment methods and then use your wallet balance to pay for orders instantly.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Q4: What is the delivery range? -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q4">
-                            4. Where do you deliver?
-                        </button>
-                    </h2>
-                    <div id="q4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            Our bakers deliver within their local neighborhoods to ensure cakes arrive fresh and in perfect condition. The delivery options available to you will depend on your address and the proximity of our approved home bakers.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Q5: How much is delivery? -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q5">
-                            5. What are the delivery charges?
-                        </button>
-                    </h2>
-                    <div id="q5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            We charge a flat delivery fee of <strong>₹50.00</strong> per order to compensate our delivery partners and ensure safe transportation of your cakes.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Q6: Can I track my order? -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q6">
-                            6. How can I track my order status?
-                        </button>
-                    </h2>
-                    <div id="q6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            Once an order is placed, you can visit the "My Orders" section to see a real-time timeline. You'll see updates for every stage: Pending, Confirmed, Baking, Packed, Out for Delivery, and Delivered.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Q7: What about cake quality? -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q7">
-                            7. Are the home bakers verified?
-                        </button>
-                    </h2>
-                    <div id="q7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            Absolutely. Every baker on our platform must go through a rigorous approval process. We verify their FSSAI license and identity to ensure highest standards of hygiene and quality.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Q8: Can I cancel my order? -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q8">
-                            8. Can I cancel an order once it's placed?
-                        </button>
-                    </h2>
-                    <div id="q8" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            Orders can be cancelled as long as they are still in the "Pending" status. Once a baker confirms and starts preparing your cake, cancellations are no longer possible to prevent waste.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Q9: What happens if there's an issue? -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q9">
-                            9. What should I do if I have an issue with my order?
-                        </button>
-                    </h2>
-                    <div id="q9" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            Your satisfaction is our priority. If there's any issue with your cake or delivery, please contact our support team at <strong>exam.avin@gmail.com</strong> or call us at <strong>1234567890</strong> immediately.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Q10: How do I become a baker? -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q10">
-                            10. How can I start selling my own cakes on HomeBaker?
-                        </button>
-                    </h2>
-                    <div id="q10" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            We'd love to have you! Simply register for an account and select the "Baker" role. You'll need to fill out your shop profile and upload your FSSAI certificate. Our admin team will review your application within 24-48 hours.
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            
-            <div class="mt-5 text-center">
-                <p>Still have questions? <a href="{% url 'about_us' %}" class="text-primary fw-bold">Contact our team</a></p>
-            </div>
-        </div>
-    </div>
-</div>
-
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+
+    .script-font {
+        font-family: 'Great Vibes', cursive;
+        font-weight: normal;
+        letter-spacing: 1px;
+    }
+
+    /* Background Globs matching Home */
+    .bg-glob-1 {
+        position: fixed;
+        top: -10%;
+        left: -10%;
+        width: 800px;
+        height: 800px;
+        background: radial-gradient(circle, rgba(108, 30, 180, 0.2) 0%, rgba(7, 3, 10, 0) 60%);
+        border-radius: 50%;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .bg-glob-2 {
+        position: fixed;
+        top: 40%;
+        right: -20%;
+        width: 900px;
+        height: 900px;
+        background: radial-gradient(circle, rgba(108, 30, 180, 0.15) 0%, rgba(7, 3, 10, 0) 60%);
+        border-radius: 50%;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .content-wrapper {
+        position: relative;
+        z-index: 1;
+    }
+
+    .gold-text {
+        color: #ebd197 !important;
+    }
+    
+    .text-muted-premium {
+        color: #94a3b8 !important;
+    }
+
+    /* Force dark theme for this page specifically */
+    body {
+        background-color: #07030a !important;
+        color: #ffffff !important;
+    }
+
+    /* Premium Accordion Styling */
+    .accordion-item {
+        background-color: rgba(30, 20, 40, 0.4) !important;
+        border: 1px solid rgba(235, 209, 151, 0.15) !important;
+        border-radius: 12px !important;
+        margin-bottom: 1rem;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        overflow: hidden;
+    }
+    
+    .accordion-button {
+        background-color: transparent !important;
+        color: #ebd197 !important;
+        box-shadow: none !important;
+        font-size: 1.1rem;
+        padding: 1.25rem 1.5rem;
+    }
+
+    .accordion-button:not(.collapsed) {
+        background-color: rgba(74, 28, 106, 0.4) !important;
+        color: #ffffff !important;
+        border-bottom: 1px solid rgba(235, 209, 151, 0.1);
+    }
+
+    /* Make the default accordion icon gold/white */
+    .accordion-button::after {
+        filter: invert(80%) sepia(20%) saturate(1000%) hue-rotate(350deg) brightness(100%) contrast(100%);
+    }
+    .accordion-button:not(.collapsed)::after {
+        filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+    }
+
+    .accordion-body {
+        color: #cbd5e1;
+        font-size: 1.05rem;
+        line-height: 1.7;
+        padding: 1.5rem;
+    }
+
     .faq-container {
         animation: fadeIn 0.8s ease-out;
     }
@@ -171,25 +104,183 @@
         from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
     }
-    .accordion-button:not(.collapsed) {
-        background-color: #6c5ce7;
-        color: white;
-    }
-    .accordion-button:focus {
-        border-color: #6c5ce7;
-        box-shadow: 0 0 0 0.25rem rgba(108, 92, 231, 0.25);
-    }
-    [data-theme="dark"] .accordion-item {
-        background-color: #2d2d2d;
-        color: white;
-        border-color: #404040;
-    }
-    [data-theme="dark"] .accordion-button {
-        background-color: #2d2d2d;
-        color: white;
-    }
-    [data-theme="dark"] .accordion-button:not(.collapsed) {
-        background-color: #6c5ce7;
-    }
 </style>
+
+<div class="bg-glob-1"></div>
+<div class="bg-glob-2"></div>
+
+<div class="content-wrapper faq-container py-5">
+    <div class="text-center mb-5 pb-3" style="border-bottom: 1px solid rgba(235, 209, 151, 0.1);">
+        <h1 class="script-font gold-text" style="font-size: 4.5rem; text-shadow: 0 0 15px rgba(235, 209, 151, 0.3);">Frequently Asked Questions</h1>
+        <p class="lead text-muted-premium" style="font-size: 1.2rem; letter-spacing: 0.5px;">Everything you need to know about ordering your perfect cake.</p>
+    </div>
+
+    <div class="container mb-5 pb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+                <div class="accordion accordion-flush" id="faqAccordion">
+                    
+                    <!-- Q1 -->
+                    <div class="accordion-item shadow-sm">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q1">
+                               1. How do I place an order for a cake?
+                            </button>
+                        </h2>
+                        <div id="q1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Ordering is simple! Browse our collection of cakes, select your favorite, choose the size (0.5kg to 3kg), and click "Add to Cart". Once you're ready, proceed to checkout, provide your delivery details, and pay using your HomeBaker wallet.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div class="accordion-item shadow-sm">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q2">
+                                2. Can I get a custom cake with my own design?
+                            </button>
+                        </h2>
+                        <div id="q2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Yes! We specialize in custom designs. You can upload an image of the design you want or use our AI-powered designer to generate a unique concept. Our bakers will review your request and provide a quote.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div class="accordion-item shadow-sm">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q3">
+                                3. What payment methods are accepted?
+                            </button>
+                        </h2>
+                        <div id="q3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                We use a secure wallet-based system. You can recharge your HomeBaker wallet using standard payment methods and then use your wallet balance to pay for orders instantly.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Q4 -->
+                    <div class="accordion-item shadow-sm">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q4">
+                                4. Where do you deliver?
+                            </button>
+                        </h2>
+                        <div id="q4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Our bakers deliver within their local neighborhoods to ensure cakes arrive fresh and in perfect condition. The delivery options available to you will depend on your address and the proximity of our approved home bakers.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Q5 -->
+                    <div class="accordion-item shadow-sm">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q5">
+                                5. What are the delivery charges?
+                            </button>
+                        </h2>
+                        <div id="q5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                We charge a flat delivery fee of <strong class="text-white">₹50.00</strong> per order to compensate our delivery partners and ensure safe transportation of your cakes.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Q6 -->
+                    <div class="accordion-item shadow-sm">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q6">
+                                6. How can I track my order status?
+                            </button>
+                        </h2>
+                        <div id="q6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Once an order is placed, you can visit the "My Orders" section to see a real-time timeline. You'll see updates for every stage: Pending, Confirmed, Baking, Packed, Out for Delivery, and Delivered.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Q7 -->
+                    <div class="accordion-item shadow-sm">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q7">
+                                7. Are the home bakers verified?
+                            </button>
+                        </h2>
+                        <div id="q7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Absolutely. Every baker on our platform must go through a rigorous approval process. We verify their FSSAI license and identity to ensure highest standards of hygiene and quality.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Q8 -->
+                    <div class="accordion-item shadow-sm">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q8">
+                                8. Can I cancel an order once it's placed?
+                            </button>
+                        </h2>
+                        <div id="q8" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Orders can be cancelled as long as they are still in the "Pending" status. Once a baker confirms and starts preparing your cake, cancellations are no longer possible to prevent waste.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Q9 -->
+                    <div class="accordion-item shadow-sm">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q9">
+                                9. What should I do if I have an issue with my order?
+                            </button>
+                        </h2>
+                        <div id="q9" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Your satisfaction is our priority. If there's any issue with your cake or delivery, please contact our support team at <strong class="text-white">exam.avin@gmail.com</strong> or call us at <strong class="text-white">1234567890</strong> immediately.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Q10 -->
+                    <div class="accordion-item shadow-sm">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q10">
+                                10. How can I start selling my own cakes on HomeBaker?
+                            </button>
+                        </h2>
+                        <div id="q10" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                We'd love to have you! Simply register for an account and select the "Baker" role. You'll need to fill out your shop profile and upload your FSSAI certificate. Our admin team will review your application within 24-48 hours.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <div class="mt-5 text-center p-4" style="background: rgba(30, 20, 40, 0.4); border-radius: 12px; border: 1px solid rgba(235, 209, 151, 0.1);">
+                    <p class="text-muted-premium mb-0" style="font-size: 1.1rem;">Still have questions? <a href="{% url 'about_us' %}" class="gold-text fw-bold text-decoration-none" style="border-bottom: 1px dashed #ebd197;">Contact our team</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const container = document.querySelector('.faq-container');
+        container.style.opacity = '0';
+        container.style.transform = 'translateY(20px)';
+        container.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
+        
+        setTimeout(() => {
+            container.style.opacity = '1';
+            container.style.transform = 'translateY(0)';
+        }, 100);
+    });
+</script>
 {% endblock %}
