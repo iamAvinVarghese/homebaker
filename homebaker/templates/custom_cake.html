@@ -1,85 +1,469 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Design Your Dream Cake{% endblock %}
+{% block title %}AI Cake Designer — HomeBaker{% endblock %}
 
 {% block content %}
 <style>
-    [data-theme="dark"] .list-group-item {
-        background-color: var(--bg-card);
-        border-color: var(--border-color);
-        color: var(--text-primary);
+    @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+
+    /* ===== AI CAKE DESIGNER — ULTRA LUXURY ===== */
+    :root {
+        --gold: #ebd197;
+        --gold-glow-color: rgba(235, 209, 151, 0.4);
+        --glass: rgba(30, 20, 40, 0.55);
+        --glass-border: rgba(235, 209, 151, 0.15);
     }
+
+    .ai-page-wrapper {
+        min-height: 100vh;
+        background: #07030a;
+        position: relative;
+        overflow: hidden;
+        padding: 4rem 0 6rem;
+    }
+
+    /* Ambient background orbs */
+    .ai-orb-1 {
+        position: fixed; top: -15%; left: -10%;
+        width: 900px; height: 900px;
+        background: radial-gradient(circle, rgba(108, 30, 180, 0.18) 0%, transparent 65%);
+        border-radius: 50%; pointer-events: none; z-index: 0;
+    }
+    .ai-orb-2 {
+        position: fixed; bottom: -20%; right: -10%;
+        width: 800px; height: 800px;
+        background: radial-gradient(circle, rgba(235, 209, 151, 0.07) 0%, transparent 60%);
+        border-radius: 50%; pointer-events: none; z-index: 0;
+    }
+
+    .ai-content { position: relative; z-index: 1; }
+
+    /* Hero Header */
+    .ai-hero {
+        text-align: center;
+        margin-bottom: 3.5rem;
+    }
+
+    .ai-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.4rem 1.2rem;
+        background: rgba(235, 209, 151, 0.08);
+        border: 1px solid var(--glass-border);
+        border-radius: 50px;
+        color: var(--gold);
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+    }
+
+    .ai-hero h1 {
+        font-family: 'Great Vibes', cursive;
+        font-size: clamp(3rem, 7vw, 5rem);
+        color: var(--gold);
+        text-shadow: 0 0 30px var(--gold-glow-color);
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .ai-hero p {
+        color: rgba(255,255,255,0.6);
+        font-size: 1.1rem;
+        max-width: 550px;
+        margin: 0 auto;
+        line-height: 1.7;
+    }
+
+    /* Form Card */
+    .ai-form-card {
+        background: var(--glass);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 28px;
+        padding: 2.5rem;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+    }
+
+    .ai-form-card .form-section-title {
+        font-family: 'Great Vibes', cursive;
+        font-size: 2rem;
+        color: var(--gold);
+        margin-bottom: 2rem;
+    }
+
+    /* Form Elements */
+    .luxury-label {
+        display: block;
+        color: var(--gold);
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+    }
+
+    .luxury-form-control,
+    .luxury-form-control select,
+    .luxury-form-control input,
+    .luxury-form-control textarea {
+        width: 100%;
+        background: rgba(255,255,255,0.04) !important;
+        border: 1px solid rgba(235, 209, 151, 0.2) !important;
+        border-radius: 12px !important;
+        color: #fff !important;
+        padding: 0.85rem 1.1rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        appearance: none;
+        -webkit-appearance: none;
+    }
+
+    .luxury-form-control select,
+    .luxury-form-control input,
+    .luxury-form-control textarea {
+        border-radius: 12px !important;
+    }
+
+    /* Override Django form rendering */
+    #id_size, #id_shape, #id_flavor, #id_occasion,
+    #id_primary_colors, #id_design_style,
+    #id_message_on_cake, #id_extra_instructions {
+        background: rgba(255,255,255,0.04) !important;
+        border: 1px solid rgba(235, 209, 151, 0.2) !important;
+        border-radius: 12px !important;
+        color: #fff !important;
+        padding: 0.85rem 1.1rem;
+        font-size: 0.95rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    #id_size:focus, #id_shape:focus, #id_flavor:focus,
+    #id_occasion:focus, #id_primary_colors:focus,
+    #id_design_style:focus, #id_message_on_cake:focus,
+    #id_extra_instructions:focus {
+        border-color: var(--gold) !important;
+        box-shadow: 0 0 0 3px rgba(235, 209, 151, 0.1) !important;
+        outline: none;
+        background: rgba(255,255,255,0.07) !important;
+    }
+
+    #id_size option, #id_shape option, #id_flavor option,
+    #id_occasion option {
+        background: #1a0b2e;
+        color: #fff;
+    }
+
+    /* Generate Button */
+    .btn-generate {
+        background: linear-gradient(135deg, #ebd197, #c5a059);
+        color: #07030a !important;
+        font-weight: 800;
+        font-size: 1.1rem;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        border: none;
+        width: 100%;
+        letter-spacing: 0.5px;
+        box-shadow: 0 10px 30px rgba(235, 209, 151, 0.3);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-generate:hover:not(:disabled) {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 15px 40px rgba(235, 209, 151, 0.5);
+    }
+
+    .btn-generate:disabled {
+        opacity: 0.9;
+        cursor: not-allowed;
+        transform: none !important;
+        box-shadow: 0 8px 25px rgba(235, 209, 151, 0.2) !important;
+    }
+
+    .btn-generate::before {
+        content: '';
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .btn-generate:hover:not(:disabled)::before { left: 100%; }
+
+    /* Gold Ring Spinner */
+    .gold-spinner {
+        display: inline-block;
+        width: 22px;
+        height: 22px;
+        border: 3px solid rgba(7, 3, 10, 0.25);
+        border-top-color: #07030a;
+        border-radius: 50%;
+        animation: goldSpin 0.8s linear infinite;
+        vertical-align: middle;
+        margin-right: 0.6rem;
+        flex-shrink: 0;
+    }
+
+    @keyframes goldSpin {
+        to { transform: rotate(360deg); }
+    }
+
+    .btn-loading-state {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Result Section */
+    .ai-result-card {
+        background: var(--glass);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+        margin-bottom: 2.5rem;
+    }
+
+    .result-image-grid .design-label {
+        border: 2px solid rgba(235, 209, 151, 0.2);
+        border-radius: 12px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .result-image-grid .design-label:hover {
+        border-color: var(--gold);
+        transform: scale(1.02);
+    }
+
+    .btn-check:checked + .design-label {
+        border-color: var(--gold) !important;
+        box-shadow: 0 0 15px var(--gold-glow-color);
+    }
+
+    .result-details {
+        padding: 2.5rem;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .result-details h3 {
+        font-family: 'Great Vibes', cursive;
+        font-size: 2.5rem;
+        color: var(--gold);
+        margin-bottom: 1rem;
+    }
+
+    .result-price {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #fff;
+        font-family: 'Inter', sans-serif;
+        margin-bottom: 1.5rem;
+    }
+
+    .result-price span {
+        font-size: 0.95rem;
+        font-weight: 400;
+        color: rgba(255,255,255,0.5);
+        margin-left: 0.5rem;
+    }
+
+    .btn-order-luxury {
+        background: linear-gradient(135deg, #ebd197, #c5a059);
+        color: #07030a !important;
+        font-weight: 700;
+        padding: 0.85rem 1.5rem;
+        border-radius: 50px;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-order-luxury:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(235, 209, 151, 0.4);
+    }
+
+    .btn-redesign-luxury {
+        background: transparent;
+        color: var(--gold) !important;
+        border: 1px solid var(--glass-border);
+        padding: 0.85rem 1.5rem;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-redesign-luxury:hover {
+        border-color: var(--gold);
+        background: rgba(235, 209, 151, 0.08);
+    }
+
+    /* Modal */
+    .modal-luxury .modal-content {
+        background: #0f0a1a;
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        color: #fff;
+    }
+
+    .modal-luxury .modal-header {
+        border-bottom: 1px solid var(--glass-border);
+        padding: 1.5rem 2rem;
+    }
+
+    .modal-luxury .modal-footer {
+        border-top: 1px solid var(--glass-border);
+    }
+
+    .modal-luxury .modal-title {
+        font-family: 'Great Vibes', cursive;
+        font-size: 2rem;
+        color: var(--gold);
+    }
+
+    .modal-luxury .btn-close {
+        filter: invert(1);
+    }
+
+    /* Baker List Items */
+    .baker-item {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(235, 209, 151, 0.1) !important;
+        border-radius: 18px !important;
+        padding: 1.2rem;
+        margin-bottom: 0.8rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        cursor: pointer;
+        position: relative;
+    }
+
+    .baker-item:hover {
+        background: rgba(235, 209, 151, 0.08);
+        border-color: var(--gold) !important;
+        transform: translateX(5px);
+        box-shadow: -5px 0 15px rgba(235, 209, 151, 0.1);
+    }
+
+    .baker-item:active {
+        transform: scale(0.98);
+    }
+
+    .baker-item:last-child { margin-bottom: 0; }
+
+    .luxury-search {
+        background: rgba(255,255,255,0.04) !important;
+        border: 1px solid var(--glass-border) !important;
+        border-radius: 12px !important;
+        color: #fff !important;
+        padding: 0.85rem 1.2rem;
+    }
+
+    .luxury-search::placeholder { color: rgba(255,255,255,0.3); }
+    .luxury-search:focus {
+        border-color: var(--gold) !important;
+        box-shadow: 0 0 0 3px rgba(235, 209, 151, 0.1) !important;
+        outline: none;
+    }
+
+    /* Divider */
+    .luxury-divider {
+        border: none;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--gold-glow-color), transparent);
+        margin: 2rem 0;
+    }
+
+    /* Entry animation */
+    @keyframes luxuryFadeIn {
+        from { opacity: 0; transform: translateY(25px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .lx-animate { animation: luxuryFadeIn 0.7s ease both; }
+    .lx-d1 { animation-delay: 0.1s; }
+    .lx-d2 { animation-delay: 0.2s; }
+    .lx-d3 { animation-delay: 0.3s; }
 </style>
-<div class="container-fluid py-5"
-    style="background: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('/media/branding/ai_designer_banner.jpg'); background-size: cover; background-attachment: fixed; min-height: 100vh;">
-    <div class="container">
+
+<div class="ai-page-wrapper">
+    <div class="ai-orb-1"></div>
+    <div class="ai-orb-2"></div>
+
+    <div class="ai-content container">
         <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="text-center mb-5 pt-4">
-                    <span class="badge bg-primary px-3 py-2 mb-3 rounded-pill">AI POWERED</span>
-                    <h1 class="fw-bold text-primary mb-3 display-4">AI Cake Designer</h1>
-                    <p class="lead text-muted">Bring your imagination to life. Our AI will design the perfect cake for
-                        your special moment.</p>
+            <div class="col-lg-9 col-xl-8">
+
+                <!-- Hero Header -->
+                <div class="ai-hero lx-animate">
+                    <div class="ai-badge">
+                        <i class="fas fa-robot"></i>
+                        AI Powered
+                    </div>
+                    <h1 class="script-font">AI Cake Designer</h1>
+                    <p>Bring your imagination to life. Our AI will craft the perfect cake for your most special moment.</p>
                 </div>
 
                 {% if result %}
-                <!-- AI Result Section -->
-                <div class="card border-0 shadow-lg mb-5 overflow-hidden">
+                <!-- ===== AI RESULT SECTION ===== -->
+                <div class="ai-result-card lx-animate lx-d1">
                     <div class="row g-0">
-                        <div class="col-md-6">
-                            <!-- Image Selection Grid -->
-                            <div class="p-2">
-                                <h6 class="fw-bold text-muted mb-2">Select your favorite design:</h6>
-                                <div class="row g-2">
-                                    {% for img_url in result.image_urls %}
-                                    <div class="col-6">
-                                        <div class="ratio ratio-4x3 position-relative">
-                                            <input type="radio" name="selected_design" id="design_{{ forloop.counter }}"
-                                                class="btn-check design-selector" value="{{ img_url|safe }}"
-                                                onchange="updateSelectedImage(this.value)">
-
-                                            <label
-                                                class="btn btn-outline-primary p-0 w-100 h-100 overflow-hidden border-2"
-                                                for="design_{{ forloop.counter }}">
-                                                <img src="{{ img_url|safe }}" class="w-100 h-100"
-                                                    style="object-fit: cover;" alt="Design Option {{ forloop.counter }}"
-                                                    id="img_preview_{{ forloop.counter0 }}"
-                                                    onerror="handleImageError(this, {{ forloop.counter0 }})">
-
-                                                <div class="position-absolute top-0 end-0 m-1">
-                                                    <i class="fas fa-check-circle text-primary bg-white rounded-circle fs-5 shadow-sm check-icon"
-                                                        style="display: none;"></i>
-                                                </div>
-                                            </label>
-                                        </div>
+                        <div class="col-md-6 p-3">
+                            <p class="luxury-label mb-3">Select Your Favourite Design</p>
+                            <div class="row g-2 result-image-grid">
+                                {% for img_url in result.image_urls %}
+                                <div class="col-6">
+                                    <div class="ratio ratio-4x3">
+                                        <input type="radio" name="selected_design" id="design_{{ forloop.counter }}"
+                                            class="btn-check design-selector" value="{{ img_url|safe }}"
+                                            onchange="updateSelectedImage(this.value)">
+                                        <label class="design-label w-100 h-100" for="design_{{ forloop.counter }}">
+                                            <img src="{{ img_url|safe }}" class="w-100 h-100"
+                                                style="object-fit: cover;" alt="Design Option {{ forloop.counter }}"
+                                                id="img_preview_{{ forloop.counter0 }}"
+                                                onerror="handleImageError(this, {{ forloop.counter0 }})">
+                                            <div class="position-absolute top-0 end-0 m-2">
+                                                <i class="fas fa-check-circle check-icon"
+                                                    style="display:none; color: var(--gold); background: #07030a; border-radius: 50%; font-size: 1.2rem;"></i>
+                                            </div>
+                                        </label>
                                     </div>
-                                    {% endfor %}
                                 </div>
+                                {% endfor %}
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="card-body p-4 h-100 d-flex flex-column">
-                                <div class="mb-auto">
-                                    <h3 class="fw-bold mb-3">Your Design</h3>
-                                    <p class="text-muted small mb-4">{{ result.summary }}</p>
-
-                                    <h5 class="fw-bold text-primary">₹{{ result.estimated_price }} <small
-                                            class="text-muted fw-normal">(approx)</small></h5>
-
-                                    <div class="mt-4">
-                                        <h6 class="fw-bold">Description:</h6>
-                                        <p class="small text-muted">{{ result.image_description|truncatewords:30 }}</p>
-                                    </div>
+                            <div class="result-details">
+                                <h3>Your Creation</h3>
+                                <p style="color: rgba(255,255,255,0.6); font-size: 0.95rem; line-height: 1.7;">{{ result.summary }}</p>
+                                <hr class="luxury-divider">
+                                <div class="result-price">
+                                    ₹{{ result.estimated_price }}
+                                    <span>estimated</span>
                                 </div>
-
-                                <div class="mt-4 d-grid gap-2">
-                                    <button class="btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#fullDetailsModal">
-                                        <i class="fas fa-shopping-cart me-2"></i> Order Selected Design
+                                <p class="small" style="color: rgba(255,255,255,0.5); margin-bottom: 2rem;">{{ result.image_description|truncatewords:25 }}</p>
+                                <div class="mt-auto d-grid gap-2">
+                                    <button class="btn-order-luxury" data-bs-toggle="modal" data-bs-target="#fullDetailsModal">
+                                        <i class="fas fa-paper-plane me-2"></i> Order This Design
                                     </button>
-                                    <a href="{% url 'custom_cake' %}" class="btn btn-outline-secondary">
-                                        <i class="fas fa-redo me-2"></i> Design Another
+                                    <a href="{% url 'custom_cake' %}" class="btn-redesign-luxury text-center text-decoration-none">
+                                        <i class="fas fa-redo me-2"></i> Redesign
                                     </a>
                                 </div>
                             </div>
@@ -91,31 +475,20 @@
                 <script>
                     function handleImageError(img, index) {
                         img.onerror = null;
-
-                        // Robustly parse fallback URLs passed from Django
                         let fallbackUrls = [];
                         try {
                             const dataElement = document.getElementById('fallback-urls-data');
-                            if (dataElement) {
-                                fallbackUrls = JSON.parse(dataElement.textContent);
-                            }
-                        } catch (e) {
-                            console.error("Error parsing fallback URLs:", e);
-                            fallbackUrls = ['/media/cakes/dreamcake.jpg'];
-                        }
-
-                        if (fallbackUrls && fallbackUrls.length > index && fallbackUrls[index]) {
-                            img.src = fallbackUrls[index];
-                        } else {
-                            img.src = '/media/cakes/dreamcake.jpg';
-                        }
+                            if (dataElement) fallbackUrls = JSON.parse(dataElement.textContent);
+                        } catch (e) { fallbackUrls = ['/media/cakes/dreamcake.jpg']; }
+                        img.src = (fallbackUrls && fallbackUrls.length > index && fallbackUrls[index])
+                            ? fallbackUrls[index] : '/media/cakes/dreamcake.jpg';
                     }
 
                     function updateSelectedImage(url) {
-                        // Update hidden input in form
-                        document.getElementById('selectedImageInput').value = url;
-
-                        // Update visual selection state
+                        // Update ALL baker form image inputs
+                        document.querySelectorAll('.selected-image-input').forEach(function(input) {
+                            input.value = url;
+                        });
                         document.querySelectorAll('.check-icon').forEach(icon => icon.style.display = 'none');
                         const checkedRadio = document.querySelector('input[name="selected_design"]:checked');
                         if (checkedRadio) {
@@ -125,160 +498,72 @@
                         }
                     }
 
-                    // Initialize on load
                     document.addEventListener('DOMContentLoaded', function () {
                         let checkedRadio = document.querySelector('input[name="selected_design"]:checked');
-
-                        // If none checked (because we removed template logic), check the first one
                         if (!checkedRadio) {
                             const firstRadio = document.querySelector('input[name="selected_design"]');
-                            if (firstRadio) {
-                                firstRadio.checked = true;
-                                checkedRadio = firstRadio;
-                            }
+                            if (firstRadio) { firstRadio.checked = true; checkedRadio = firstRadio; }
                         }
-
-                        if (checkedRadio) {
-                            updateSelectedImage(checkedRadio.value);
-                        }
+                        if (checkedRadio) updateSelectedImage(checkedRadio.value);
                     });
-                </script>
+                </script>{% endif %}
 
-                <!-- Full Details Modal -->
-                <div class="modal fade" id="fullDetailsModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title fw-bold">Design Specifications</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
+                <!-- ===== INPUT FORM ===== -->
+                <div class="ai-form-card lx-animate lx-d2">
+                    <div class="form-section-title script-font">
+                        {% if result %}Refine Your Vision{% else %}Craft Your Cake{% endif %}
+                    </div>
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label class="luxury-label">Size</label>
+                                {{ form.size }}
                             </div>
-                            <div class="modal-body">
-                                <h6 class="fw-bold text-primary mb-3">Select a Baker to Order</h6>
-
-                                <!-- Baker Search Input -->
-                                <div class="mb-3">
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-white border-end-0">
-                                            <i class="fas fa-search text-muted"></i>
-                                        </span>
-                                        <input type="text" id="bakerSearch" class="form-control border-start-0 ps-0"
-                                            placeholder="Search bakers by name or location...">
-                                    </div>
-                                </div>
-
-                                <div class="list-group" id="bakerList">
-                                    {% for baker in bakers %}
-                                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="mb-0 fw-bold text-dark">{{ baker.shop_name }}</h6>
-                                            <div class="text-secondary small d-flex align-items-center">
-                                                <i class="fas fa-star text-warning me-1"></i>
-                                                <b class="me-2">{{ baker.average_rating|floatformat:1 }}</b>
-                                                <span>({{ baker.total_reviews }} Reviews)</span>
-                                            </div>
-                                        </div>
-                                        <form action="{% url 'submit_custom_request' %}" method="POST" class="d-inline">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="baker_id" value="{{ baker.id }}">
-                                            <input type="hidden" name="request_type" value="AI">
-                                            <input type="hidden" name="description"
-                                                value="{{ result.summary }} - {{ result.description }}">
-                                            <input type="hidden" name="image_url" id="selectedImageInput"
-                                                value="{{ result.image_url }}">
-                                            <input type="hidden" name="flavor" value="{{ result.requirements.flavor }}">
-                                            <input type="hidden" name="size" value="{{ result.requirements.size }}">
-                                            <input type="hidden" name="shape" value="{{ result.requirements.shape }}">
-                                            <input type="hidden" name="occasion" value="{{ result.requirements.occasion }}">
-                                            <input type="hidden" name="design_style" value="{{ result.requirements.design_style }}">
-                                            <input type="hidden" name="message_on_cake" value="{{ result.requirements.message_on_cake }}">
-                                            <input type="hidden" name="extra_instructions" value="{{ result.requirements.extra_instructions }}">
-                                            <button type="submit" class="btn btn-sm btn-primary">
-                                                <i class="fas fa-paper-plane me-1"></i> Send Request
-                                            </button>
-                                        </form>
-                                    </div>
-                                    {% empty %}
-                                    <div class="alert alert-info">
-                                        No bakers are currently accepting custom orders.
-                                    </div>
-                                    {% endfor %}
-                                </div>
+                            <div class="col-md-6">
+                                <label class="luxury-label">Shape</label>
+                                {{ form.shape }}
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <div class="col-md-6">
+                                <label class="luxury-label">Flavour</label>
+                                {{ form.flavor }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="luxury-label">Occasion</label>
+                                {{ form.occasion }}
+                            </div>
+                            <div class="col-12">
+                                <label class="luxury-label">Primary Colors</label>
+                                {{ form.primary_colors }}
+                            </div>
+                            <div class="col-12">
+                                <label class="luxury-label">Design Style</label>
+                                {{ form.design_style }}
+                            </div>
+                            <div class="col-12">
+                                <label class="luxury-label">Message on Cake</label>
+                                {{ form.message_on_cake }}
+                            </div>
+                            <div class="col-12">
+                                <label class="luxury-label">Extra Instructions</label>
+                                {{ form.extra_instructions }}
+                            </div>
+                            <div class="col-12 mt-2">
+                                <button type="submit" id="generateBtn" class="btn-generate">
+                                    <span id="generateBtnText" class="btn-loading-state">
+                                        <i class="fas fa-wand-magic-sparkles me-2"></i> Generate My Dream Cake
+                                    </span>
+                                    <span id="generateBtnSpinner" class="d-none btn-loading-state">
+                                        <span class="gold-spinner"></span>
+                                        Crafting your masterpiece...
+                                    </span>
+                                </button>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
-                {% endif %}
 
-                <!-- Input Form -->
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body p-4 p-md-5">
-                        {% if result %}
-                        <h4 class="fw-bold mb-4 text-muted">Modify Requirements</h4>
-                        {% else %}
-                        <h4 class="fw-bold mb-4">Cake Requirements</h4>
-                        {% endif %}
-
-                        <form method="POST">
-                            {% csrf_token %}
-
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label fw-bold small text-uppercase">Size</label>
-                                    {{ form.size }}
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-bold small text-uppercase">Shape</label>
-                                    {{ form.shape }}
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label class="form-label fw-bold small text-uppercase">Flavor</label>
-                                    {{ form.flavor }}
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-bold small text-uppercase">Occasion</label>
-                                    {{ form.occasion }}
-                                </div>
-
-                                <div class="col-12">
-                                    <label class="form-label fw-bold small text-uppercase">Primary Colors</label>
-                                    {{ form.primary_colors }}
-                                </div>
-
-                                <div class="col-12">
-                                    <label class="form-label fw-bold small text-uppercase">Design Style</label>
-                                    {{ form.design_style }}
-                                </div>
-
-                                <div class="col-12">
-                                    <label class="form-label fw-bold small text-uppercase">Message on Cake</label>
-                                    {{ form.message_on_cake }}
-                                </div>
-
-                                <div class="col-12">
-                                    <label class="form-label fw-bold small text-uppercase">Extra Instructions</label>
-                                    {{ form.extra_instructions }}
-                                </div>
-
-                                <div class="col-12 mt-4">
-                                    <button type="submit" id="generateBtn" class="btn btn-primary w-100 py-3 fw-bold">
-                                        <span id="generateBtnText">
-                                            <i class="fas fa-magic me-2"></i> Generate Design
-                                        </span>
-                                        <span id="generateBtnSpinner" class="d-none">
-                                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                            Generating...
-                                        </span>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -294,22 +579,13 @@
         if (bakerSearch && bakerList) {
             bakerSearch.addEventListener('keyup', function () {
                 const query = this.value.toLowerCase();
-                const bakers = bakerList.getElementsByClassName('list-group-item');
-
-                Array.from(bakers).forEach(function (baker) {
-                    const text = baker.textContent.toLowerCase();
-                    if (text.includes(query)) {
-                        baker.classList.add('d-flex');
-                        baker.classList.remove('d-none');
-                    } else {
-                        baker.classList.remove('d-flex');
-                        baker.classList.add('d-none');
-                    }
+                bakerList.querySelectorAll('.baker-item').forEach(function (item) {
+                    const text = item.textContent.toLowerCase();
+                    item.style.display = text.includes(query) ? 'flex' : 'none';
                 });
             });
         }
 
-        // Processing state for Generate Design button
         const generateBtn = document.getElementById('generateBtn');
         if (generateBtn) {
             generateBtn.closest('form').addEventListener('submit', function () {
@@ -320,4 +596,65 @@
         }
     });
 </script>
+
+{% if result %}
+
+                <!-- Order Modal -->
+                <div class="modal fade modal-luxury" id="fullDetailsModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Choose Your Artisan</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <p class="text-white-50 small mb-3">Select a baker to send your custom cake design to.</p>
+                                <input type="text" id="bakerSearch" class="luxury-search w-100 mb-4"
+                                    placeholder="Search bakers by name...">
+                                    <div id="bakerList">
+                                        {% for baker in bakers %}
+                                        <div class="baker-item">
+                                            <div class="flex-grow-1">
+                                                <div class="fw-bold text-white mb-1" style="font-size: 1.1rem;">{{ baker.shop_name }}</div>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <i class="fas fa-star" style="color: var(--gold); font-size: 0.75rem;"></i>
+                                                    <span style="color: var(--gold); font-weight: 700; font-size: 0.95rem;">{{ baker.average_rating|floatformat:1 }}</span>
+                                                    <span class="text-white-50 xsmall">({{ baker.total_reviews }} Reviews)</span>
+                                                </div>
+                                            </div>
+                                            <div class="request-btn-container">
+                                                <form action="{% url 'submit_custom_request' %}" method="POST" class="m-0 p-0">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="baker_id" value="{{ baker.id }}">
+                                                    <input type="hidden" name="request_type" value="AI">
+                                                    <input type="hidden" name="description" value="{{ result.summary|escape }} - {{ result.description|escape }}">
+                                                    <input type="hidden" name="image_url" class="selected-image-input" value="{{ result.image_urls.0|escape }}">
+                                                    <input type="hidden" name="flavor" value="{{ result.requirements.flavor|escape }}">
+                                                    <input type="hidden" name="size" value="{{ result.requirements.size|escape }}">
+                                                    <input type="hidden" name="shape" value="{{ result.requirements.shape|escape }}">
+                                                    <input type="hidden" name="occasion" value="{{ result.requirements.occasion|escape }}">
+                                                    <input type="hidden" name="design_style" value="{{ result.requirements.design_style|escape }}">
+                                                    <input type="hidden" name="message_on_cake" value="{{ result.requirements.message_on_cake|escape }}">
+                                                    <input type="hidden" name="extra_instructions" value="{{ result.requirements.extra_instructions|escape }}">
+                                                    <button type="submit" class="btn-order-luxury btn-sm px-4 py-2" style="font-size: 0.85rem;" onclick="setTimeout(() => this.disabled=true, 10);">
+                                                        <i class="fas fa-paper-plane me-1"></i> Request
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        {% empty %}
+                                    <div class="text-center py-4 text-white-50">
+                                        <i class="fas fa-hard-hat fa-2x mb-3 opacity-25"></i>
+                                        <p>No bakers are currently accepting custom orders.</p>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn-redesign-luxury px-4 py-2" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
 {% endblock %}

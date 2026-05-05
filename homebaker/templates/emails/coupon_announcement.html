@@ -1,39 +1,38 @@
 {% extends 'emails/base_email.html' %}
 
 {% block content %}
-<div style="text-align: center;">
-    <div style="font-size: 48px; margin-bottom: 20px;">🎉</div>
-    <h2 style="color: #6366f1; font-size: 28px; margin-bottom: 10px;">Exclusive Discount Just for You!</h2>
-    <p style="font-size: 18px; color: #475569;">Hello {{ customer_name }}, we have some sweet news!</p>
+<div style="text-align: center; margin-bottom: 30px;">
+    <h2 class="text-gold" style="font-size: 32px; margin-bottom: 10px;">Artisan Invitation</h2>
+    <p style="font-size: 16px; color: #94a3b8;">Greetings {{ customer_name }}, a moment of luxury awaits.</p>
 </div>
 
-<div class="detail-card" style="text-align: center; border: 2px solid #e2e8f0;">
-    <p style="margin-bottom: 5px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 1px;">Use Coupon Code</p>
-    <div class="otp-box" style="margin: 10px 0; background-color: #f5f3ff; border: 2px dashed #8b5cf6; color: #7c3aed;">
+<div class="detail-card" style="text-align: center; border: 1px solid #ebd197; background: rgba(235, 209, 151, 0.03);">
+    <p style="margin-bottom: 5px; font-weight: 700; color: #ebd197; text-transform: uppercase; letter-spacing: 2px; font-size: 12px;">Exclusive Privilege Code</p>
+    <div class="otp-box" style="margin: 15px 0; border: 1px solid #ebd197; background: transparent;">
         {{ coupon_code }}
     </div>
-    <h3 style="margin-top: 10px; color: #1e293b; font-size: 24px;">Get {{ discount_value }}% OFF</h3>
-    <p style="color: #64748b; font-size: 14px; margin-top: 10px;">
+    <h3 style="margin-top: 10px; color: #ffffff; font-size: 28px; font-weight: 800;">SAVE {{ discount_value }}%</h3>
+    <p style="color: #64748b; font-size: 13px; margin-top: 10px; letter-spacing: 1px;">
         {% if min_order > 0 %}
-            Valid on orders above ₹{{ min_order }}
+            ON COMMISSIONS EXCEEDING <span class="text-gold">₹{{ min_order }}</span>
         {% else %}
-            Valid on all orders!
+            VALID ACROSS THE ENTIRE ARTISAN COLLECTIVE
         {% endif %}
     </p>
 </div>
 
-<div style="margin-top: 30px; line-height: 1.8; color: #334155;">
-    <p>We're excited to offer you this special discount on your next purchase at <strong>HomeBaker</strong>. Whether you're celebrating a birthday, an anniversary, or just craving something sweet, our home bakers are ready to create something magical for you.</p>
+<div style="margin-top: 40px; line-height: 2; color: #cbd5e1; text-align: center;">
+    <p>We invite you to experience the finest artisanal creations from our master bakers. Whether celebrating a grand milestone or an intimate moment, your next masterpiece is now more accessible than ever.</p>
     
     {% if valid_until %}
-    <p style="background-color: #fff7ed; padding: 10px; border-left: 4px solid #f97316; font-size: 14px;">
-        <strong>Hurry!</strong> This offer is valid until {{ valid_until|date:"d M Y" }}.
+    <p style="background: rgba(235, 209, 151, 0.05); padding: 15px; border-radius: 10px; font-size: 14px; color: #ebd197; border-left: 2px solid #ebd197;">
+        <strong>Time-Limited Privilege:</strong> This invitation expires on <span class="gold-num">{{ valid_until|date:"d M Y" }}</span>.
     </p>
     {% endif %}
 </div>
 
-<div style="text-align: center; margin-top: 40px;">
-    <a href="{{ action_url }}" class="btn" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); padding: 15px 35px; font-size: 18px;">🛒 Shop Now</a>
-    <p style="margin-top: 20px; font-size: 12px; color: #94a3b8;">Terms and conditions apply. One use per customer.</p>
+<div style="text-align: center; margin-top: 50px;">
+    <a href="{{ action_url }}" class="btn">Explore Gallery</a>
+    <p style="margin-top: 25px; font-size: 11px; color: #475569; letter-spacing: 0.5px;">Subject to collective terms. Single redemption per patron.</p>
 </div>
 {% endblock %}

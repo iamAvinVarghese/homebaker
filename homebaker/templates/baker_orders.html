@@ -1,167 +1,260 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Manage Orders | Home Baker{% endblock %}
+{% block title %}Order Command | HomeBaker Artisan Console{% endblock %}
 
 {% block content %}
-<div class="row mb-5 pt-4">
-    <div class="col-md-12">
-        <h1 class="fw-bold mb-0" style="color: #b084ff;"><i class="fas fa-edit me-2"></i> Manage Orders</h1>
-        <p class="text-secondary lead">View and accept incoming orders.</p>
-    </div>
-</div>
+<style>
+    :root {
+        --gold-primary: #ebd197;
+        --glass-bg: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(235, 209, 151, 0.1);
+        --purple-bg: #07030a;
+    }
 
-<!-- Orders List -->
-<div class="card shadow border-0 overflow-hidden" style="border-radius: 15px;">
-    <div class="card-body p-0">
+    body {
+        background-color: var(--purple-bg);
+    }
+
+    .luxury-card {
+        background: rgba(30, 20, 40, 0.4);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(235, 209, 151, 0.12);
+        border-radius: 28px;
+        box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    }
+
+    .table-premium {
+        background: transparent !important;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+    }
+
+    .table-premium thead th {
+        background: rgba(235, 209, 151, 0.03) !important;
+        border: none !important;
+        color: #ebd197 !important;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 2px;
+        font-weight: 800;
+        padding: 1.5rem 1rem;
+    }
+
+    .table-premium tbody tr {
+        background: rgba(255, 255, 255, 0.02) !important;
+        transition: all 0.3s ease;
+    }
+
+    .table-premium tbody tr:hover {
+        background: rgba(235, 209, 151, 0.05) !important;
+        transform: scale(1.005);
+    }
+
+    .table-premium tbody td {
+        background: transparent !important;
+        border: none !important;
+        padding: 1.5rem 1rem;
+        color: #fff !important;
+    }
+
+    .order-status-badge {
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 0.6rem 1.2rem;
+        border-radius: 50px;
+        white-space: nowrap;
+    }
+
+    .order-id-luxury {
+        color: #ebd197;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        letter-spacing: 1px;
+        white-space: nowrap;
+    }
+
+    .btn-luxury-action {
+        background: linear-gradient(135deg, #ebd197, #c5a059);
+        color: #07030a !important;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        text-decoration: none;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .btn-luxury-action:hover {
+        transform: translateY(-3px) scale(1.1);
+        box-shadow: 0 8px 20px rgba(235, 209, 151, 0.3);
+    }
+
+    .item-detail-box {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 0.8rem;
+    }
+    .btn-luxury-void {
+        background: transparent;
+        color: rgba(235, 209, 151, 0.4);
+        border: 1px solid rgba(235, 209, 151, 0.2);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        padding: 0;
+    }
+
+    .btn-luxury-void:hover {
+        background: rgba(220, 53, 69, 0.1);
+        color: #ff4d4d;
+        border-color: rgba(220, 53, 69, 0.4);
+        transform: rotate(90deg);
+    }
+</style>
+
+<div class="container-fluid py-5 mt-4 px-lg-5">
+    <!-- Header -->
+    <div class="mb-5">
+        <h1 class="script-font gold-shimmer mb-1" style="font-size: 4.5rem; text-shadow: 0 0 20px rgba(235, 209, 151, 0.2);">Order Command</h1>
+        <p class="text-white-50 lead mb-0" style="letter-spacing: 1px; text-transform: uppercase; font-size: 0.9rem;">Managing artisan fulfillments with real-time logistical precision</p>
+    </div>
+
+    <!-- Ledger Card -->
+    <div class="luxury-card overflow-hidden">
+        <div class="p-4 border-bottom border-white border-opacity-10 d-flex justify-content-between align-items-center">
+            <h5 class="script-font gold-shimmer mb-0" style="font-size: 2.5rem;">Active Fulfillment Ledger</h5>
+            <span class="badge-luxury py-1 px-3">{{ orders|length }} Live Assignments</span>
+        </div>
+        
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead style="background-color: #14141c; color: #c7a6ff;">
+            <table class="table table-premium align-middle mb-0">
+                <thead>
                     <tr>
-                        <th class="ps-4 py-3 border-0">Order ID</th>
-                        <th class="py-3 border-0">Customer</th>
-                        <th class="py-3 border-0">Date</th>
-                        <th class="py-3 border-0">Status</th>
-                        <th class="py-3 border-0">Items Details</th>
-                        <th class="py-3 border-0">Payment</th>
-                        <th class="py-3 border-0">Total</th>
-                        <th class="text-end pe-4 py-3 border-0">Actions</th>
+                        <th class="ps-4">Order Identity</th>
+                        <th>Patron</th>
+                        <th>Timestamp</th>
+                        <th>Phase</th>
+                        <th>Creation Details</th>
+                        <th>Valuation</th>
+                        <th class="text-end pe-4">Command</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white">
+                <tbody>
                     {% for order in orders %}
-                    <tr>
-                        <td class="ps-4 fw-bold">
-                            <a href="#" class="text-decoration-none" style="color: #7b3fe4;">{{ order.order_id }}</a>
+                    <tr class="transition-hover">
+                        <!-- Order ID -->
+                        <td class="ps-4">
+                            <span class="order-id-luxury">{{ order.order_id }}</span>
                         </td>
-                         <td>
+                        
+                        <!-- Patron -->
+                        <td>
                             <div class="d-flex align-items-center">
                                 {% if order.customer.profile.profile_picture %}
-                                <img src="{{ order.customer.profile.profile_picture.url }}" class="rounded-circle me-2"
-                                    width="32" height="32" style="object-fit: cover; border: 1px solid #7b3fe4;">
+                                <img src="{{ order.customer.profile.profile_picture.url }}" class="rounded-circle me-3 border border-white border-opacity-10" width="36" height="36" style="object-fit: cover;">
                                 {% else %}
-                                <div class="rounded-circle d-flex align-items-center justify-content-center me-2"
-                                    style="width: 32px; height: 32px; background-color: #7b3fe4; color: white; font-weight: bold; font-size: 0.85rem;">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center me-3 bg-white bg-opacity-10 text-white fw-bold" style="width: 36px; height: 36px; font-size: 0.8rem;">
                                     {{ order.customer.get_full_name|default:order.customer.username|make_list|first|upper }}
                                 </div>
                                 {% endif %}
-                                <span class="text-dark">{{ order.customer.get_full_name|default:order.customer.username }}</span>
+                                <div>
+                                    <div class="text-white fw-bold small">{{ order.customer.get_full_name|default:order.customer.username }}</div>
+                                    <div class="text-white-50 xsmall opacity-50">Verified Patron</div>
+                                </div>
                             </div>
                         </td>
-                        <td class="text-secondary small">{{ order.created_at|date:"M d, Y" }}</td>
+
+                        <!-- Date -->
+                        <td class="gold-num text-white-50 small">{{ order.created_at|date:"M d, Y"|default:"Just Now" }}</td>
+
+                        <!-- Phase (Status) -->
                         <td>
                             {% if order.status == 'pending' %}
-                            <span class="badge rounded-pill bg-warning text-dark px-3 mt-1">Pending</span>
-                            {% endif %}
-                            {% if order.status == 'confirmed' %}
-                            <span class="badge rounded-pill bg-info text-dark px-3 mt-1">Confirmed</span>
-                            {% endif %}
-                            {% if order.status == 'awaiting_confirmation' %}
-                            <span class="badge rounded-pill bg-secondary text-white px-3 mt-1">Awaiting Clarification</span>
-                            {% endif %}
-                            {% if order.status == 'baking' %}
-                            <span class="badge rounded-pill bg-primary px-3 mt-1">Baking</span>
-                            {% endif %}
-                            {% if order.status == 'ready' %}
-                            <span class="badge rounded-pill bg-success px-3 mt-1">Ready</span>
-                            {% endif %}
-                            {% if order.status == 'delivered' %}
-                            <span class="badge rounded-pill bg-success px-3 mt-1">Delivered</span>
-                            {% endif %}
-                            {% if order.status == 'cancelled' %}
-                            <span class="badge rounded-pill bg-danger px-3 mt-1">Cancelled</span>
-                            {% endif %}
-                            {% if order.status == 'out_for_delivery' %}
-                            <span class="badge rounded-pill bg-warning px-3 mt-1">Ready for Pickup</span>
-                            {% endif %}
-                            {% if order.status == 'packing' %}
-                            <span class="badge rounded-pill bg-info px-3 mt-1">Packing</span>
+                            <span class="order-status-badge status-pending">Pending Approval</span>
+                            {% elif order.status == 'confirmed' %}
+                            <span class="order-status-badge status-confirmed">Confirmed</span>
+                            {% elif order.status == 'baking' %}
+                            <span class="order-status-badge status-baking">Artisan Baking</span>
+                            {% elif order.status == 'ready' or order.status == 'out_for_delivery' %}
+                            <span class="order-status-badge status-ready">Ready for Pickup</span>
+                            {% elif order.status == 'delivered' %}
+                            <span class="order-status-badge status-delivered">Fulfilled</span>
+                            {% elif order.status == 'cancelled' %}
+                            <span class="order-status-badge status-cancelled">Voided</span>
+                            {% else %}
+                            <span class="order-status-badge bg-secondary text-white opacity-50">{{ order.status|title }}</span>
                             {% endif %}
                         </td>
+
+                        <!-- Item Details -->
                         <td>
                             {% for item in order.items.all %}
                                 {% if item.cake.baker == request.user %}
-                                <div class="mb-3">
-                                    <div class="small fw-bold text-dark">{{ item.cake.name }}</div>
-                                    <div class="small text-muted d-flex flex-wrap gap-2 mt-1">
-                                        <span class="badge bg-light text-dark border"><i class="fas fa-utensils me-1 text-primary"></i> {{ item.cake.flavor|title }}</span>
-                                        <span class="badge bg-light text-dark border"><i class="fas fa-weight-hanging me-1 text-primary"></i> {{ item.quantity }} kg</span>
-                                        <span class="badge bg-light text-dark border"><i class="fas fa-tag me-1 text-primary"></i> ₹{{ item.subtotal }}</span>
+                                <div class="item-detail-box mb-2">
+                                    <div class="text-white small fw-bold">{{ item.cake.name }}</div>
+                                    <div class="d-flex gap-2 mt-1">
+                                        <span class="badge-luxury py-0 px-2" style="font-size: 0.6rem; background: rgba(235, 209, 151, 0.1) !important; color: #ebd197 !important;">{{ item.cake.get_flavor_display }}</span>
+                                        <span class="badge-luxury py-0 px-2" style="font-size: 0.6rem;">{{ item.quantity }}KG</span>
                                     </div>
                                     {% if item.message_on_cake %}
-                                    <div class="x-small text-primary mt-1" style="font-size: 0.75rem;">
-                                        <i class="fas fa-quote-left me-1 opacity-50"></i> {{ item.message_on_cake }}
-                                    </div>
-                                    {% endif %}
-                                    {% if item.cake.name|slice:":21" == "Custom Cake Request #" %}
-                                    <div class="mt-1 p-2 bg-light rounded x-small text-secondary border-start border-3 border-primary" style="font-size: 0.7rem;">
-                                        <strong><i class="fas fa-info-circle me-1"></i> Design Details:</strong><br>
-                                        {{ item.cake.description }}
+                                    <div class="gold-text xsmall mt-2 opacity-75 script-font" style="font-size: 1rem;">
+                                        <i class="fas fa-quote-left me-1" style="font-size: 0.7rem;"></i> {{ item.message_on_cake }}
                                     </div>
                                     {% endif %}
                                 </div>
                                 {% endif %}
                             {% endfor %}
                         </td>
-                        <td>
-                            {% if order.payment_status == 'paid' %}
-                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2">
-                                <i class="fas fa-check-circle me-1"></i> Paid
-                            </span>
-                            {% else %}
-                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2">
-                                <i class="fas fa-clock me-1"></i> Pending
-                            </span>
-                            {% endif %}
-                        </td>
-                        <td class="fw-bold text-dark">₹{{ order.total_amount }}</td>
+
+                        <!-- Valuation -->
+                        <td class="gold-num fw-extra-bold text-white fs-5">₹{{ order.total_amount|default:"0.00" }}</td>
+
+                        <!-- Actions -->
                         <td class="text-end pe-4">
-                            {% if order.status == 'pending' %}
-                            <a href="{% url 'baker_accept_order' order.id %}"
-                                class="btn btn-sm btn-success px-3 py-1 shadow-sm">
-                                <i class="fas fa-check me-1"></i> Accept
-                            </a>
-                            {% endif %}
-                            {% if order.status == 'confirmed' or order.status == 'baking' or order.status == 'packing' or order.status == 'ready' %}
-                            <a href="{% url 'trigger_delivery' order.id %}"
-                                class="btn btn-sm text-white px-3 py-1 shadow-sm" style="background-color: #00d2ff;">
-                                <i class="fas fa-box me-1"></i> Ready for Pickup
-                            </a>
-                            {% endif %}
-                            {% if order.status == 'out_for_delivery' %}
-                            <div class="d-inline-block">
-                                <span class="badge bg-warning text-dark px-3 py-2">
-                                    <i class="fas fa-box-open me-1"></i> Ready for Pickup
-                                </span>
-                            </div>
-                            {% endif %}
-                            {% if order.status == 'delivered' %}
-                            <span class="badge bg-success-subtle text-success border border-success px-3 py-2">
-                                <i class="fas fa-check-double me-1"></i> Completed
-                            </span>
-                            {% endif %}
-                            {% if order.status == 'cancelled' %}
-                            <button class="btn btn-sm btn-secondary opacity-50 px-3 cursor-default"
-                                disabled>Cancelled</button>
-                            {% else %}
-                                {% if order.status != 'delivered' and order.status != 'out_for_delivery' %}
-                                <form action="{% url 'baker_cancel_order' order.id %}" method="POST" class="d-inline ms-1" onsubmit="return confirm('Are you sure you want to cancel this order? This will refund the customer.')">
+                            <div class="d-flex justify-content-end align-items-center gap-2">
+                                {% if order.status == 'pending' %}
+                                <a href="{% url 'baker_accept_order' order.id %}" class="btn-luxury-action" title="Accept Order">
+                                    <i class="fas fa-check"></i>
+                                </a>
+                                {% elif order.status == 'confirmed' or order.status == 'baking' or order.status == 'packing' or order.status == 'ready' %}
+                                <a href="{% url 'trigger_delivery' order.id %}" class="btn-luxury-action" style="background: linear-gradient(135deg, #00d2ff 0%, #00a8cc 100%);" title="Mark as Ready">
+                                    <i class="fas fa-box-open"></i>
+                                </a>
+                                {% elif order.status == 'delivered' %}
+                                <span class="text-white-50 xsmall opacity-25 fw-bold"><i class="fas fa-check-double me-1"></i>ARCHIVED</span>
+                                {% endif %}
+                                
+                                {% if order.status != 'delivered' and order.status != 'out_for_delivery' and order.status != 'cancelled' %}
+                                <form action="{% url 'baker_cancel_order' order.id %}" method="POST" class="m-0" onsubmit="return confirm('Relinquish this order and initiate patron refund?');">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-outline-danger px-2 py-1">
-                                        <i class="fas fa-times me-1"></i> Cancel
+                                    <button type="submit" class="btn-luxury-void" title="Relinquish Order">
+                                        <i class="fas fa-times"></i>
                                     </button>
                                 </form>
                                 {% endif %}
-                            {% endif %}
+                            </div>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
                         <td colspan="7" class="text-center py-5">
-                            <div class="text-muted opacity-50">
-                                <i class="fas fa-clipboard-list fa-4x mb-3"></i>
-                                <h5 class="fw-bold">No incoming orders</h5>
-                                <p>You'll see new orders here as customers place them.</p>
+                            <div class="text-white-50 opacity-25 py-5">
+                                <i class="fas fa-clipboard-list fa-5x mb-4 gold-shimmer"></i>
+                                <h3 class="script-font gold-shimmer" style="font-size: 3rem;">Ledger Vacant</h3>
+                                <p class="lead" style="letter-spacing: 1px;">Awaiting new artisan commissions from the gallery.</p>
                             </div>
                         </td>
                     </tr>
@@ -171,29 +264,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block extra_css %}
-<style>
-    .avatar-circle {
-        transition: transform 0.2s;
-    }
-
-    .table tr {
-        transition: background-color 0.2s;
-    }
-
-    .table tr:hover {
-        background-color: #fcfaff !important;
-    }
-
-    .btn-success {
-        background-color: #2ecc71;
-        border: none;
-    }
-
-    .btn-success:hover {
-        background-color: #27ae60;
-    }
-</style>
 {% endblock %}

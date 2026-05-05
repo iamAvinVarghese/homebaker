@@ -1,76 +1,196 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Commission Analytics - Admin Panel{% endblock %}
+
+{% block title %}Commission Analytics | Admin Panel{% endblock %}
 
 {% block content %}
-<div class="row mb-4 align-items-center">
-    <div class="col">
-        <h2 class="fw-bold">Platform Commission</h2>
-        <p class="text-muted">Breakdown of platform earnings from baker sales.</p>
-    </div>
-    <div class="col-auto">
-        <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+<style>
+    :root {
+        --gold-primary: #ebd197;
+        --gold-dark: #c5a66a;
+        --glass-bg: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(235, 209, 151, 0.1);
+        --purple-bg: #07030a;
+    }
+
+    body {
+        background-color: var(--purple-bg);
+    }
+
+    .glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    }
+
+    .gold-text {
+        background: linear-gradient(135deg, #ebd197 0%, #f5d97a 50%, #ebd197 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: bold;
+    }
+
+    .table-premium {
+        color: white;
+        border-collapse: separate;
+        border-spacing: 0 12px;
+        background: transparent !important;
+        --bs-table-bg: transparent !important;
+        --bs-table-color: white !important;
+    }
+
+    .table-premium thead th {
+        border: none;
+        color: rgba(235, 209, 151, 0.6);
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1.5px;
+        padding: 1.2rem 1.5rem;
+    }
+
+    .table-premium tbody tr {
+        background: rgba(255, 255, 255, 0.03) !important;
+        transition: all 0.3s ease;
+    }
+
+    .table-premium tbody tr:hover {
+        background: rgba(255, 255, 255, 0.07) !important;
+        transform: translateY(-2px);
+    }
+
+    .table-premium tbody td {
+        border: none !important;
+        padding: 1.5rem;
+        vertical-align: middle;
+        background: transparent !important;
+    }
+
+    .table-premium tbody tr td:first-child { border-radius: 15px 0 0 15px; }
+    .table-premium tbody tr td:last-child { border-radius: 0 15px 15px 0; }
+
+    .stat-badge-premium {
+        background: rgba(111, 219, 159, 0.1);
+        color: #6fdb9f;
+        border: 1px solid rgba(111, 219, 159, 0.2);
+        padding: 0.4rem 1rem;
+        border-radius: 50px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 0.75rem;
+    }
+
+    .commission-hero {
+        background: linear-gradient(135deg, rgba(235, 209, 151, 0.05) 0%, rgba(30, 20, 40, 0.4) 100%);
+        border: 1px solid rgba(235, 209, 151, 0.15);
+        border-radius: 30px;
+        padding: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .floating-usd-icon {
+        position: absolute;
+        bottom: -20px;
+        right: 20px;
+        font-size: 10rem;
+        color: var(--gold-primary);
+        opacity: 0.05;
+        transform: rotate(-15deg);
+    }
+
+    .btn-luxury-back {
+        background: rgba(255, 255, 255, 0.05);
+        color: rgba(235, 209, 151, 0.8);
+        border: 1px solid rgba(235, 209, 151, 0.2);
+        border-radius: 50px;
+        padding: 0.6rem 1.5rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .btn-luxury-back:hover {
+        background: rgba(235, 209, 151, 0.1);
+        color: var(--gold-primary);
+        border-color: var(--gold-primary);
+    }
+</style>
+
+<div class="container py-5 mt-4">
+    <div class="d-flex justify-content-between align-items-end mb-5">
+        <div>
+            <h1 class="display-4 gold-text fw-extra-bold mb-1">Platform Commission</h1>
+            <p class="text-white-50 lead mb-0">Transparent revenue oversight and analytical breakdown</p>
+        </div>
+        <a href="{% url 'admin_dashboard' %}" class="btn-luxury-back">
+            <i class="fas fa-arrow-left me-2"></i>Dashboard
         </a>
     </div>
-</div>
 
-<div class="row g-4 mb-4">
-    <div class="col-md-12">
-        <div class="card shadow-sm border-0 bg-primary text-white overflow-hidden">
-            <div class="card-body p-4 position-relative">
-                <div class="position-relative" style="z-index: 2;">
-                    <h6 class="text-white-50 text-uppercase fw-bold mb-1">Total Platform Commission</h6>
-                    <h1 class="display-4 fw-bold mb-0">₹{{ total_platform_commission|floatformat:2 }}</h1>
-                </div>
-                <i class="fas fa-hand-holding-usd position-absolute end-0 bottom-0 text-white opacity-25"
-                    style="font-size: 8rem; margin-right: -1rem; margin-bottom: -1rem;"></i>
-            </div>
+    <!-- Commission Hero Section -->
+    <div class="commission-hero mb-5">
+        <i class="fas fa-hand-holding-usd floating-usd-icon"></i>
+        <div class="position-relative" style="z-index: 2;">
+            <p class="text-white-50 text-uppercase fw-bold mb-2 small" style="letter-spacing: 2px;">Total Accumulated Earnings</p>
+            <h1 class="display-1 gold-num gold-text fw-extra-bold mb-0">₹{{ total_platform_commission|floatformat:2 }}</h1>
         </div>
     </div>
-</div>
 
-<div class="card shadow-sm">
-    <div class="card-header bg-white">
-        <h5 class="mb-0">Baker Commission Breakdown</h5>
-    </div>
-    <div class="card-body p-0">
+    <!-- Breakdown Section -->
+    <div class="glass-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4 px-3">
+            <h3 class="gold-text h4 fw-bold mb-0"><i class="fas fa-chart-pie me-3"></i>Baker Contribution Registry</h3>
+            <div class="text-white-50 small">Aggregated from <span class="gold-num fw-bold text-white">{{ baker_commissions|length }}</span> Partners</div>
+        </div>
+        
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="bg-light">
+            <table class="table table-premium">
+                <thead>
                     <tr>
-                        <th class="ps-4">Baker</th>
-                        <th>Shop Name</th>
-                        <th>Total Sales</th>
-                        <th>Commission Rate</th>
-                        <th class="text-end pe-4">Platform Earnings</th>
+                        <th>Baker Identity</th>
+                        <th>Boutique Name</th>
+                        <th>Gross Revenue</th>
+                        <th>Commission Tier</th>
+                        <th class="text-end">Platform Share</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in baker_commissions %}
                     <tr>
-                        <td class="ps-4">
+                        <td>
                             <div class="d-flex align-items-center">
-                                {% if item.baker.user_profile.profile_picture %}
-                                <img src="{{ item.baker.user_profile.profile_picture.url }}" class="rounded-circle me-2"
-                                    width="32" height="32" style="object-fit: cover;">
-                                {% else %}
-                                <div class="rounded-circle bg-secondary bg-opacity-10 d-flex align-items-center justify-content-center me-2"
-                                    style="width: 32px; height: 32px;">
-                                    <span class="small fw-bold">{{ item.baker.shop_name|slice:":1" }}</span>
+                                <div class="rounded-circle overflow-hidden border border-2 border-gold me-3" style="width: 38px; height: 38px; border-color: rgba(235,209,151,0.2) !important;">
+                                    {% if item.baker.user_profile.profile_picture %}
+                                        <img src="{{ item.baker.user_profile.profile_picture.url }}" class="w-100 h-100 object-fit-cover">
+                                    {% else %}
+                                        <div class="w-100 h-100 bg-dark d-flex align-items-center justify-content-center text-white-50 small fw-bold">
+                                            {{ item.baker.shop_name|slice:":1" }}
+                                        </div>
+                                    {% endif %}
                                 </div>
-                                {% endif %}
-                                <span class="ms-1">{{ item.baker.user_profile.user.username }}</span>
+                                <span class="text-white fw-bold">{{ item.baker.user_profile.user.username }}</span>
                             </div>
                         </td>
-                        <td>{{ item.baker.shop_name }}</td>
-                        <td>₹{{ item.revenue|floatformat:2 }}</td>
-                        <td><span class="badge bg-info text-dark">{{ item.commission_rate }}%</span></td>
-                        <td class="text-end pe-4 fw-bold text-success">₹{{ item.commission_amount|floatformat:2 }}</td>
+                        <td class="text-white-50">{{ item.baker.shop_name }}</td>
+                        <td><span class="gold-num text-white">₹{{ item.revenue|floatformat:2 }}</span></td>
+                        <td>
+                            <span class="stat-badge-premium">
+                                <i class="fas fa-percentage me-1" style="font-size: 0.6rem;"></i>
+                                {{ item.commission_rate }}%
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <span class="gold-num fw-extra-bold fs-5 text-success">₹{{ item.commission_amount|floatformat:2 }}</span>
+                        </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="5" class="text-center py-4 text-muted">No commission data available.</td>
+                        <td colspan="5" class="text-center py-5">
+                            <i class="fas fa-receipt fa-3x gold-text opacity-25 mb-3"></i>
+                            <p class="text-white-50">No commission cycles recorded for this period.</p>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -78,4 +198,5 @@
         </div>
     </div>
 </div>
+
 {% endblock %}

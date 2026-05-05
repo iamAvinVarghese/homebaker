@@ -9,7 +9,7 @@ from main.views import (
     # NEW
     mark_notification_read, mark_all_notifications_read, notifications_list,
     baker_public_profile, baker_reviews, services_index,
-    about_us, faq, apply_coupon,
+    about_us, faq, apply_coupon, subscribe_newsletter,
 
 
     # Auth
@@ -30,6 +30,7 @@ from main.views import (
     admin_audit_logs, admin_analytics,
     admin_revenue, admin_orders_list, admin_commission, admin_user_detail, admin_helpdesk,
     admin_coupons, admin_delete_coupon,
+    admin_letterbox, admin_send_letter,
     
     # Delivery
     trigger_delivery, verify_delivery, rate_order
@@ -55,6 +56,7 @@ urlpatterns = [
     path('baker/<int:baker_id>/reviews/', baker_reviews, name='baker_reviews'),
     path('about-us/', about_us, name='about_us'),
     path('faq/', faq, name='faq'),
+    path('subscribe-newsletter/', subscribe_newsletter, name='subscribe_newsletter'),
 
     # ========== AUTHENTICATION ==========
     path('login/', login_view, name='login'),
@@ -135,6 +137,8 @@ urlpatterns = [
     path('admin-panel/helpdesk/', admin_helpdesk, name='admin_helpdesk'),
     path('admin-panel/coupons/', admin_coupons, name='admin_coupons'),
     path('admin-panel/coupons/<int:coupon_id>/delete/', admin_delete_coupon, name='admin_delete_coupon'),
+    path('admin-panel/letterbox/', admin_letterbox, name='admin_letterbox'),
+    path('admin-panel/letterbox/send/', admin_send_letter, name='admin_send_letter'),
     path('ajax-verify-fssai/', ajax_verify_fssai, name='ajax_verify_fssai'),
 ]
 

@@ -1,131 +1,271 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}My Wallet{% endblock %}
+{% block title %}My Digital Vault - HomeBaker{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row">
-        <!-- Wallet Balance & Recharge Section -->
-        <div class="col-lg-4 mb-4">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body text-center p-4">
-                    <div class="mb-3">
-                        <i class="fas fa-wallet fa-3x text-primary"></i>
-                    </div>
-                    <h5 class="text-muted mb-2">Current Balance</h5>
-                    <h2 class="display-4 fw-bold text-body mb-4">₹{{ wallet_balance }}</h2>
+<style>
+    .wallet-wrapper {
+        min-height: 90vh;
+        padding-top: 3rem;
+        padding-bottom: 5rem;
+    }
 
-                    <hr class="my-4">
+    .premium-card {
+        background: rgba(30, 20, 40, 0.4) !important;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(235, 209, 151, 0.15) !important;
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+        transition: all 0.4s ease;
+    }
 
-                    <!-- Withdraw Form (Available to all) -->
-                    <h5 class="mb-3">Withdraw Funds</h5>
-                    <form method="post" class="needs-validation mb-4" novalidate>
-                        {% csrf_token %}
-                        <input type="hidden" name="action" value="withdraw">
-                        <div class="mb-3 text-start">
-                            {{ withdraw_form.amount.label_tag }}
-                            {{ withdraw_form.amount }}
-                            {% if withdraw_form.amount.errors %}
-                            <div class="text-danger small mt-1">
-                                {{ withdraw_form.amount.errors|join:", " }}
-                            </div>
-                            {% endif %}
-                            <div class="form-text">Amount will be deducted from your wallet balance.</div>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-outline-danger">
-                                <i class="fas fa-hand-holding-usd me-2"></i>Withdraw
-                            </button>
-                        </div>
-                    </form>
+    .premium-card:hover {
+        border-color: rgba(235, 209, 151, 0.4) !important;
+        transform: translateY(-5px);
+    }
 
-                    <hr class="my-4">
+    .gold-text { color: #ebd197 !important; }
+    .text-muted-premium { color: #94a3b8 !important; }
+    .script-font { font-family: 'Great Vibes', cursive; }
 
-                    <!-- Recharge Form (Available to all) -->
-                    <h5 class="mb-3">Recharge Wallet</h5>
-                    <form method="post" class="needs-validation" novalidate>
-                        {% csrf_token %}
-                        <input type="hidden" name="action" value="recharge">
-                        <div class="mb-3 text-start">
-                            {{ recharge_form.amount.label_tag }}
-                            {{ recharge_form.amount }}
-                            {% if recharge_form.amount.errors %}
-                            <div class="text-danger small mt-1">
-                                {{ recharge_form.amount.errors|join:", " }}
-                            </div>
-                            {% endif %}
-                            <div class="form-text">Enter amount to add to your wallet</div>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">
-                                Add Funds
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+    /* Balance Display */
+    .balance-glow {
+        font-size: 4.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #ebd197, #c5a059);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 30px rgba(235, 209, 151, 0.3);
+        margin: 1rem 0;
+    }
+
+    /* Transaction Table */
+    .table {
+        color: #ffffff !important;
+        margin-bottom: 0;
+        background: transparent !important;
+    }
+    
+    .table thead th {
+        background: rgba(235, 209, 151, 0.05) !important;
+        color: #ebd197 !important;
+        border-bottom: 1px solid rgba(235, 209, 151, 0.1) !important;
+        padding: 1.5rem 1rem;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+    }
+
+    .table tbody td {
+        padding: 1.5rem 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+        vertical-align: middle;
+        background: transparent !important;
+    }
+
+    .table-hover tbody tr:hover {
+        background: rgba(235, 209, 151, 0.03) !important;
+    }
+
+    /* Form Controls */
+    .premium-input {
+        background: rgba(0, 0, 0, 0.3) !important;
+        border: 1px solid rgba(235, 209, 151, 0.2) !important;
+        border-radius: 12px !important;
+        color: #ffffff !important;
+        padding: 0.8rem 1.2rem !important;
+    }
+
+    .premium-input:focus {
+        border-color: #ebd197 !important;
+        box-shadow: 0 0 15px rgba(235, 209, 151, 0.2) !important;
+        background: rgba(0, 0, 0, 0.5) !important;
+    }
+
+    .btn-premium-gold {
+        background: linear-gradient(135deg, #ebd197, #c5a059);
+        color: #07030a !important;
+        border: none;
+        border-radius: 50px;
+        padding: 0.8rem 2rem;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    }
+
+    .btn-premium-gold:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(235, 209, 151, 0.3);
+    }
+
+    .btn-outline-gold {
+        background: transparent;
+        border: 1px solid #ebd197;
+        color: #ebd197 !important;
+        border-radius: 50px;
+        padding: 0.8rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-gold:hover {
+        background: rgba(235, 209, 151, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .badge-credit {
+        background: rgba(16, 185, 129, 0.1) !important;
+        color: #10b981 !important;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .badge-debit {
+        background: rgba(239, 68, 68, 0.1) !important;
+        color: #ef4444 !important;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+</style>
+
+<div class="wallet-wrapper">
+    <div class="container">
+        <!-- Page Header -->
+        <div class="text-center mb-5 animate-row">
+            <h1 class="script-font gold-text" style="font-size: 5rem;">My Digital Vault</h1>
+            <p class="text-muted-premium">Manage your earnings and transactions with artisanal precision</p>
         </div>
 
-        <!-- Transaction History Section -->
-        <div class="col-lg-8">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0 fw-bold">Transaction History</h5>
+        <div class="row">
+            <!-- Balance & Actions -->
+            <div class="col-lg-4 mb-5 animate-row" style="animation-delay: 0.2s;">
+                <div class="card premium-card text-center p-4 h-100">
+                    <div class="mt-4 mb-3">
+                        <div class="d-inline-block p-4 rounded-circle mb-3" style="background: rgba(235, 209, 151, 0.05); border: 1px solid rgba(235, 209, 151, 0.1);">
+                            <i class="fas fa-vault gold-text fa-3x"></i>
+                        </div>
+                    </div>
+                    <h5 class="text-muted-premium text-uppercase letter-spacing-1 small">Total Available Balance</h5>
+                    <div class="balance-glow">₹{{ wallet_balance }}</div>
+                    
+                    <div class="mt-4 px-3">
+                        <!-- Withdraw Section -->
+                        <div class="p-4 rounded-4 mb-4" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);">
+                            <h6 class="gold-text fw-bold mb-3"><i class="fas fa-arrow-up me-2"></i>Withdrawal</h6>
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="withdraw">
+                                <div class="mb-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-transparent border-end-0" style="border-color: rgba(235, 209, 151, 0.2); color: #ebd197;">₹</span>
+                                        {{ withdraw_form.amount }}
+                                    </div>
+                                    {% if withdraw_form.amount.errors %}
+                                    <small class="text-danger mt-2 d-block">{{ withdraw_form.amount.errors|join:", " }}</small>
+                                    {% endif %}
+                                </div>
+                                <button type="submit" class="btn btn-outline-gold w-100">
+                                    <i class="fas fa-hand-holding-usd me-2"></i>Request Payout
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Recharge Section -->
+                        <div class="p-4 rounded-4" style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);">
+                            <h6 class="gold-text fw-bold mb-3"><i class="fas fa-plus-circle me-2"></i>Add Funds</h6>
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="recharge">
+                                <div class="mb-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-transparent border-end-0" style="border-color: rgba(235, 209, 151, 0.2); color: #ebd197;">₹</span>
+                                        {{ recharge_form.amount }}
+                                    </div>
+                                    {% if recharge_form.amount.errors %}
+                                    <small class="text-danger mt-2 d-block">{{ recharge_form.amount.errors|join:", " }}</small>
+                                    {% endif %}
+                                </div>
+                                <button type="submit" class="btn btn-premium-gold w-100">
+                                    <i class="fas fa-bolt me-2"></i>Top Up Now
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0 align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th scope="col">Date</th>
-                                <th scope="col">Description</th>
-                                <th scope="col">Type</th>
-                                <th scope="col" class="text-end">Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for transaction in transactions %}
-                            <tr>
-                                <td class="text-muted small">
-                                    {{ transaction.created_at|date:"M d, Y H:i" }}
-                                </td>
-                                <td>
-                                    <div class="fw-medium">{{ transaction.description }}</div>
-                                    <div class="small text-muted">Source: {{ transaction.source|title }}</div>
-                                </td>
-                                <td>
-                                    {% if transaction.transaction_type == 'credit' %}
-                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">
-                                        Credit
-                                    </span>
-                                    {% else %}
-                                    <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3">
-                                        Debit
-                                    </span>
-                                    {% endif %}
-                                </td>
-                                <td
-                                    class="text-end fw-bold {% if transaction.transaction_type == 'credit' %}text-success{% else %}text-danger{% endif %}">
-                                    {% if transaction.transaction_type == 'credit' %}
-                                    +₹{{ transaction.amount }}
-                                    {% else %}
-                                    -₹{{ transaction.amount }}
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="4" class="text-center py-5 text-muted">
-                                    <i class="fas fa-history fa-2x mb-3 d-block"></i>
-                                    No transactions found
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+            </div>
+
+            <!-- Transaction History -->
+            <div class="col-lg-8 mb-5 animate-row" style="animation-delay: 0.4s;">
+                <div class="card premium-card h-100">
+                    <div class="card-header bg-transparent border-bottom p-4" style="border-color: rgba(235, 209, 151, 0.1) !important;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="gold-text fw-bold mb-0">Transaction Audit</h4>
+                            <div class="badge rounded-pill bg-dark border border-secondary px-3 py-2">
+                                <i class="fas fa-history me-1"></i> Latest Records
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Transaction Description</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for transaction in transactions %}
+                                <tr>
+                                    <td class="text-muted-premium small">
+                                        {{ transaction.created_at|date:"M d, Y" }}<br>
+                                        <span class="opacity-50">{{ transaction.created_at|date:"H:i" }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-white mb-1">{{ transaction.description }}</div>
+                                        <div class="small text-muted-premium">via {{ transaction.source|title }} system</div>
+                                    </td>
+                                    <td>
+                                        {% if transaction.transaction_type == 'credit' %}
+                                        <span class="badge badge-credit rounded-pill px-3 py-2">CREDIT</span>
+                                        {% else %}
+                                        <span class="badge badge-debit rounded-pill px-3 py-2">DEBIT</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-end fw-bold fs-5 {% if transaction.transaction_type == 'credit' %}text-success{% else %}text-danger{% endif %}">
+                                        {% if transaction.transaction_type == 'credit' %}+{% else %}-{% endif %}₹{{ transaction.amount }}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-5">
+                                        <div class="opacity-25 mb-3">
+                                            <i class="fas fa-receipt fa-4x gold-text"></i>
+                                        </div>
+                                        <h5 class="text-muted-premium">No transaction data available</h5>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('input:not([type="checkbox"])');
+        inputs.forEach(input => {
+            input.classList.add('premium-input');
+            input.classList.add('form-control');
+            if (input.placeholder === "") {
+                input.placeholder = "Enter amount...";
+            }
+        });
+    });
+</script>
 {% endblock %}

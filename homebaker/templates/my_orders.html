@@ -1,103 +1,444 @@
 {% extends 'base.html' %}
-{% block title %}My Orders{% endblock %}
+{% block title %}My Orders — HomeBaker{% endblock %}
 
 {% block content %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold mb-0" style="color: var(--text-primary);">My Orders</h2>
-</div>
+    /* ===== MY ORDERS — ULTRA LUXURY ===== */
+    .orders-page {
+        min-height: 100vh;
+        background: #07030a;
+        position: relative;
+        padding: 4rem 0 6rem;
+    }
 
-{% if orders %}
-<div class="card border-0 shadow-sm">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th class="px-4 py-3 fw-semibold">Order ID</th>
-                        <th class="px-4 py-3 fw-semibold">Items</th>
-                        <th class="px-4 py-3 fw-semibold text-center">Delivery Date</th>
-                        <th class="px-4 py-3 fw-semibold text-end">Total Price</th>
-                        <th class="px-4 py-3 fw-semibold text-center">Status</th>
-                        <th class="px-4 py-3 fw-semibold text-end">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for order in orders %}
-                    <tr>
-                        <td class="px-4 py-3 fw-bold">{{ order.order_id }}</td>
-                        <td class="px-4 py-3" style="min-width: 250px;">
-                            {% for item in order.items.all %}
-                            <div class="mb-2 pb-2 {% if not forloop.last %}border-bottom border-light{% endif %}">
-                                <div class="fw-semibold text-dark">{{ item.cake.name }}</div>
-                                <div class="small text-muted d-flex flex-wrap gap-2 mt-1">
-                                    <span class="badge bg-light text-dark border"><i class="fas fa-utensils me-1 text-primary"></i> {{ item.cake.flavor|title }}</span>
-                                    <span class="badge bg-light text-dark border"><i class="fas fa-weight-hanging me-1 text-primary"></i> {{ item.quantity }} kg</span>
-                                    <span class="badge bg-light text-dark border"><i class="fas fa-tag me-1 text-primary"></i> ₹{{ item.unit_price }}</span>
+    .ord-orb-1 {
+        position: fixed; top: -10%; left: -10%;
+        width: 800px; height: 800px;
+        background: radial-gradient(circle, rgba(108, 30, 180, 0.15) 0%, transparent 65%);
+        border-radius: 50%; pointer-events: none; z-index: 0;
+    }
+    .ord-orb-2 {
+        position: fixed; bottom: -20%; right: -10%;
+        width: 700px; height: 700px;
+        background: radial-gradient(circle, rgba(235, 209, 151, 0.05) 0%, transparent 60%);
+        border-radius: 50%; pointer-events: none; z-index: 0;
+    }
+
+    .ord-content { position: relative; z-index: 1; }
+
+    /* Page Header */
+    .ord-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin-bottom: 3rem;
+    }
+
+    .ord-title {
+        font-family: 'Great Vibes', cursive;
+        font-size: clamp(3rem, 6vw, 4.5rem);
+        color: #ebd197;
+        text-shadow: 0 0 25px rgba(235, 209, 151, 0.35);
+        margin: 0;
+        line-height: 1;
+    }
+
+    .ord-count {
+        font-size: 0.8rem;
+        color: rgba(255,255,255,0.4);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 0.4rem;
+    }
+
+    /* Table Card */
+    .ord-table-card {
+        background: rgba(30, 20, 40, 0.5);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        border: 1px solid rgba(235, 209, 151, 0.12);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+    }
+
+    /* Table */
+    .ord-table {
+        width: 100%;
+        margin: 0;
+        border-collapse: collapse;
+        color: #fff;
+    }
+
+    .ord-table thead th {
+        background: rgba(235, 209, 151, 0.05);
+        border-bottom: 1px solid rgba(235, 209, 151, 0.12);
+        color: #ebd197;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        padding: 1.2rem 1.4rem;
+        white-space: nowrap;
+    }
+
+    .ord-table tbody tr {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        transition: background 0.25s ease;
+    }
+
+    .ord-table tbody tr:last-child { border-bottom: none; }
+
+    .ord-table tbody tr:hover {
+        background: rgba(235, 209, 151, 0.04);
+    }
+
+    .ord-table tbody td {
+        padding: 1.4rem 1.4rem;
+        vertical-align: middle;
+    }
+
+    /* Order ID */
+    .ord-id {
+        font-weight: 800;
+        color: #ebd197;
+        font-family: 'Inter', sans-serif;
+        letter-spacing: -0.5px;
+        font-size: 1.05rem;
+    }
+
+    /* Item Badges */
+    .item-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.3rem 0.7rem;
+        border-radius: 20px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        background: rgba(235, 209, 151, 0.08);
+        border: 1px solid rgba(235, 209, 151, 0.15);
+        color: rgba(255,255,255,0.75);
+    }
+
+    .item-badge i { color: #ebd197; font-size: 0.65rem; }
+
+    .item-name {
+        font-weight: 700;
+        color: #fff;
+        font-size: 0.95rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .item-message {
+        color: rgba(235, 209, 151, 0.7);
+        font-size: 0.8rem;
+        font-style: italic;
+        margin-top: 0.4rem;
+    }
+
+    .item-desc {
+        color: rgba(255, 255, 255, 0.35);
+        font-size: 0.78rem;
+        margin-top: 0.3rem;
+        font-style: italic;
+    }
+
+    /* Amount */
+    .ord-amount {
+        font-weight: 800;
+        color: #fff;
+        font-size: 1.05rem;
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Date */
+    .ord-date {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+
+    /* Status Badges */
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.45rem 1rem;
+        border-radius: 50px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .status-pending     { background: rgba(148,163,184,0.1); border: 1px solid rgba(148,163,184,0.3); color: #94a3b8; }
+    .status-confirmed   { background: rgba(34,197,94,0.1);  border: 1px solid rgba(34,197,94,0.3);  color: #22c55e; }
+    .status-baking      { background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); color: #fbbf24; }
+    .status-processing  { background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.3); color: #818cf8; }
+    .status-delivery    { background: rgba(14,165,233,0.1); border: 1px solid rgba(14,165,233,0.3); color: #38bdf8; }
+    .status-delivered   { background: rgba(34,197,94,0.1);  border: 1px solid rgba(34,197,94,0.3);  color: #22c55e; }
+    .status-cancelled   { background: rgba(239,68,68,0.1);  border: 1px solid rgba(239,68,68,0.3);  color: #f87171; }
+
+    /* Action Buttons */
+    .btn-ord-track {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 1rem;
+        background: rgba(235, 209, 151, 0.08);
+        border: 1px solid rgba(235, 209, 151, 0.2);
+        border-radius: 50px;
+        color: #ebd197 !important;
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.25s ease;
+        white-space: nowrap;
+    }
+
+    .btn-ord-track:hover {
+        background: rgba(235, 209, 151, 0.15);
+        border-color: #ebd197;
+        transform: translateY(-2px);
+    }
+
+    .btn-ord-rate {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 1rem;
+        background: linear-gradient(135deg, #ebd197, #c5a059);
+        border: none;
+        border-radius: 50px;
+        color: #07030a !important;
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-decoration: none;
+        transition: all 0.25s ease;
+        white-space: nowrap;
+    }
+
+    .btn-ord-rate:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(235, 209, 151, 0.4);
+    }
+
+    .btn-ord-cancel {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 1rem;
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        border-radius: 50px;
+        color: #f87171 !important;
+        font-size: 0.78rem;
+        font-weight: 600;
+        transition: all 0.25s ease;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+
+    .btn-ord-cancel:hover {
+        background: rgba(239, 68, 68, 0.15);
+        border-color: #f87171;
+    }
+
+    /* Empty State */
+    .ord-empty {
+        background: rgba(30, 20, 40, 0.5);
+        backdrop-filter: blur(18px);
+        border: 1px solid rgba(235, 209, 151, 0.12);
+        border-radius: 24px;
+        text-align: center;
+        padding: 6rem 2rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .ord-empty i {
+        font-size: 3rem;
+        color: #ebd197;
+        opacity: 0.2;
+        margin-bottom: 1.5rem;
+        display: block;
+    }
+
+    .ord-empty h4 { color: #fff; margin-bottom: 0.5rem; }
+    .ord-empty p { color: rgba(255,255,255,0.4); }
+
+    .btn-browse-luxury {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.85rem 2rem;
+        background: linear-gradient(135deg, #ebd197, #c5a059);
+        border: none;
+        border-radius: 50px;
+        color: #07030a !important;
+        font-weight: 800;
+        text-decoration: none;
+        margin-top: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-browse-luxury:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(235, 209, 151, 0.4);
+    }
+
+    /* Item separator */
+    .item-separator {
+        border: none;
+        height: 1px;
+        background: rgba(255,255,255,0.05);
+        margin: 0.8rem 0;
+    }
+
+    /* Entry animation */
+    @keyframes ordFadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .ord-animate { animation: ordFadeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    .ord-d1 { animation-delay: 0.1s; }
+    .ord-d2 { animation-delay: 0.2s; }
+</style>
+
+<div class="orders-page">
+    <div class="ord-orb-1"></div>
+    <div class="ord-orb-2"></div>
+
+    <div class="ord-content">
+
+        <!-- Header -->
+        <div class="ord-header ord-animate">
+            <div>
+                <div class="ord-count">Order History</div>
+                <h1 class="ord-title">My Orders</h1>
+            </div>
+            <a href="{% url 'cakes' %}" class="btn-browse-luxury" style="font-size: 0.9rem; padding: 0.7rem 1.5rem;">
+                <i class="fas fa-birthday-cake"></i> Shop More
+            </a>
+        </div>
+
+        {% if orders %}
+        <div class="ord-table-card ord-animate ord-d1">
+            <div class="table-responsive">
+                <table class="ord-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Items</th>
+                            <th class="text-center">Delivery Date</th>
+                            <th class="text-end">Amount</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <!-- Order ID -->
+                            <td>
+                                <div class="ord-id">#{{ order.order_id }}</div>
+                            </td>
+
+                            <!-- Items -->
+                            <td style="min-width: 260px;">
+                                {% for item in order.items.all %}
+                                {% if not forloop.first %}<hr class="item-separator">{% endif %}
+                                <div class="item-name">{{ item.cake.name }}</div>
+                                <div class="d-flex flex-wrap gap-1 mt-1">
+                                    <span class="item-badge"><i class="fas fa-utensils"></i> {{ item.cake.flavor|title }}</span>
+                                    <span class="item-badge"><i class="fas fa-balance-scale"></i> {{ item.quantity }} kg</span>
+                                    <span class="item-badge"><i class="fas fa-rupee-sign"></i> {{ item.unit_price }}</span>
                                 </div>
                                 {% if item.message_on_cake %}
-                                <div class="small text-primary mt-1">
-                                    <i class="fas fa-quote-left me-1 opacity-50"></i> {{ item.message_on_cake }}
-                                </div>
+                                <div class="item-message"><i class="fas fa-quote-left me-1 opacity-50"></i>{{ item.message_on_cake }}</div>
                                 {% endif %}
                                 {% if item.cake.name|slice:":21" == "Custom Cake Request #" %}
-                                <div class="small text-secondary mt-1" style="font-style: italic;">
-                                    <i class="fas fa-info-circle me-1"></i> {{ item.cake.description|truncatechars:100 }}
-                                </div>
+                                <div class="item-desc"><i class="fas fa-info-circle me-1 opacity-50"></i>{{ item.cake.description|truncatechars:80 }}</div>
                                 {% endif %}
-                            </div>
-                            {% empty %}
-                            <span class="text-muted italic small">No items found</span>
-                            {% endfor %}
-                        </td>
-                        <td class="px-4 py-3 text-center">{{ order.delivery_date|date:"d M Y" }}</td>
-                        <td class="px-4 py-3 fw-bold text-end">₹{{ order.total_amount }}</td>
-                        <td class="px-4 py-3 text-center">
-                            {% if order.status == 'pending' %}
-                            <span class="badge bg-secondary">Pending</span>
-                            {% elif order.status == 'confirmed' or order.status == 'awaiting_confirmation' %}
-                            <span class="badge bg-success">Confirmed</span>
-                            {% elif order.status == 'baking' %}
-                            <span class="badge bg-warning text-dark">Baking</span>
-                            {% elif order.status == 'out_for_delivery' %}
-                            <span class="badge bg-warning text-dark">Out for Delivery</span>
-                            {% elif order.status == 'ready' or order.status == 'packing' %}
-                            <span class="badge bg-info">Processing</span>
-                            {% elif order.status == 'delivered' %}
-                            <span class="badge bg-success">Delivered</span>
-                            {% elif order.status == 'cancelled' %}
-                            <span class="badge bg-danger">Cancelled</span>
-                            {% endif %}
-                        </td>
-                        <td class="px-4 py-3 text-end">
-                            <div class="btn-group">
+                                {% empty %}
+                                <span class="ord-date">No items found</span>
+                                {% endfor %}
+                            </td>
+
+                            <!-- Delivery Date -->
+                            <td class="text-center">
+                                <div class="ord-date">{{ order.delivery_date|date:"d M" }}</div>
+                                <div class="ord-date" style="font-size: 0.75rem; opacity: 0.6;">{{ order.delivery_date|date:"Y" }}</div>
+                            </td>
+
+                            <!-- Amount -->
+                            <td class="text-end">
+                                <div class="ord-amount">₹{{ order.total_amount }}</div>
+                            </td>
+
+                            <!-- Status -->
+                            <td class="text-center">
                                 {% if order.status == 'pending' %}
-                                <form action="{% url 'cancel_order' order.order_id %}" method="post" class="d-inline"
-                                    onsubmit="return confirm('Are you sure you want to cancel this order?');">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-outline-danger me-1">Cancel</button>
-                                </form>
+                                    <span class="status-badge status-pending">Pending</span>
+                                {% elif order.status == 'confirmed' or order.status == 'awaiting_confirmation' %}
+                                    <span class="status-badge status-confirmed">Confirmed</span>
+                                {% elif order.status == 'baking' %}
+                                    <span class="status-badge status-baking">Baking</span>
+                                {% elif order.status == 'out_for_delivery' %}
+                                    <span class="status-badge status-delivery">On The Way</span>
+                                {% elif order.status == 'ready' or order.status == 'packing' %}
+                                    <span class="status-badge status-processing">Processing</span>
+                                {% elif order.status == 'delivered' %}
+                                    <span class="status-badge status-delivered">Delivered</span>
+                                {% elif order.status == 'cancelled' %}
+                                    <span class="status-badge status-cancelled">Cancelled</span>
                                 {% endif %}
-                                <a href="{% url 'order_tracking' order.order_id %}"
-                                    class="btn btn-sm btn-outline-primary me-1">Track</a>
-                                {% if order.status == 'delivered' and not order.review %}
-                                <a href="{% url 'add_review' order.order_id %}"
-                                    class="btn btn-sm btn-warning text-dark">Rate</a>
-                                {% endif %}
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                            </td>
+
+                            <!-- Actions -->
+                            <td class="text-end">
+                                <div class="d-flex gap-2 justify-content-end flex-wrap">
+                                    {% if order.status == 'pending' %}
+                                    <form action="{% url 'cancel_order' order.order_id %}" method="post"
+                                        onsubmit="return confirm('Cancel this order?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn-ord-cancel">
+                                            <i class="fas fa-times"></i> Cancel
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                    <a href="{% url 'order_tracking' order.order_id %}" class="btn-ord-track">
+                                        <i class="fas fa-map-marker-alt"></i> Track
+                                    </a>
+                                    {% if order.status == 'delivered' and not order.review %}
+                                    <a href="{% url 'add_review' order.order_id %}" class="btn-ord-rate">
+                                        <i class="fas fa-star"></i> Rate
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
+
+        {% else %}
+        <!-- Empty State -->
+        <div class="ord-empty ord-animate ord-d1">
+            <i class="fas fa-shopping-bag"></i>
+            <h4>No orders yet</h4>
+            <p>Your order history is empty. Start your culinary journey today.</p>
+            <a href="{% url 'cakes' %}" class="btn-browse-luxury">
+                <i class="fas fa-birthday-cake me-1"></i> Explore Cakes
+            </a>
+        </div>
+        {% endif %}
+
     </div>
 </div>
-{% else %}
-<div class="alert alert-info text-center">
-    <p class="mb-0">You haven't placed any orders yet. <a href="{% url 'cakes' %}" class="text-decoration-none">Browse
-            cakes</a> to get started!</p>
-</div>
-{% endif %}
-
 {% endblock %}

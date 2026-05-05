@@ -4,57 +4,130 @@
 {% block title %}My Notifications - HomeBaker{% endblock %}
 
 {% block content %}
-<div class="container py-5">
+<style>
+    .notifications-wrapper {
+        min-height: 80vh;
+        padding-top: 3rem;
+        padding-bottom: 5rem;
+        position: relative;
+    }
+
+    .premium-card {
+        background: rgba(30, 20, 40, 0.4) !important;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(235, 209, 151, 0.15) !important;
+        border-radius: 25px;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .list-group-item {
+        background: transparent !important;
+        border-color: rgba(235, 209, 151, 0.1) !important;
+        transition: all 0.3s ease;
+        padding: 2rem !important;
+    }
+
+    .list-group-item:hover {
+        background: rgba(235, 209, 151, 0.03) !important;
+    }
+
+    .notification-unread {
+        background: rgba(235, 209, 151, 0.05) !important;
+        border-left: 4px solid #ebd197 !important;
+    }
+
+    .gold-text { color: #ebd197 !important; }
+    .text-muted-premium { color: #94a3b8 !important; }
+    
+    .btn-premium-gold {
+        background: linear-gradient(135deg, #ebd197, #c5a059);
+        color: #07030a !important;
+        border: none;
+        border-radius: 50px;
+        padding: 0.8rem 2rem;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 20px rgba(235, 209, 151, 0.2);
+    }
+
+    .btn-premium-gold:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(235, 209, 151, 0.4);
+        color: #000 !important;
+    }
+
+    .script-font {
+        font-family: 'Great Vibes', cursive;
+    }
+</style>
+
+<div class="notifications-wrapper">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="mb-0" style="color: #6f42c1;">My Notifications</h2>
+        <div class="col-lg-10 col-xl-8">
+            <div class="d-flex justify-content-between align-items-end mb-5 animate-row">
+                <div>
+                    <h1 class="script-font gold-text display-4 mb-0">My Notifications</h1>
+                    <p class="text-muted-premium mb-0">Stay updated with your latest alerts and activities</p>
+                </div>
                 {% if notifications_list %}
-                <button class="btn btn-outline-light btn-sm" onclick="markAllAsReadPage()">
-                    <i class="fas fa-check-double me-1"></i> Mark all as read
+                <button class="btn btn-outline-warning btn-sm rounded-pill px-4" onclick="markAllAsReadPage()" style="border-color: rgba(235, 209, 151, 0.3); color: #ebd197;">
+                    <i class="fas fa-check-double me-2"></i> Mark all as read
                 </button>
                 {% endif %}
             </div>
 
-            <div class="card border-0 shadow-sm overflow-hidden">
+            <div class="card premium-card animate-row" style="animation-delay: 0.2s;">
                 <div class="list-group list-group-flush">
                     {% for notification in notifications_list %}
-                    <div class="list-group-item p-4 {% if not notification.is_read %}bg-primary bg-opacity-10 border-start border-primary border-4{% else %}border-start border-4 border-transparent{% endif %}"
+                    <div class="list-group-item {% if not notification.is_read %}notification-unread{% endif %}"
                         id="notification-{{ notification.id }}">
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="flex-grow-1">
-                                <div class="d-flex align-items-center mb-1">
-                                    <h6 class="mb-0 fw-bold text-black">{{ notification.title }}</h6>
+                                <div class="d-flex align-items-center mb-2">
+                                    <h5 class="mb-0 fw-bold gold-text">{{ notification.title }}</h5>
                                     {% if not notification.is_read %}
-                                    <span class="badge bg-primary ms-2" style="font-size: 0.6rem;">NEW</span>
+                                    <span class="badge rounded-pill ms-3" style="background: #4a1c6a; color: #ebd197; border: 1px solid rgba(235, 209, 151, 0.3); font-size: 0.65rem; padding: 0.4em 0.8em;">NEW</span>
                                     {% endif %}
                                 </div>
-                                <p class="text-black mb-2">{{ notification.message }}</p>
-                                <div class="d-flex align-items-center text-black small">
-                                    <i class="far fa-clock me-1"></i>
+                                <p class="text-white-50 mb-3" style="font-size: 1.05rem; line-height: 1.6;">
+                                    <a href="{{ notification.get_target_url }}" class="text-decoration-none text-white-50 d-block hover-gold-text transition-all">
+                                        {{ notification.message }}
+                                    </a>
+                                </p>
+                                <div class="d-flex align-items-center text-muted-premium small">
+                                    <i class="far fa-clock me-2"></i>
                                     {{ notification.created_at|timesince }} ago
-                                    {% if notification.order %}
-                                    <span class="mx-2">•</span>
-                                    <a href="{% url 'my_orders' %}" class="text-decoration-none text-primary">View Order</a>
-                                    {% elif "custom_request" in notification.notification_type %}
-                                    <span class="mx-2">•</span>
-                                    <a href="{% url 'my_custom_requests' %}" class="text-decoration-none text-primary">View Request</a>
-                                    {% endif %}
+                                    
+                                    <span class="mx-3 text-muted opacity-25">|</span>
+                                    <a href="{{ notification.get_target_url }}" class="text-decoration-none gold-text fw-bold">
+                                        <i class="fas fa-external-link-alt me-1" style="font-size: 0.8rem;"></i> View Relevant Page
+                                    </a>
                                 </div>
                             </div>
                             {% if not notification.is_read %}
-                            <button class="btn btn-link text-primary p-0 ms-3" title="Mark as read"
+                            <button class="btn btn-link gold-text p-0 ms-4 transition-scale" title="Mark as read"
                                 onclick="markIndividualAsReadPage(this, '{{ notification.id }}')">
-                                <i class="fas fa-check-circle fa-lg"></i>
+                                <i class="fas fa-check-circle fa-2x opacity-75"></i>
                             </button>
                             {% endif %}
                         </div>
                     </div>
                     {% empty %}
-                    <div class="text-center py-5">
-                        <i class="fas fa-bell-slash fa-3x mb-3 text-muted opacity-25"></i>
-                        <p class="text-black">You have no notifications yet.</p>
-                        <a href="{% url 'cakes' %}" class="btn btn-primary mt-2">Explore Cakes</a>
+                    <div class="text-center py-5 my-5">
+                        <div class="mb-4">
+                            <i class="fas fa-bell-slash fa-5x gold-text opacity-25"></i>
+                        </div>
+                        <h3 class="gold-text fw-bold mb-3">Your Inbox is Quiet</h3>
+                        <p class="text-muted-premium mb-4">You have no notifications at the moment.</p>
+                        {% if user.profile.role == 'customer' %}
+                        <a href="{% url 'cakes' %}" class="btn btn-premium-gold px-5">Explore Our Collection</a>
+                        {% elif user.profile.role == 'delivery_assistant' %}
+                        <a href="{% url 'delivery_dashboard' %}" class="btn btn-premium-gold px-5">Go to Dashboard</a>
+                        {% elif user.profile.role == 'baker' %}
+                        <a href="{% url 'baker_dashboard' %}" class="btn btn-premium-gold px-5">Back to Oven</a>
+                        {% endif %}
                     </div>
                     {% endfor %}
                 </div>
@@ -88,13 +161,12 @@
         }).then(response => {
             if (response.ok) {
                 const item = document.getElementById(`notification-${id}`);
-                item.classList.remove('bg-primary', 'bg-opacity-10', 'border-primary');
-                item.classList.add('border-transparent');
+                item.classList.remove('notification-unread');
                 button.remove();
                 const badge = item.querySelector('.badge');
                 if (badge) badge.remove();
 
-                // Optional: update navbar count if you want to be extra smooth
+                // Update navbar counter if visible
                 const counter = document.querySelector('.badge.rounded-pill.bg-danger');
                 if (counter) {
                     let count = parseInt(counter.textContent);
@@ -108,10 +180,4 @@
         });
     }
 </script>
-
-<style>
-    .border-transparent {
-        border-color: transparent !important;
-    }
-</style>
 {% endblock %}

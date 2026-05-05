@@ -1,102 +1,247 @@
 {% extends 'base.html' %}
-{% block title %}Help Desk – Admin{% endblock %}
+{% load static %}
+
+{% block title %}Help Desk | Admin Panel{% endblock %}
+
 {% block content %}
 <style>
-    .ticket-card {
-        border-radius: 12px;
-        border: 1px solid var(--border-color);
-        background-color: var(--bg-card);
-        transition: box-shadow 0.2s ease;
+    :root {
+        --gold-primary: #ebd197;
+        --gold-dark: #c5a66a;
+        --glass-bg: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(235, 209, 151, 0.1);
+        --purple-bg: #07030a;
     }
-    .ticket-card:hover { box-shadow: 0 4px 16px rgba(108,92,231,0.10); }
-    .status-badge-open { background-color: rgba(253,126,20,0.15); color: #fd7e14; }
-    .status-badge-resolved { background-color: rgba(25,135,84,0.15); color: #198754; }
+
+    body {
+        background-color: var(--purple-bg);
+    }
+
+    .glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        transition: all 0.3s ease;
+    }
+
+    .ticket-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(235, 209, 151, 0.08);
+        border-radius: 18px;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ticket-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.04);
+        border-color: rgba(235, 209, 151, 0.2);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .gold-text {
+        background: linear-gradient(135deg, #ebd197 0%, #f5d97a 50%, #ebd197 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: bold;
+    }
+
+    .stat-luxury {
+        background: rgba(235, 209, 151, 0.05);
+        border: 1px solid rgba(235, 209, 151, 0.15);
+        border-radius: 15px;
+        padding: 1.2rem;
+        min-width: 120px;
+        transition: all 0.3s ease;
+    }
+
+    .stat-luxury:hover {
+        background: rgba(235, 209, 151, 0.1);
+        border-color: var(--gold-primary);
+    }
+
+    .form-control-premium {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(235, 209, 151, 0.15) !important;
+        color: white !important;
+        border-radius: 12px;
+        padding: 0.8rem 1.2rem;
+    }
+
+    .form-control-premium:focus {
+        border-color: var(--gold-primary) !important;
+        box-shadow: 0 0 15px rgba(235, 209, 151, 0.1) !important;
+    }
+
+    .status-badge {
+        font-family: 'Inter', sans-serif;
+        padding: 0.4rem 1rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .status-open { background: rgba(253, 126, 20, 0.1); color: #fd7e14; border: 1px solid rgba(253, 126, 20, 0.2); }
+    .status-resolved { background: rgba(111, 219, 159, 0.1); color: #6fdb9f; border: 1px solid rgba(111, 219, 159, 0.2); }
+
+    .btn-premium-gold {
+        background: linear-gradient(135deg, #ebd197, #c5a66a);
+        color: #000 !important;
+        font-weight: 800;
+        border-radius: 50px;
+        padding: 0.6rem 1.5rem;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-premium-gold:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(235, 209, 151, 0.3);
+    }
+
+    .floating-support-icon {
+        position: absolute;
+        top: -10px;
+        right: 20px;
+        font-size: 4rem;
+        color: var(--gold-primary);
+        opacity: 0.03;
+        transform: rotate(15deg);
+    }
 </style>
 
-<div class="container py-4">
-    <!-- Header -->
-    <div class="d-flex align-items-center justify-content-between mb-4">
+<div class="container py-5 mt-4">
+    <!-- Header Section -->
+    <div class="section-header d-flex flex-wrap justify-content-between align-items-end gap-4 mb-5">
         <div>
-            <h2 class="fw-bold mb-0" style="color: var(--text-primary);">🎧 Help Desk</h2>
-            <p class="text-muted mb-0 small">Review and manage user-submitted support tickets.</p>
+            <h1 class="display-4 gold-text fw-extra-bold mb-1">Help Desk</h1>
+            <p class="text-white-50 lead">Concierge support for the HomeBaker community</p>
         </div>
+        
         <div class="d-flex gap-3">
-            <div class="text-center px-3 py-2 rounded-3 border" style="background-color: var(--bg-secondary);">
-                <div class="fw-bold fs-5" style="color: #fd7e14;">{{ open_tickets }}</div>
-                <div class="text-muted small">Open</div>
+            <div class="stat-luxury text-center">
+                <div class="gold-num fw-extra-bold fs-3">{{ open_tickets }}</div>
+                <div class="text-white-50 small text-uppercase fw-bold" style="letter-spacing: 1px;">Open</div>
             </div>
-            <div class="text-center px-3 py-2 rounded-3 border" style="background-color: var(--bg-secondary);">
-                <div class="fw-bold fs-5 text-success">{{ resolved_tickets }}</div>
-                <div class="text-muted small">Resolved</div>
+            <div class="stat-luxury text-center">
+                <div class="gold-num fw-extra-bold fs-3">{{ resolved_tickets }}</div>
+                <div class="text-white-50 small text-uppercase fw-bold" style="letter-spacing: 1px;">Resolved</div>
             </div>
-            <div class="text-center px-3 py-2 rounded-3 border" style="background-color: var(--bg-secondary);">
-                <div class="fw-bold fs-5" style="color: var(--text-primary);">{{ total_tickets }}</div>
-                <div class="text-muted small">Total</div>
+            <div class="stat-luxury text-center">
+                <div class="gold-num fw-extra-bold fs-3">{{ total_tickets }}</div>
+                <div class="text-white-50 small text-uppercase fw-bold" style="letter-spacing: 1px;">Total</div>
             </div>
         </div>
     </div>
 
-    <!-- Filter Bar -->
-    <form method="GET" class="row g-2 mb-4">
-        <div class="col-md-6">
-            <input type="text" name="search" value="{{ search_query }}" class="form-control" placeholder="Search by username or subject...">
-        </div>
-        <div class="col-md-3">
-            <select name="status" class="form-select">
-                <option value="">All Statuses</option>
-                <option value="open" {% if status_filter == 'open' %}selected{% endif %}>Open</option>
-                <option value="resolved" {% if status_filter == 'resolved' %}selected{% endif %}>Resolved</option>
-            </select>
-        </div>
-        <div class="col-md-3 d-flex gap-2">
-            <button type="submit" class="btn btn-primary w-100">Filter</button>
-            <a href="{% url 'admin_helpdesk' %}" class="btn btn-outline-secondary w-100">Reset</a>
-        </div>
-    </form>
+    <!-- Glass Filter Bar -->
+    <div class="glass-card p-4 mb-5">
+        <form method="GET" class="row g-3 align-items-center">
+            <div class="col-lg-5 col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-0 text-white-50 pe-0">
+                        <i class="fas fa-search"></i>
+                    </span>
+                    <input type="text" name="search" value="{{ search_query }}" class="form-control form-control-premium" placeholder="Search client name or subject...">
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3">
+                <select name="status" class="form-select form-control-premium">
+                    <option value="">All Ticket Statuses</option>
+                    <option value="open" {% if status_filter == 'open' %}selected{% endif %}>Open Requests</option>
+                    <option value="resolved" {% if status_filter == 'resolved' %}selected{% endif %}>Resolved Requests</option>
+                </select>
+            </div>
+            <div class="col-lg-4 col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-premium-gold flex-grow-1">
+                    <i class="fas fa-filter me-2"></i>Apply Filters
+                </button>
+                <a href="{% url 'admin_helpdesk' %}" class="btn btn-outline-secondary rounded-pill px-4">Reset</a>
+            </div>
+        </form>
+    </div>
 
-    <!-- Ticket List -->
+    <!-- Tickets Registry -->
     {% if tickets %}
-    <div class="d-flex flex-column gap-3">
+    <div class="d-flex flex-column gap-4">
         {% for ticket in tickets %}
         <div class="ticket-card p-4">
-            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+            <i class="fas fa-headset floating-support-icon"></i>
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-4">
                 <div class="flex-grow-1">
-                    <div class="d-flex align-items-center gap-2 mb-1">
-                        <span class="badge rounded-pill fw-semibold px-3 py-1 {% if ticket.status == 'open' %}status-badge-open{% else %}status-badge-resolved{% endif %}">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <span class="status-badge {% if ticket.status == 'open' %}status-open{% else %}status-resolved{% endif %}">
+                            <i class="fas {% if ticket.status == 'open' %}fa-clock{% else %}fa-check-circle{% endif %} me-1"></i>
                             {{ ticket.get_status_display }}
                         </span>
-                        <small class="text-muted">Ticket #{{ ticket.id }} · {{ ticket.created_at|date:"M d, Y" }}</small>
+                        <div class="text-white-50 small">
+                            <span class="gold-num fw-bold text-white">#{{ ticket.id }}</span> 
+                            <span class="mx-2">|</span> 
+                            <i class="far fa-calendar-alt me-1"></i> {{ ticket.created_at|date:"M d, Y" }}
+                        </div>
                     </div>
-                    <h5 class="fw-bold mb-1" style="color: var(--text-primary);">{{ ticket.subject }}</h5>
-                    <p class="text-muted mb-2">{{ ticket.description }}</p>
-                    <small class="text-muted">
-                        <i class="fas fa-user me-1"></i>
-                        {{ ticket.user.get_full_name|default:ticket.user.username }}
-                        ({{ ticket.user.email }}) — {{ ticket.user.profile.get_role_display }}
-                    </small>
+                    
+                    <h4 class="fw-bold mb-2 text-white">{{ ticket.subject }}</h4>
+                    <p class="text-white-50 mb-3" style="max-width: 800px; line-height: 1.6;">{{ ticket.description }}</p>
+                    
+                    <div class="d-flex align-items-center gap-3 mt-4">
+                        <div class="rounded-circle overflow-hidden border border-2 border-gold" style="width: 32px; height: 32px; border-color: rgba(235,209,151,0.3) !important;">
+                            {% if ticket.user.profile.profile_picture %}
+                                <img src="{{ ticket.user.profile.profile_picture.url }}" class="w-100 h-100 object-fit-cover">
+                            {% else %}
+                                <div class="w-100 h-100 bg-dark d-flex align-items-center justify-content-center text-white-50">
+                                    <i class="fas fa-user small"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="small">
+                            <span class="text-white fw-bold">{{ ticket.user.get_full_name|default:ticket.user.username }}</span>
+                            <span class="text-white-50 mx-1">·</span>
+                            <span class="text-white-50">{{ ticket.user.profile.get_role_display }}</span>
+                            <div class="text-white-50" style="font-size: 0.75rem;">{{ ticket.user.email }}</div>
+                        </div>
+                    </div>
                 </div>
-                <!-- Change Status -->
-                <form method="POST" class="d-flex flex-column align-items-end gap-2">
-                    {% csrf_token %}
-                    <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
-                    <div class="d-flex align-items-center gap-2">
-                        <select name="new_status" class="form-select form-select-sm" style="width: 140px;">
-                            <option value="open" {% if ticket.status == 'open' %}selected{% endif %}>Open</option>
-                            <option value="resolved" {% if ticket.status == 'resolved' %}selected{% endif %}>Resolved</option>
-                        </select>
-                        <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
-                    </div>
-                    <textarea name="resolution_message" class="form-control form-control-sm mt-1" rows="2" placeholder="Optional resolution message..." style="width: 250px; font-size: 0.8rem;">{{ ticket.resolution_message|default:'' }}</textarea>
-                </form>
+
+                <!-- Management Portal -->
+                <div class="glass-card p-3" style="min-width: 280px; background: rgba(255,255,255,0.01);">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
+                        
+                        <div class="mb-3">
+                            <label class="text-white-50 small text-uppercase mb-2 d-block fw-bold" style="font-size: 0.65rem; letter-spacing: 1px;">Update Status</label>
+                            <select name="new_status" class="form-select form-control-premium form-select-sm">
+                                <option value="open" {% if ticket.status == 'open' %}selected{% endif %}>Open</option>
+                                <option value="resolved" {% if ticket.status == 'resolved' %}selected{% endif %}>Resolved</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="text-white-50 small text-uppercase mb-2 d-block fw-bold" style="font-size: 0.65rem; letter-spacing: 1px;">Resolution Notes</label>
+                            <textarea name="resolution_message" class="form-control form-control-premium form-control-sm" rows="3" placeholder="Enter resolution details...">{{ ticket.resolution_message|default:'' }}</textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-premium-gold btn-sm w-100 mt-2">
+                            <i class="fas fa-save me-2"></i>Update Registry
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
         {% endfor %}
     </div>
     {% else %}
-    <div class="text-center py-5 my-4">
-        <i class="fas fa-headset fa-3x text-muted mb-3"></i>
-        <h5 class="text-muted fw-semibold">No tickets found.</h5>
-        <p class="text-muted small">All quiet! No support tickets match your current filter.</p>
+    <div class="glass-card text-center py-5 my-4">
+        <i class="fas fa-headset fa-4x mb-4 gold-text opacity-25"></i>
+        <h3 class="text-white fw-bold">All Quiet at the Concierge</h3>
+        <p class="text-white-50">No support tickets currently match your filtration criteria.</p>
     </div>
     {% endif %}
 </div>

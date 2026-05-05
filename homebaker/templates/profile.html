@@ -1,279 +1,460 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}My Profile{% endblock %}
+{% block title %}My Profile - HomeBaker{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold" style="color: var(--text-primary);">My Profile</h2>
-            <span class="badge bg-{{ is_baker|yesno:'primary,success' }} fs-6">
-                {{ user.profile.get_role_display }}
-            </span>
-        </div>
+<style>
+    .profile-wrapper {
+        min-height: 90vh;
+        padding-top: 3rem;
+        padding-bottom: 5rem;
+    }
 
-        <div class="card border-0 shadow-sm p-4">
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
+    .premium-card {
+        background: rgba(30, 20, 40, 0.4) !important;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(235, 209, 151, 0.15) !important;
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+        position: relative;
+    }
 
-                {% if user_form.non_field_errors %}
-                <div class="alert alert-danger">
-                    {% for error in user_form.non_field_errors %}
-                    {{ error }}
-                    {% endfor %}
+    .gold-text { color: #ebd197 !important; }
+    .text-muted-premium { color: #94a3b8 !important; }
+
+    /* Form Controls */
+    .premium-input {
+        background: rgba(0, 0, 0, 0.3) !important;
+        border: 1px solid rgba(235, 209, 151, 0.15) !important;
+        border-radius: 12px !important;
+        color: #ffffff !important;
+        padding: 0.8rem 1.2rem !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .premium-input:focus {
+        background: rgba(0, 0, 0, 0.5) !important;
+        border-color: #ebd197 !important;
+        box-shadow: 0 0 15px rgba(235, 209, 151, 0.2) !important;
+    }
+
+    .premium-input[readonly] {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border-color: rgba(255, 255, 255, 0.1) !important;
+        color: #94a3b8 !important;
+    }
+
+    .form-label {
+        color: #ebd197 !important;
+        font-weight: 600;
+        margin-bottom: 0.6rem;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Profile Pic */
+    .profile-pic-container {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+    }
+
+    .profile-pic-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid #ebd197;
+        box-shadow: 0 0 25px rgba(235, 209, 151, 0.3);
+    }
+
+    .pic-edit-btn {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        background: #ebd197;
+        color: #07030a;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 4px solid #1a1025;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .pic-edit-btn:hover {
+        transform: scale(1.1);
+        background: #ffffff;
+    }
+
+    .pic-remove-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: #ff4757;
+        color: #ffffff;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border: 3px solid #1a1025;
+        transition: all 0.3s ease;
+    }
+
+    .pic-remove-btn:hover {
+        transform: scale(1.1);
+        background: #ff6b81;
+    }
+
+    /* Section Headers */
+    .section-divider {
+        display: flex;
+        align-items: center;
+        margin: 3rem 0 2rem;
+    }
+
+    .section-divider span {
+        background: linear-gradient(135deg, #ebd197, #c5a059);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        padding-right: 1.5rem;
+        font-size: 1.1rem;
+    }
+
+    .section-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(90deg, rgba(235, 209, 151, 0.3), transparent);
+    }
+
+    .btn-premium-gold {
+        background: linear-gradient(135deg, #ebd197, #c5a059);
+        color: #07030a !important;
+        border: none;
+        border-radius: 50px;
+        padding: 0.8rem 2.5rem;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 20px rgba(235, 209, 151, 0.2);
+    }
+
+    .btn-premium-gold:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(235, 209, 151, 0.4);
+    }
+
+    .btn-glass-danger {
+        background: rgba(255, 71, 87, 0.1);
+        border: 1px solid rgba(255, 71, 87, 0.3);
+        color: #ff4757 !important;
+        border-radius: 50px;
+        padding: 0.6rem 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-glass-danger:hover {
+        background: rgba(255, 71, 87, 0.2);
+        border-color: #ff4757;
+    }
+
+    /* Baker Stats */
+    .stats-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .stats-card:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(235, 209, 151, 0.1);
+    }
+
+    .script-font {
+        font-family: 'Great Vibes', cursive;
+        text-shadow: 2px 2px 10px rgba(235, 209, 151, 0.2);
+    }
+
+    /* Custom Switch Styling */
+    .form-check-input {
+        background-color: rgba(255,255,255,0.1);
+        border-color: rgba(255,255,255,0.2);
+        cursor: pointer;
+    }
+    .form-check-input:checked {
+        background-color: #ebd197;
+        border-color: #ebd197;
+    }
+</style>
+
+<div class="profile-wrapper">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            
+            <div class="d-flex justify-content-between align-items-end mb-5 animate-row">
+                <div>
+                    <h1 class="script-font gold-text mb-0" style="font-size: 5rem;">Identity & Profile</h1>
+                    <p class="text-muted-premium mb-0" style="font-size: 1.1rem; letter-spacing: 1px;">Manage your personal presence and bakery settings</p>
                 </div>
-                {% endif %}
+                <div class="badge rounded-pill px-4 py-2" style="background: rgba(235, 209, 151, 0.1); border: 1px solid rgba(235, 209, 151, 0.3); color: #ebd197;">
+                    <i class="fas fa-id-badge me-2"></i> {{ user.profile.get_role_display|upper }}
+                </div>
+            </div>
 
-                <!-- Profile Picture -->
-                <div class="text-center mb-4">
-                    <div class="position-relative d-inline-block">
-                        {% if user.profile.profile_picture %}
-                        <img src="{{ user.profile.profile_picture.url }}" class="rounded-circle shadow-sm"
-                            style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #fff;"
-                            alt="Profile Picture">
-                        {% else %}
-                        <div class="rounded-circle bg-light d-flex justify-content-center align-items-center shadow-sm"
-                            style="width: 120px; height: 120px; border: 3px solid #fff;">
-                            <i class="fas fa-user fa-3x text-secondary"></i>
+            <div class="card premium-card p-4 p-md-5 animate-row" style="animation-delay: 0.2s;">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    {% if user_form.non_field_errors %}
+                    <div class="alert alert-danger bg-danger bg-opacity-10 border-danger text-danger rounded-4 mb-4">
+                        {% for error in user_form.non_field_errors %}
+                        <i class="fas fa-exclamation-circle me-2"></i> {{ error }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Profile Picture -->
+                    <div class="text-center mb-5">
+                        <div class="profile-pic-container">
+                            {% if user.profile.profile_picture %}
+                            <img src="{{ user.profile.profile_picture.url }}" class="profile-pic-img" alt="Profile Picture">
+                            {% else %}
+                            <div class="profile-pic-img d-flex align-items-center justify-content-center bg-dark">
+                                <i class="fas fa-user fa-4x gold-text opacity-50"></i>
+                            </div>
+                            {% endif %}
+                            
+                            <label for="{{ user_form.profile_picture.id_for_label }}" class="pic-edit-btn">
+                                <i class="fas fa-camera"></i>
+                            </label>
+
+                            {% if user.profile.profile_picture %}
+                            <a href="{% url 'remove_profile_picture' %}" class="pic-remove-btn text-decoration-none"
+                                onclick="return confirm('Are you sure you want to remove your profile picture?')">
+                                <i class="fas fa-times"></i>
+                            </a>
+                            {% endif %}
                         </div>
-                        {% endif %}
-                        <label for="{{ user_form.profile_picture.id_for_label }}"
-                            class="position-absolute bottom-0 end-0 bg-primary text-white p-2 rounded-circle shadow-sm"
-                            style="cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-camera fa-xs"></i>
-                        </label>
-                        {% if user.profile.profile_picture %}
-                        <a href="{% url 'remove_profile_picture' %}"
-                            class="position-absolute top-0 start-100 translate-middle bg-danger text-white p-2 rounded-circle shadow-sm text-decoration-none"
-                            style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;"
-                            onclick="return confirm('Are you sure you want to remove your profile picture?')">
-                            <i class="fas fa-trash fa-xs"></i>
-                        </a>
-                        {% endif %}
-                    </div>
-                    <div class="mt-2 text-center">
-                        <small class="text-muted d-block mb-2">Upload Profile Picture</small>
-                        <div class="d-none">
-                            {{ user_form.profile_picture }}
+                        <div class="mt-3">
+                            <span class="gold-text fw-bold">Upload New Avatar</span>
+                            <div class="d-none">
+                                {{ user_form.profile_picture }}
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- User Details -->
-                <h5 class="mb-3 text-secondary border-bottom pb-2">Personal Details</h5>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">First Name</label>
-                        {{ user_form.first_name }}
-                        {% if user_form.first_name.errors %}
-                        <div class="text-danger small">{{ user_form.first_name.errors }}</div>
-                        {% endif %}
+                    <!-- Personal Details -->
+                    <div class="section-divider">
+                        <span>Personal Details</span>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Last Name</label>
-                        {{ user_form.last_name }}
-                        {% if user_form.last_name.errors %}
-                        <div class="text-danger small">{{ user_form.last_name.errors }}</div>
-                        {% endif %}
-                    </div>
-                </div>
 
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Email Address</label>
-                    {{ user_form.email }}
-                    {% if user_form.email.errors %}
-                    <div class="text-danger small">{{ user_form.email.errors }}</div>
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">First Name</label>
+                            {{ user_form.first_name }}
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Last Name</label>
+                            {{ user_form.last_name }}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Email Address</label>
+                        {{ user_form.email }}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Phone Number</label>
+                            <input type="text" class="form-control premium-input" value="{{ user.profile.phone_number }}" readonly>
+                            <small class="text-muted-premium" style="font-size: 0.75rem;">Verified primary contact</small>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Default Delivery Address</label>
+                            {{ user_form.default_address }}
+                        </div>
+                    </div>
+
+                    <!-- Baker Specific Details -->
+                    {% if is_baker and baker_form %}
+                    <div class="section-divider">
+                        <span>Bakery Excellence</span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Shop Name</label>
+                        {{ baker_form.shop_name }}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Physical Address</label>
+                        {{ baker_form.address }}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">City</label>
+                            {{ baker_form.city }}
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Pincode</label>
+                            {{ baker_form.pincode }}
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center mb-5">
+                        <div class="col-md-7 mb-4 mb-md-0">
+                            <label class="form-label">FSSAI License Number</label>
+                            {{ baker_form.license_number }}
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label">FSSAI Certificate</label>
+                            <div class="premium-input d-flex align-items-center justify-content-between">
+                                <span class="small text-white-50 overflow-hidden text-nowrap me-2">
+                                    {% if baker_profile.fssai_certificate %}
+                                    <i class="fas fa-check-circle text-success me-1"></i> Current Uploaded
+                                    {% else %}
+                                    No File Selected
+                                    {% endif %}
+                                </span>
+                                {{ baker_form.fssai_certificate }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Acceptance Toggle -->
+                    <div class="stats-card mb-5 d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-warning bg-opacity-10 p-3 me-3">
+                                <i class="fas fa-birthday-cake gold-text fa-lg"></i>
+                            </div>
+                            <div>
+                                <h6 class="gold-text mb-0 fw-bold">Accept Custom Orders</h6>
+                                <p class="text-muted-premium small mb-0">Allow customers to send personalized requests</p>
+                            </div>
+                        </div>
+                        <div class="form-check form-switch fs-4">
+                            {{ baker_form.accepts_custom_orders }}
+                        </div>
+                    </div>
+
+                    <!-- Metrics Grid -->
+                    <div class="row g-4 mb-5">
+                        <div class="col-4">
+                            <div class="stats-card text-center h-100">
+                                <small class="text-muted-premium d-block mb-1">Status</small>
+                                <span class="fw-bold fs-5 {% if baker_profile.status == 'approved' %}text-success{% elif baker_profile.status == 'rejected' %}text-danger{% else %}text-warning{% endif %}">
+                                    {{ baker_profile.get_status_display|upper }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stats-card text-center h-100">
+                                <small class="text-muted-premium d-block mb-1">Commission</small>
+                                <span class="fw-bold gold-text fs-5">{{ baker_profile.commission_rate }}%</span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="stats-card text-center h-100">
+                                <small class="text-muted-premium d-block mb-1">Revenue</small>
+                                <span class="fw-bold gold-text fs-5">₹{{ total_revenue|floatformat:0 }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if baker_profile.status == 'pending' %}
+                    <div class="alert border-0 shadow-lg d-flex align-items-center p-4 mb-5" style="background: rgba(235, 209, 151, 0.05); border-left: 5px solid #ebd197 !important;">
+                        <i class="fas fa-hourglass-half gold-text fs-3 me-4"></i>
+                        <div>
+                            <h6 class="gold-text fw-bold mb-1">Application Under Review</h6>
+                            <p class="text-white-50 small mb-0">Our curation team is validating your certificates. You will receive an encrypted notification once approved.</p>
+                        </div>
+                    </div>
                     {% endif %}
-                </div>
 
-                <div class="mb-4">
-                    <label class="form-label fw-semibold">Phone Number</label>
-                    <input type="text" class="form-control" value="{{ user.profile.phone_number }}" readonly>
-                    <div class="form-text">Phone number cannot be changed.</div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Default Delivery Address</label>
-                    {{ user_form.default_address }}
-                    <div class="form-text">This address will be pre-filled during checkout.</div>
-                    {% if user_form.default_address.errors %}
-                    <div class="text-danger small">{{ user_form.default_address.errors }}</div>
                     {% endif %}
-                </div>
 
-                <!-- Baker Details -->
-                {% if is_baker and baker_form %}
-                <h5 class="mb-3 text-secondary border-bottom pb-2 mt-4">Bakery Details</h5>
-
-                {% if baker_form.non_field_errors %}
-                <div class="alert alert-danger">
-                    {% for error in baker_form.non_field_errors %}
-                    {{ error }}
-                    {% endfor %}
-                </div>
-                {% endif %}
-
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Shop Name</label>
-                    {{ baker_form.shop_name }}
-                    {% if baker_form.shop_name.errors %}
-                    <div class="text-danger small">{{ baker_form.shop_name.errors }}</div>
-                    {% endif %}
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">Address</label>
-                    {{ baker_form.address }}
-                    {% if baker_form.address.errors %}
-                    <div class="text-danger small">{{ baker_form.address.errors }}</div>
-                    {% endif %}
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">City</label>
-                        {{ baker_form.city }}
-                        {% if baker_form.city.errors %}
-                        <div class="text-danger small">{{ baker_form.city.errors }}</div>
-                        {% endif %}
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label fw-semibold">Pincode</label>
-                        {{ baker_form.pincode }}
-                        {% if baker_form.pincode.errors %}
-                        <div class="text-danger small">{{ baker_form.pincode.errors }}</div>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">FSSAI License Number</label>
-                    {{ baker_form.license_number }}
-                    {% if baker_form.license_number.help_text %}
-                    <div class="form-text">{{ baker_form.license_number.help_text }}</div>
-                    {% endif %}
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label fw-semibold">FSSAI Certificate</label>
-                    {% if baker_profile.fssai_certificate %}
-                    <div class="mb-2">
-                        <a href="{{ baker_profile.fssai_certificate.url }}" target="_blank"
-                            class="text-decoration-none">
-                            <i class="fas fa-file-alt me-1"></i> View Current Certificate
-                        </a>
-                    </div>
-                    {% endif %}
-                    {{ baker_form.fssai_certificate }}
-                    <div class="form-text">Upload new certificate to replace the current one.</div>
-                    {% if baker_form.fssai_certificate.errors %}
-                    <div class="text-danger small">{{ baker_form.fssai_certificate.errors }}</div>
-                    {% endif %}
-                </div>
-
-                <!-- Read-only Stats -->
-                <div class="mb-4 pt-2 border-top">
-                    <div
-                        class="form-check form-switch p-0 d-flex align-items-center justify-content-between bg-light p-3 rounded">
-                        <label class="form-check-label fw-semibold mb-0"
-                            for="{{ baker_form.accepts_custom_orders.id_for_label }}">
-                            <i class="fas fa-birthday-cake me-2 text-primary"></i> I accept custom cake orders
-                        </label>
-                        {{ baker_form.accepts_custom_orders }}
-                    </div>
-                    <div class="form-text mt-1 ms-1">Enable this to let customers know you accept personalized cake
-                        requests.</div>
-                </div>
-
-                <div class="row mt-3 bg-light p-3 rounded mx-0">
-                    <div class="col-4 text-center border-end">
-                        <small class="text-muted d-block">Status</small>
-                        <span
-                            class="fw-bold {% if baker_profile.status == 'approved' %}text-success{% elif baker_profile.status == 'rejected' %}text-danger{% else %}text-warning{% endif %}">
-                            {{ baker_profile.get_status_display }}
-                        </span>
-                    </div>
-                    <div class="col-4 text-center border-end">
-                        <small class="text-muted d-block">Commission</small>
-                        <span class="fw-bold">{{ baker_profile.commission_rate }}%</span>
-                    </div>
-                    <div class="col-4 text-center">
-                        <small class="text-muted d-block">Total Revenue</small>
-                        <span class="fw-bold">₹{{ total_revenue|floatformat:2 }}</span>
-                    </div>
-                </div>
-
-                {% if baker_profile.status == 'pending' %}
-                <div class="alert alert-warning mt-4 border-0 shadow-sm d-flex align-items-center">
-                    <i class="fas fa-info-circle fs-4 me-3"></i>
-                    <div>
-                        <h6 class="fw-bold mb-1">Application Under Review</h6>
-                        <p class="small mb-0">Our admin team is currently reviewing your certificates. You'll receive an email once your account is activated.</p>
-                    </div>
-                </div>
-                {% elif baker_profile.status == 'rejected' %}
-                <div class="alert alert-danger mt-4 border-0 shadow-sm d-flex align-items-center">
-                    <i class="fas fa-exclamation-circle fs-4 me-3"></i>
-                    <div>
-                        <h6 class="fw-bold mb-1">Application Rejected</h6>
-                        <p class="small mb-0">Your application was not approved. Please ensure your FSSAI certificate is valid and clear before reapplying.</p>
-                    </div>
-                </div>
-                {% endif %}
-
-                {% endif %}
-
-                <div class="mt-4 d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center">
-                        <a href="{% url 'change_password' %}" class="btn btn-outline-primary btn-sm me-2">
-                            <i class="fas fa-key me-2"></i> Change Password
-                        </a>
-                        {% if user.profile.role != 'admin' and user.profile.role != 'delivery_assistant' %}
-                        <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#deleteAccountModal">
-                            <i class="fas fa-trash-alt me-2"></i> Delete Account
+                    <!-- Action Buttons -->
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center border-top pt-5" style="border-color: rgba(235, 209, 151, 0.1) !important;">
+                        <div class="d-flex mb-4 mb-md-0">
+                            <a href="{% url 'change_password' %}" class="btn btn-outline-warning rounded-pill px-4 me-3" style="border-color: rgba(235, 209, 151, 0.3); color: #ebd197;">
+                                <i class="fas fa-shield-alt me-2"></i> Password Settings
+                            </a>
+                            {% if user.profile.role != 'admin' and user.profile.role != 'delivery_assistant' %}
+                            <button type="button" class="btn btn-glass-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                                <i class="fas fa-trash-alt me-2"></i> Terminate Account
+                            </button>
+                            {% endif %}
+                        </div>
+                        
+                        <button type="submit" class="btn btn-premium-gold shadow-lg">
+                            <i class="fas fa-save me-2"></i> Commit Changes
                         </button>
-                        {% endif %}
                     </div>
-                    
-                    <button type="submit" class="btn btn-primary px-4">
-                        <i class="fas fa-save me-2"></i> Save Changes
-                    </button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
 {% if user.profile.role != 'admin' and user.profile.role != 'delivery_assistant' %}
 <!-- Delete Account Confirmation Modal -->
-<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteAccountModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-danger text-white border-0">
-                <h5 class="modal-title fw-bold" id="deleteAccountModalLabel">
-                    <i class="fas fa-exclamation-triangle me-2"></i> Delete Account?
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body p-4 text-center">
-                <div class="mb-3">
-                    <i class="fas fa-user-slash fa-4x text-danger opacity-25"></i>
+        <div class="modal-content border-0 shadow-lg" style="background: rgba(20, 10, 25, 0.95); backdrop-filter: blur(20px); border-radius: 30px; border: 1px solid rgba(255, 71, 87, 0.2) !important;">
+            <div class="modal-body p-5 text-center">
+                <div class="mb-4">
+                    <i class="fas fa-exclamation-triangle fa-5x text-danger opacity-50"></i>
                 </div>
-                <h5 class="fw-bold mb-3">Are you sure you want to leave us?</h5>
-                <p class="text-muted">This action is permanent and cannot be undone. All your data, orders, and history will be permanently deleted.</p>
-            </div>
-            <div class="modal-footer border-0 p-4 pt-0">
-                <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancel</button>
-                <form action="{% url 'delete_account' %}" method="POST">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger px-4">
-                        <i class="fas fa-trash-alt me-2"></i> Yes, Delete My Account
-                    </button>
-                </form>
+                <h3 class="text-white fw-bold mb-3">Permanent Termination</h3>
+                <p class="text-white-50 mb-4">Are you absolutely sure? This will permanently erase your baking history, active orders, and profile data. This action cannot be reversed.</p>
+                
+                <div class="d-grid gap-2">
+                    <form action="{% url 'delete_account' %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger w-100 rounded-pill py-3 fw-bold shadow-lg mb-3">
+                            <i class="fas fa-trash-alt me-2"></i> YES, TERMINATE ACCOUNT
+                        </button>
+                    </form>
+                    <button type="button" class="btn btn-outline-light w-100 rounded-pill py-3 fw-bold" data-bs-dismiss="modal">CANCEL & STAY</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 {% endif %}
+
+<script>
+    // Apply premium styling to django-rendered inputs
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('input:not([type="checkbox"]):not([type="file"]), textarea, select');
+        inputs.forEach(input => {
+            input.classList.add('premium-input');
+            input.classList.add('form-control');
+        });
+
+        const checks = document.querySelectorAll('input[type="checkbox"]');
+        checks.forEach(check => {
+            check.classList.add('form-check-input');
+        });
+    });
+</script>
 {% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'emails/base_email.html' %}
+
+{% block content %}
+<div class="subject-line" style="font-size: 24px; font-weight: 800; color: #ebd197; margin-bottom: 25px; text-align: center; letter-spacing: 2px; text-transform: uppercase;">
+    {{ subject }}
+</div>
+
+<div class="letter-body" style="background: rgba(255, 255, 255, 0.02); padding: 30px; border-radius: 16px; border: 1px solid rgba(235, 209, 151, 0.1); margin-bottom: 40px; line-height: 2; color: #e2e8f0;">
+    {{ letter_content|safe|linebreaks }}
+</div>
+
+<div style="text-align: center;">
+    <p style="color: #94a3b8; font-size: 14px; margin-bottom: 15px; letter-spacing: 1px;">Discover our latest artisanal collections</p>
+    <a href="{{ action_url }}" class="btn">Explore Gallery</a>
+</div>
+
+<div style="margin-top: 40px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 25px;">
+    <p style="font-size: 13px; color: #64748b; font-style: italic;">"Crafting Exquisite Moments, One Commission at a Time."</p>
+</div>
+{% endblock %}

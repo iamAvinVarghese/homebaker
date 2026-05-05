@@ -145,6 +145,7 @@ def logout_view(request):
     return redirect('home')
 
 
+@ensure_csrf_cookie
 @transaction.atomic
 def register(request):
     """
@@ -337,6 +338,7 @@ def remove_profile_picture(request):
     
     return redirect('profile')
 
+@ensure_csrf_cookie
 def verify_otp(request):
     """Verify registration or login OTP"""
     phone = request.session.get('verify_phone')

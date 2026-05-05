@@ -1,23 +1,26 @@
 {% extends 'emails/base_email.html' %}
 
 {% block content %}
-<h2 class="text-violet">Verification Code</h2>
-<p>Hello {% if customer_name %}{{ customer_name }}{% endif %},</p>
-<p>Your OTP for <strong>{{ purpose }}</strong> is ready. Please enter this code in the application to continue.</p>
+<h2 class="text-gold">Security Authentication</h2>
+<p>Greetings {% if customer_name %}{{ customer_name }}{% else %}Artisan Patron{% endif %},</p>
+<p>Your secure authentication code for <strong>{{ purpose }}</strong> is ready. Please input this unique sequence into the HomeBaker application to proceed.</p>
 
-<div style="text-align: center;">
+<div style="text-align: center; margin: 40px 0;">
     <div class="otp-box">
         {{ otp }}
     </div>
 </div>
 
-{% if is_delivery %}
-<p>Please share this code with your delivery partner to confirm reception of your order <strong>{{ order_id }}</strong>.</p>
-{% else %}
-<p>This code will expire in <strong>5 minutes</strong> for your security.</p>
-{% endif %}
-<p>If you did not request this code, you can safely ignore this email.</p>
+<div class="detail-card">
+    {% if is_delivery %}
+    <p style="margin: 0;">Present this secure verification code to your artisan delivery partner to finalize the reception of order <strong class="text-gold">#{{ order_id }}</strong>.</p>
+    {% else %}
+    <p style="margin: 0; font-size: 13px; color: #64748b;">This authentication sequence will expire in <strong class="text-gold">5 minutes</strong> for your logistical security.</p>
+    {% endif %}
+</div>
+
+<p style="font-size: 14px; opacity: 0.7;">If you did not initiate this request, your account remains secure; simply disregard this transmission.</p>
 
 <br>
-<p>Best regards,<br>The Home Baker Team</p>
+<p>With culinary regards,<br><span class="text-gold" style="font-weight: 700;">HomeBaker Artisan Team</span></p>
 {% endblock %}

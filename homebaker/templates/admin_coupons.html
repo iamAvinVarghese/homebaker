@@ -1,153 +1,301 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Coupon Management - Admin Dashboard{% endblock %}
+{% block title %}Coupon Management | Admin Panel{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-md-12">
-        <div class="d-flex justify-content-between align-items-center">
-            <h2 class="fw-bold">🎟️ Coupon Management</h2>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0">
+<style>
+    :root {
+        --gold-primary: #ebd197;
+        --gold-dark: #c5a66a;
+        --glass-bg: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(235, 209, 151, 0.1);
+        --purple-bg: #07030a;
+    }
+
+    body {
+        background-color: var(--purple-bg);
+    }
+
+    .glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        transition: all 0.3s ease;
+    }
+
+    .glass-card:hover {
+        border-color: rgba(235, 209, 151, 0.2);
+        box-shadow: 0 20px 45px rgba(0,0,0,0.5);
+    }
+
+    .gold-text {
+        background: linear-gradient(135deg, #ebd197 0%, #f5d97a 50%, #ebd197 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: bold;
+    }
+
+    .section-header {
+        margin-bottom: 3.5rem;
+    }
+
+    .form-control-premium {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(235, 209, 151, 0.15) !important;
+        color: white !important;
+        border-radius: 14px;
+        padding: 0.8rem 1.2rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control-premium:focus {
+        border-color: var(--gold-primary) !important;
+        box-shadow: 0 0 20px rgba(235, 209, 151, 0.1) !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .btn-premium-gold {
+        background: linear-gradient(135deg, #ebd197, #c5a66a);
+        color: #000 !important;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        border-radius: 50px;
+        padding: 0.8rem 2rem;
+        border: none;
+        box-shadow: 0 10px 20px rgba(235, 209, 151, 0.2);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .btn-premium-gold:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 15px 30px rgba(235, 209, 151, 0.4);
+    }
+
+    .table-premium {
+        color: white;
+        border-collapse: separate;
+        border-spacing: 0 12px;
+        background: transparent !important;
+        --bs-table-bg: transparent !important;
+        --bs-table-color: white !important;
+    }
+
+    .table-premium thead th {
+        border: none;
+        color: rgba(235, 209, 151, 0.6);
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1.5px;
+        padding: 1.2rem 1.5rem;
+    }
+
+    .table-premium tbody tr {
+        background: rgba(255, 255, 255, 0.03) !important;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .table-premium tbody tr:hover {
+        background: rgba(255, 255, 255, 0.07) !important;
+        transform: translateY(-2px);
+    }
+
+    .table-premium tbody td {
+        border: none !important;
+        padding: 1.5rem;
+        vertical-align: middle;
+        background: transparent !important;
+    }
+
+    .table-premium tbody tr td:first-child { border-radius: 15px 0 0 15px; }
+    .table-premium tbody tr td:last-child { border-radius: 0 15px 15px 0; }
+
+    .coupon-badge {
+        font-family: 'Inter', sans-serif;
+        padding: 0.4rem 1rem;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .badge-active { background: rgba(111, 219, 159, 0.1); color: #6fdb9f; border: 1px solid rgba(111, 219, 159, 0.2); }
+    .badge-expired { background: rgba(240, 173, 78, 0.1); color: #f0ad4e; border: 1px solid rgba(240, 173, 78, 0.2); }
+    .badge-inactive { background: rgba(220, 53, 69, 0.1); color: #dc3545; border: 1px solid rgba(220, 53, 69, 0.2); }
+
+    .floating-icon {
+        position: absolute;
+        top: -15px;
+        right: 30px;
+        font-size: 3.5rem;
+        color: var(--gold-primary);
+        opacity: 0.05;
+        transform: rotate(-15deg);
+    }
+
+    .breadcrumb-premium .breadcrumb-item a {
+        color: rgba(235, 209, 151, 0.6);
+        text-decoration: none;
+    }
+    .breadcrumb-premium .breadcrumb-item.active {
+        color: var(--gold-primary);
+    }
+</style>
+
+<div class="container py-5 mt-4">
+    <div class="section-header d-flex justify-content-between align-items-end">
+        <div>
+            <nav aria-label="breadcrumb" class="breadcrumb-premium mb-2">
+                <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Coupons</li>
+                    <li class="breadcrumb-item active" aria-current="page">Coupons</li>
                 </ol>
             </nav>
+            <h1 class="display-4 gold-text fw-extra-bold mb-0">Coupon Management</h1>
+            <p class="text-white-50 lead mt-2">Design exclusive offers for your premium clientele</p>
         </div>
-        <p class="text-muted">Create and manage promotional discount codes for your customers.</p>
-    </div>
-</div>
-
-<div class="row">
-    <!-- Add Coupon Form -->
-    <div class="col-lg-4">
-        <div class="card shadow-sm mb-4 border-0">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0 fw-bold"><i class="fas fa-plus-circle me-2"></i>Create New Coupon</h5>
+        <div class="text-end">
+            <div class="stat-badge mb-2 d-inline-block">
+                <span class="text-white-50 small">Total Active:</span>
+                <span class="gold-num fw-bold ms-2">{{ coupons.count }}</span>
             </div>
-            <div class="card-body">
+        </div>
+    </div>
+
+    <div class="row g-5">
+        <!-- Composer Side -->
+        <div class="col-lg-4">
+            <div class="glass-card p-4 position-relative overflow-hidden">
+                <i class="fas fa-ticket-alt floating-icon"></i>
+                <h2 class="gold-text fw-bold h4 mb-4"><i class="fas fa-plus-circle me-2"></i>Create New Offer</h2>
+                
                 <form method="POST">
                     {% csrf_token %}
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Coupon Code</label>
-                        <input type="text" name="code" class="form-control text-uppercase" placeholder="e.g. SAVE10" required>
-                        <div class="form-text">Customer enters this at checkout.</div>
+                    <div class="mb-4">
+                        <label class="text-white-50 small text-uppercase mb-2 ms-2">Coupon Code</label>
+                        <input type="text" name="code" class="form-control form-control-premium text-uppercase" placeholder="E.G. LUXE2026" required>
                     </div>
 
                     <input type="hidden" name="discount_type" value="percent">
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Discount Value (%)</label>
-                        <input type="number" step="0.1" name="discount_value" class="form-control" min="1" max="10" placeholder="Enter percentage (1-10)" required>
-                        <div class="form-text">Must be between 1 and 10 percent.</div>
+                    <div class="mb-4">
+                        <label class="text-white-50 small text-uppercase mb-2 ms-2">Discount Value (%)</label>
+                        <input type="number" step="0.1" name="discount_value" class="form-control form-control-premium" min="1" max="10" placeholder="1-10%" required>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Min. Order Amount (₹)</label>
-                        <input type="number" step="0.01" name="min_order_amount" class="form-control" value="0">
+                    <div class="row mb-4">
+                        <div class="col-6">
+                            <label class="text-white-50 small text-uppercase mb-2 ms-2">Min. Order (₹)</label>
+                            <input type="number" step="0.01" name="min_order_amount" class="form-control form-control-premium" value="0">
+                        </div>
+                        <div class="col-6">
+                            <label class="text-white-50 small text-uppercase mb-2 ms-2">Max Disc. (₹)</label>
+                            <input type="number" step="0.01" name="max_discount_amount" class="form-control form-control-premium">
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Max Discount (₹)</label>
-                        <input type="number" step="0.01" name="max_discount_amount" class="form-control">
-                        <div class="form-text">Optional. Cap for percentage discounts.</div>
+                    <div class="mb-4">
+                        <label class="text-white-50 small text-uppercase mb-2 ms-2">Valid Until</label>
+                        <input type="date" name="valid_until" class="form-control form-control-premium">
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Valid Until</label>
-                        <input type="date" name="valid_until" class="form-control">
-                        <div class="form-text">Optional. Coupon expires after this date.</div>
+                    <div class="mb-4">
+                        <label class="text-white-50 small text-uppercase mb-2 ms-2">Usage Limit</label>
+                        <input type="number" name="usage_limit" class="form-control form-control-premium" placeholder="Optional">
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Usage Limit</label>
-                        <input type="number" name="usage_limit" class="form-control">
-                        <div class="form-text">Optional. Total number of times this can be used.</div>
-                    </div>
-
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary fw-bold">
-                            <i class="fas fa-save me-2"></i>Create Coupon
+                    <div class="d-grid mt-5">
+                        <button type="submit" class="btn btn-premium-gold">
+                            <i class="fas fa-magic me-2"></i>Generate Coupon
                         </button>
                     </div>
                 </form>
             </div>
         </div>
-    </div>
 
-    <!-- Coupon List -->
-    <div class="col-lg-8">
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0 fw-bold"><i class="fas fa-list me-2"></i>Existing Coupons</h5>
-                <span class="badge bg-secondary">{{ coupons.count }} Total</span>
-            </div>
-            <div class="card-body p-0">
+        <!-- Inventory Side -->
+        <div class="col-lg-8">
+            <div class="glass-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="gold-text fw-bold h4 mb-0"><i class="fas fa-vault me-2"></i>Active Inventory</h2>
+                    <div class="search-box">
+                        <!-- Optional search if needed later -->
+                    </div>
+                </div>
+                
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0 align-middle">
-                        <thead class="bg-light">
+                    <table class="table table-premium">
+                        <thead>
                             <tr>
-                                <th>Code</th>
-                                <th>Discount</th>
-                                <th>Conditions</th>
+                                <th>Identity</th>
+                                <th>Value</th>
+                                <th>Terms</th>
                                 <th>Usage</th>
                                 <th>Status</th>
-                                <th>Actions</th>
+                                <th class="text-end">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for coupon in coupons %}
                             <tr>
                                 <td>
-                                    <span class="fw-bold text-primary">{{ coupon.code }}</span>
+                                    <div class="d-flex align-items-center">
+                                        <div class="gold-num fw-extra-bold h5 mb-0 text-white">{{ coupon.code }}</div>
+                                    </div>
                                 </td>
                                 <td>
-                                    {% if coupon.discount_type == 'percent' %}
-                                        {{ coupon.discount_value }}%
-                                    {% else %}
-                                        ₹{{ coupon.discount_value }}
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <div class="small">
-                                        Min Order: ₹{{ coupon.min_order_amount }}<br>
-                                        {% if coupon.valid_until %}
-                                            Expires: {{ coupon.valid_until|date:"d M Y" }}
+                                    <span class="gold-num fw-bold">
+                                        {% if coupon.discount_type == 'percent' %}
+                                            {{ coupon.discount_value }}%
                                         {% else %}
-                                            <span class="text-success">No Expiry</span>
+                                            ₹{{ coupon.discount_value }}
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="small text-white-50">
+                                        Min: <span class="gold-num">₹{{ coupon.min_order_amount }}</span><br>
+                                        {% if coupon.valid_until %}
+                                            Until: {{ coupon.valid_until|date:"d M Y" }}
+                                        {% else %}
+                                            <span class="text-success small">Forever</span>
                                         {% endif %}
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="badge bg-info text-dark">
-                                        {{ coupon.used_count }}{% if coupon.usage_limit %} / {{ coupon.usage_limit }}{% endif %}
-                                    </span>
+                                    <div class="d-flex align-items-center">
+                                        <span class="gold-num fw-bold">{{ coupon.used_count }}{% if coupon.usage_limit %}<span class="text-white-50 ms-1" style="font-size: 0.7rem;">/ {{ coupon.usage_limit }}</span>{% endif %}</span>
+                                    </div>
                                 </td>
                                 <td>
                                     {% if not coupon.is_active %}
-                                        <span class="badge bg-danger">Inactive</span>
+                                        <span class="coupon-badge badge-inactive">Inactive</span>
                                     {% elif coupon.valid_until and coupon.valid_until < now %}
-                                        <span class="badge bg-warning text-dark">Expired</span>
+                                        <span class="coupon-badge badge-expired">Expired</span>
                                     {% elif coupon.usage_limit and coupon.used_count >= coupon.usage_limit %}
-                                        <span class="badge bg-danger">Limit Reached</span>
+                                        <span class="coupon-badge badge-inactive">Limit</span>
                                     {% else %}
-                                        <span class="badge bg-success">Active</span>
+                                        <span class="coupon-badge badge-active">Live</span>
                                     {% endif %}
                                 </td>
-                                <td>
+                                <td class="text-end">
                                     <a href="{% url 'admin_delete_coupon' coupon.id %}" 
-                                       class="btn btn-outline-danger btn-sm"
-                                       onclick="return confirm('Are you sure you want to delete this coupon? This cannot be undone.')">
-                                        <i class="fas fa-trash"></i>
+                                       class="btn btn-link text-danger p-2"
+                                       onclick="return confirm('Are you sure you want to delete this coupon?')">
+                                        <i class="fas fa-trash-alt"></i>
                                     </a>
                                 </td>
                             </tr>
                             {% empty %}
                             <tr>
                                 <td colspan="6" class="text-center py-5">
-                                    <i class="fas fa-ticket-alt fa-3x opacity-25 mb-3"></i>
-                                    <p class="mb-0">No coupons found. Create your first one on the left!</p>
+                                    <i class="fas fa-ticket-alt fa-3x mb-3 gold-text opacity-25"></i>
+                                    <p class="text-white-50">The vault is currently empty.</p>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -158,4 +306,5 @@
         </div>
     </div>
 </div>
+
 {% endblock %}

@@ -1,104 +1,204 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Audit Logs - Admin Panel{% endblock %}
+
+{% block title %}Audit Logs | Admin Panel{% endblock %}
 
 {% block content %}
-<div class="row mb-4 align-items-center">
-    <div class="col">
-        <h2 class="fw-bold">Audit Logs</h2>
-        <p class="text-muted">Track system activity and user actions.</p>
-    </div>
-    <div class="col-auto">
-        <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+<style>
+    :root {
+        --gold-primary: #ebd197;
+        --gold-dark: #c5a66a;
+        --glass-bg: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(235, 209, 151, 0.1);
+        --purple-bg: #07030a;
+    }
+
+    body {
+        background-color: var(--purple-bg);
+    }
+
+    .glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    }
+
+    .gold-text {
+        background: linear-gradient(135deg, #ebd197 0%, #f5d97a 50%, #ebd197 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: bold;
+    }
+
+    .table-premium {
+        color: white;
+        border-collapse: separate;
+        border-spacing: 0 10px;
+        background: transparent !important;
+        --bs-table-bg: transparent !important;
+        --bs-table-color: white !important;
+    }
+
+    .table-premium thead th {
+        border: none;
+        color: rgba(235, 209, 151, 0.6);
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1.5px;
+        padding: 1.2rem 1.5rem;
+    }
+
+    .table-premium tbody tr {
+        background: rgba(255, 255, 255, 0.03) !important;
+        transition: all 0.3s ease;
+    }
+
+    .table-premium tbody tr:hover {
+        background: rgba(255, 255, 255, 0.06) !important;
+        transform: scale(1.005);
+    }
+
+    .table-premium tbody td {
+        border: none !important;
+        padding: 1.2rem 1.5rem;
+        vertical-align: middle;
+        background: transparent !important;
+    }
+
+    .table-premium tbody tr td:first-child { border-radius: 15px 0 0 15px; }
+    .table-premium tbody tr td:last-child { border-radius: 0 15px 15px 0; }
+
+    .form-control-premium {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(235, 209, 151, 0.15) !important;
+        color: white !important;
+        border-radius: 12px;
+        padding: 0.8rem 1.2rem;
+    }
+
+    .form-control-premium:focus {
+        border-color: var(--gold-primary) !important;
+        box-shadow: 0 0 15px rgba(235, 209, 151, 0.1) !important;
+    }
+
+    .action-badge {
+        font-family: 'Inter', sans-serif;
+        padding: 0.3rem 0.8rem;
+        border-radius: 50px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background: rgba(255, 255, 255, 0.05);
+        color: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .ip-luxury {
+        font-family: 'Inter', sans-serif;
+        color: rgba(235, 209, 151, 0.7);
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-luxury-back {
+        background: rgba(255, 255, 255, 0.05);
+        color: rgba(235, 209, 151, 0.8);
+        border: 1px solid rgba(235, 209, 151, 0.2);
+        border-radius: 50px;
+        padding: 0.6rem 1.5rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .btn-luxury-back:hover {
+        background: rgba(235, 209, 151, 0.1);
+        color: var(--gold-primary);
+        border-color: var(--gold-primary);
+    }
+</style>
+
+<div class="container py-5 mt-4">
+    <div class="d-flex justify-content-between align-items-end mb-5">
+        <div>
+            <h1 class="display-4 gold-text fw-extra-bold mb-1">Audit Logs</h1>
+            <p class="text-white-50 lead mb-0">Immortal registry of all system interactions</p>
+        </div>
+        <a href="{% url 'admin_dashboard' %}" class="btn-luxury-back">
+            <i class="fas fa-arrow-left me-2"></i>Dashboard
         </a>
     </div>
-</div>
 
-<!-- Filters -->
-<div class="card mb-4">
-    <div class="card-body">
-        <form method="get" class="row g-3 align-items-end">
-            <div class="col-md-4">
-                <label class="form-label">Action Filter</label>
-                <select name="action" class="form-select" onchange="this.form.submit()">
-                    <option value="" {% if not action_filter %}selected{% endif %}>
-                        All Actions
-                    </option>
-                    <option value="login" {% if action_filter == 'login' %}selected{% endif %}>
-                        Login
-                    </option>
-                    <option value="logout" {% if action_filter == 'logout' %}selected{% endif %}>
-                        Logout
-                    </option>
-                    <option value="register" {% if action_filter == 'register' %}selected{% endif %}>
-                        Register
-                    </option>
-                    <option value="update" {% if action_filter == 'update' %}selected{% endif %}>
-                        Updates
-                    </option>
-                    <option value="delete" {% if action_filter == 'delete' %}selected{% endif %}>
-                        Deletions
-                    </option>
-                    <option value="approve" {% if action_filter == 'approve' %}selected{% endif %}>
-                        Approvals
-                    </option>
-                    <option value="reject" {% if action_filter == 'reject' %}selected{% endif %}>
-                        Rejections
-                    </option>
+    <!-- Filtering Suite -->
+    <div class="glass-card p-4 mb-5">
+        <form method="get" class="row g-3 align-items-center">
+            <div class="col-lg-4 col-md-6">
+                <label class="text-white-50 small text-uppercase mb-2 ms-2 fw-bold" style="letter-spacing: 1px;">Action Intelligence</label>
+                <select name="action" class="form-select form-control-premium" onchange="this.form.submit()">
+                    <option value="" {% if not action_filter %}selected{% endif %}>Show All Actions</option>
+                    <option value="login" {% if action_filter == 'login' %}selected{% endif %}>User Authentications</option>
+                    <option value="logout" {% if action_filter == 'logout' %}selected{% endif %}>User Disconnections</option>
+                    <option value="register" {% if action_filter == 'register' %}selected{% endif %}>New Registrations</option>
+                    <option value="update" {% if action_filter == 'update' %}selected{% endif %}>System Updates</option>
+                    <option value="delete" {% if action_filter == 'delete' %}selected{% endif %}>Record Removals</option>
                 </select>
             </div>
-            <div class="col-md-8 text-end">
-                <a href="{% url 'admin_audit_logs' %}" class="btn btn-outline-secondary btn-sm">Clear Filters</a>
+            <div class="col-lg-8 text-end pt-4">
+                <a href="{% url 'admin_audit_logs' %}" class="btn btn-link text-white-50 text-decoration-none small"><i class="fas fa-undo-alt me-2"></i>Clear Intelligence Filters</a>
             </div>
         </form>
     </div>
-</div>
 
-<!-- Logs Table -->
-<div class="card shadow-sm">
-    <div class="card-body p-0">
+    <!-- The Registry -->
+    <div class="glass-card p-4 overflow-hidden">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="bg-light">
+            <table class="table table-premium">
+                <thead>
                     <tr>
-                        <th class="ps-4">Timestamp</th>
-                        <th>User</th>
-                        <th>Action</th>
-                        <th>IP Address</th>
+                        <th class="ps-4">Temporal Marker</th>
+                        <th>Subject</th>
+                        <th>Intervention</th>
+                        <th class="text-end pe-4">Digital Identity (IP)</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for log in logs %}
                     <tr>
-                        <td class="ps-4 text-nowrap text-muted small">
-                            {{ log.created_at|date:"M d, Y H:i:s" }}
+                        <td class="ps-4">
+                            <span class="gold-num text-white-50 small">{{ log.created_at|date:"M d, Y" }}</span>
+                            <div class="gold-num text-white fw-bold mt-1" style="font-size: 0.85rem;">{{ log.created_at|date:"H:i:s" }} <span class="xsmall opacity-50">IST</span></div>
                         </td>
                         <td>
                             <div class="d-flex align-items-center">
-                                {% if log.user.profile.profile_picture %}
-                                <img src="{{ log.user.profile.profile_picture.url }}" class="rounded-circle me-2"
-                                    width="24" height="24" style="object-fit: cover;">
-                                {% else %}
-                                <i class="fas fa-user-circle text-secondary me-2"></i>
-                                {% endif %}
-                                <span class="fw-bold small">{{ log.user.username }}</span>
+                                <div class="rounded-circle overflow-hidden border border-2 border-gold me-3" style="width: 32px; height: 32px; border-color: rgba(235,209,151,0.2) !important;">
+                                    {% if log.user.profile.profile_picture %}
+                                        <img src="{{ log.user.profile.profile_picture.url }}" class="w-100 h-100 object-fit-cover">
+                                    {% else %}
+                                        <div class="w-100 h-100 bg-dark d-flex align-items-center justify-content-center text-white-50 small fw-bold">
+                                            {{ log.user.username|make_list|first|upper }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <span class="text-white fw-bold">{{ log.user.username }}</span>
                             </div>
                         </td>
                         <td>
-                            <span class="badge bg-secondary bg-opacity-10 text-secondary border">{{ log.get_action_display }}</span>
+                            <span class="action-badge">
+                                {{ log.get_action_display }}
+                            </span>
                         </td>
-                        <td class="text-muted small font-monospace">
-                            {{ log.ip_address|default:"-" }}
+                        <td class="text-end pe-4">
+                            <span class="gold-num ip-luxury">{{ log.ip_address|default:"Unknown Source" }}</span>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
                         <td colspan="4" class="text-center py-5">
-                            <div class="text-muted">
-                                <i class="fas fa-history fa-3x mb-3 opacity-50"></i>
-                                <p>No audit logs found.</p>
-                            </div>
+                            <i class="fas fa-history fa-3x gold-text opacity-25 mb-3"></i>
+                            <p class="text-white-50">The registry currently holds no matching records.</p>
                         </td>
                     </tr>
                     {% endfor %}
@@ -107,4 +207,5 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
