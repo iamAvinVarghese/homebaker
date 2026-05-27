@@ -32,4 +32,3 @@ databases:
   - name: homebaker-db
     plan: free
     databaseName: homebaker_db
-    user: postgres
