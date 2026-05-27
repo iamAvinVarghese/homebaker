@@ -19,13 +19,13 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-this')
 
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,.onrender.com').split(',')
 
-# CSRF Trusted Origins for local development
-CSRF_TRUSTED_ORIGINS = [
-    'http://127.0.0.1:8000',
-    'http://localhost:8000',
-]
+# CSRF Trusted Origins for local and production development
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS', 
+    default='http://127.0.0.1:8000,http://localhost:8000'
+).split(',')
 
 
 # =====================================
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 # =====================================
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -95,15 +96,14 @@ WSGI_APPLICATION = 'homebaker.wsgi.application'
 # =====================================
 # DATABASE
 # =====================================
+import dj_database_url
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'homebaker_db',
-        'USER': 'postgres',
-        'PASSWORD': 'avin123',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(
+        default='postgresql://postgres:avin123@localhost:5432/homebaker_db',
+        conn_max_age=600,
+        ssl_require=not DEBUG
+    )
 }
 
 
@@ -132,6 +132,10 @@ USE_TZ = True
 # =====================================
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Enable WhiteNoise compression and caching
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # =====================================

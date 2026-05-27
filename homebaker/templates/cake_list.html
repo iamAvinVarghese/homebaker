@@ -405,6 +405,22 @@
                 <div class="card-body d-flex flex-column p-4">
                     <h5 class="card-title fw-bold text-white mb-2" style="font-size: 1.15rem; line-height: 1.4;">{{ cake.name }}</h5>
                     
+                    <!-- Cake Rating Section -->
+                    <div class="mb-3 d-flex align-items-center gap-2" style="font-size: 0.85rem;">
+                        {% if cake.average_rating > 0 %}
+                        <div class="d-flex align-items-center gap-1">
+                            <i class="fas fa-star" style="color: #ebd197;"></i>
+                            <span style="color: #ebd197; font-weight: 700;">{{ cake.average_rating|floatformat:1 }}</span>
+                            <span class="text-white-50">({{ cake.total_reviews }} reviews)</span>
+                        </div>
+                        {% else %}
+                        <div class="d-flex align-items-center gap-1">
+                            <i class="far fa-star text-white-50"></i>
+                            <span class="text-white-50">No reviews</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
                     <div class="mb-3 d-flex align-items-center">
                         <a href="{% url 'baker_public_profile' cake.baker.profile.baker_profile.id %}"
                             class="text-decoration-none text-muted-premium small d-flex align-items-center" style="transition: color 0.3s;">

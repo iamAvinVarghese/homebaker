@@ -76,7 +76,7 @@
 
     /* Hero */
     .hero-section {
-        padding: 0.5rem 0 6rem 0;
+        padding: 0.5rem 0 3rem 0;
         position: relative;
     }
     
@@ -137,7 +137,7 @@
         font-size: 3.5rem;
         color: #ffffff;
         text-align: center;
-        margin-bottom: 3rem;
+        margin-bottom: 1.5rem;
     }
 
     /* Cards */
@@ -171,9 +171,10 @@
         background-color: transparent !important;
         border: none !important;
         padding: 0 1rem;
+        position: relative;
     }
     
-    .cake-card img {
+    .cake-card .cake-main-img {
         border-radius: 8px;
         height: 250px;
         object-fit: cover;
@@ -212,6 +213,81 @@
         border-radius: 12px;
         color: white;
     }
+
+    /* Horizontal Scrolling Container */
+    .featured-scroll-container {
+        display: flex;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        gap: 1.5rem;
+        padding: 1.5rem 0.5rem;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(235, 209, 151, 0.3) transparent;
+    }
+    
+    /* Scrollbar Styling */
+    .featured-scroll-container::-webkit-scrollbar {
+        height: 6px;
+    }
+    .featured-scroll-container::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .featured-scroll-container::-webkit-scrollbar-thumb {
+        background-color: rgba(235, 209, 151, 0.3);
+        border-radius: 10px;
+    }
+    .featured-scroll-container::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(235, 209, 151, 0.5);
+    }
+    
+    /* Ensure cards inside scroll have fixed width so they don't squash */
+    .featured-scroll-item {
+        flex: 0 0 350px;
+        max-width: 350px;
+    }
+
+    /* Navigation Buttons style */
+    .scroll-nav-btn {
+        position: absolute;
+        top: 55%;
+        transform: translateY(-50%);
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: rgba(30, 20, 40, 0.85);
+        border: 1px solid rgba(235, 209, 151, 0.4);
+        color: #ebd197;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    }
+    .scroll-nav-btn:hover {
+        background: #ebd197;
+        color: #07030a;
+        box-shadow: 0 0 20px rgba(235, 209, 151, 0.7);
+        transform: translateY(-50%) scale(1.1);
+    }
+    .scroll-nav-btn.btn-left {
+        left: -15px;
+    }
+    .scroll-nav-btn.btn-right {
+        right: -15px;
+    }
+    @media (max-width: 768px) {
+        .scroll-nav-btn {
+            display: none; /* Hide buttons on mobile where native touch swipe is perfect */
+        }
+        .featured-scroll-item {
+            flex: 0 0 290px;
+            max-width: 290px;
+        }
+    }
 </style>
 
 <div class="bg-glob-1"></div>
@@ -247,7 +323,7 @@
     </div>
 
     <!-- PLATFORM STATISTICS SECTION -->
-    <div class="container mb-5 pb-4 mt-4">
+    <div class="container mb-3 pb-2 mt-2">
         <div class="row g-4 justify-content-center text-center">
             <div class="col-md-4 col-sm-6">
                 <div class="stat-card p-4 h-100">
@@ -280,7 +356,7 @@
     </div>
 
     <!-- HOW IT WORKS SECTION -->
-    <div class="container py-5 my-3">
+    <div class="container py-3 my-2">
         <div class="text-center mb-5">
             <h2 class="script-font section-title mb-2">How HomeBaker Works</h2>
             <p class="mx-auto" style="color: #cbd5e1; max-width: 600px;">Experience the easiest way to order high-quality, customized cakes baked by passionate local artisans.</p>
@@ -328,24 +404,70 @@
 
     <!-- FEATURED CAKES SECTION -->
     {% if featured_cakes %}
-    <div class="container py-5 my-4">
+    <div class="container pt-5 pb-3 my-3 position-relative" style="z-index: 1;">
         <h2 class="script-font section-title">Featured Creations</h2>
         
-        <div class="row g-5 justify-content-center">
-            {% for cake in featured_cakes|slice:":3" %}
-            <div class="col-lg-4 col-md-6 border-0">
+        <!-- Navigation Buttons -->
+        <button class="scroll-nav-btn btn-left" id="scrollLeftBtn" title="Scroll Left">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="scroll-nav-btn btn-right" id="scrollRightBtn" title="Scroll Right">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <div class="featured-scroll-container" id="featuredScrollContainer">
+            {% for cake in featured_cakes %}
+            <div class="featured-scroll-item">
                 <div class="cake-card">
                     {% if cake.image %}
-                    <img src="{{ cake.image.url }}" alt="{{ cake.name }}">
+                    <img src="{{ cake.image.url }}" alt="{{ cake.name }}" class="cake-main-img">
                     {% elif cake.image_url %}
-                    <img src="{{ cake.image_url }}" alt="{{ cake.name }}">
+                    <img src="{{ cake.image_url }}" alt="{{ cake.name }}" class="cake-main-img">
                     {% else %}
                     <div class="bg-dark text-white d-flex align-items-center justify-content-center w-100" style="height: 250px; border-radius: 8px;">
                         <i class="fas fa-birthday-cake fa-3x opacity-50"></i>
                     </div>
                     {% endif %}
                     
-                    <h3 class="script-font cake-title">{{ cake.name }}</h3>
+                    {% if cake.average_rating >= 4.0 %}
+                    <span class="badge position-absolute top-0 end-0 m-4 shadow" style="background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); border: 1px solid #ebd197; color: #ebd197; font-size: 0.75rem; font-family: 'Inter', sans-serif; z-index: 2;">
+                        <i class="fas fa-star me-1"></i> Top Rated
+                    </span>
+                    {% endif %}
+                    
+                    <h3 class="script-font cake-title mb-1">{{ cake.name }}</h3>
+                    
+                    <!-- Cake Rating Section -->
+                    <div class="mb-3 d-flex align-items-center gap-2" style="font-size: 0.85rem; font-family: 'Inter', sans-serif;">
+                        {% if cake.average_rating > 0 %}
+                        <div class="d-flex align-items-center gap-1">
+                            <i class="fas fa-star" style="color: #ebd197;"></i>
+                            <span style="color: #ebd197; font-weight: 700;">{{ cake.average_rating|floatformat:1 }}</span>
+                            <span style="color: #94a3b8;">({{ cake.total_reviews }} reviews)</span>
+                        </div>
+                        {% else %}
+                        <div class="d-flex align-items-center gap-1">
+                            <i class="far fa-star style='color: #94a3b8;'"></i>
+                            <span style="color: #94a3b8;">No reviews</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if cake.baker %}
+                    <div class="mb-3">
+                        <a href="{% url 'baker_public_profile' cake.baker.profile.baker_profile.id %}" class="text-decoration-none d-flex align-items-center text-white-50 small gap-2" style="font-family: 'Inter', sans-serif; font-size: 0.85rem; transition: color 0.3s;">
+                            {% if cake.baker.profile.profile_picture %}
+                            <img src="{{ cake.baker.profile.profile_picture.url }}" alt="{{ cake.baker.username }}"
+                                class="rounded-circle border border-secondary"
+                                style="width: 22px; height: 22px; object-fit: cover; flex-shrink: 0; display: inline-block;">
+                            {% else %}
+                            <i class="fas fa-user-circle fs-5 text-secondary"></i>
+                            {% endif %}
+                            <span style="color: #ebd197; font-weight: 700;">{{ cake.baker.profile.baker_profile.shop_name|default:cake.baker.username }}</span>
+                        </a>
+                    </div>
+                    {% endif %}
+                    
                     <p class="small mb-2" style="color: #94a3b8; line-height: 1.4;">{{ cake.description|default:"Indulge in artisanal cakes, pastries, and treats, handcrafted with passion."|truncatechars:80 }}</p>
                     <div class="fw-bold text-white mb-3" style="font-size: 1.1rem;">₹{{ cake.price|floatformat:0 }}</div>
                     <a href="{% url 'cakes' %}" class="btn btn-theme-purple btn-sm">Add to Cart</a>
@@ -353,17 +475,47 @@
             </div>
             {% endfor %}
         </div>
-        <div class="text-center mt-5">
+        <div class="text-center mt-3">
             <a href="{% url 'cakes' %}" class="btn text-white text-decoration-none">View All Creations <i class="fas fa-arrow-right ms-1"></i></a>
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const container = document.getElementById("featuredScrollContainer");
+            const btnLeft = document.getElementById("scrollLeftBtn");
+            const btnRight = document.getElementById("scrollRightBtn");
+            
+            if (container && btnLeft && btnRight) {
+                btnLeft.addEventListener("click", function () {
+                    container.scrollBy({ left: -370, behavior: "smooth" });
+                });
+                btnRight.addEventListener("click", function () {
+                    container.scrollBy({ left: 370, behavior: "smooth" });
+                });
+                
+                const toggleButtons = () => {
+                    btnLeft.style.opacity = container.scrollLeft <= 5 ? "0.3" : "1";
+                    btnLeft.style.pointerEvents = container.scrollLeft <= 5 ? "none" : "auto";
+                    
+                    const isAtEnd = container.scrollLeft + container.clientWidth >= container.scrollWidth - 5;
+                    btnRight.style.opacity = isAtEnd ? "0.3" : "1";
+                    btnRight.style.pointerEvents = isAtEnd ? "none" : "auto";
+                };
+                
+                container.addEventListener("scroll", toggleButtons);
+                window.addEventListener("resize", toggleButtons);
+                setTimeout(toggleButtons, 100);
+            }
+        });
+    </script>
     {% endif %}
 
 
 
     <!-- TESTIMONIALS / REVIEWS SECTION -->
     {% if website_reviews %}
-    <div class="container py-5 my-4">
+    <div class="container pt-5 pb-3 my-3">
         <h2 class="script-font section-title">Users Love</h2>
         <div class="row g-4 justify-content-center">
             {% for review in website_reviews|slice:":3" %}
@@ -389,8 +541,8 @@
     {% endif %}
 
     <!-- BOTTOM CTA SECTION -->
-    <div class="container my-5 py-4">
-        <div class="cta-section p-5 text-center text-md-start">
+    <div class="container mt-5 mb-3 py-2">
+        <div class="cta-section py-4 px-5 text-center text-md-start">
             <div class="row align-items-center">
                 <div class="col-md-8 mb-4 mb-md-0">
                     <h2 class="script-font text-white mb-2" style="font-size: 3.5rem;">Join our community</h2>

@@ -61,7 +61,7 @@ def home(request):
     featured_cakes = Cake.objects.filter(
         is_available=True,
         baker__profile__baker_profile__status='approved'
-    ).order_by('-average_rating', '-order_count')[:6]
+    ).order_by('-average_rating', '-order_count')[:20]
     
     # Trending cakes
     trending_cakes = RecommendationEngine.get_trending_cakes(limit=4)

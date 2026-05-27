@@ -190,6 +190,7 @@ def register(request):
             profile = UserProfile.objects.create(
                 user=user,
                 phone_number=phone_number,
+                secondary_phone_number=form.cleaned_data.get('secondary_phone_number', ''),
                 role=form.cleaned_data['role'],
                 is_phone_verified=False,
                 email_otp=otp,

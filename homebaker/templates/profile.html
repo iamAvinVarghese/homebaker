@@ -288,9 +288,17 @@
                             <small class="text-muted-premium" style="font-size: 0.75rem;">Verified primary contact</small>
                         </div>
                         <div class="col-md-6 mb-4">
-                            <label class="form-label">Default Delivery Address</label>
-                            {{ user_form.default_address }}
+                            <label class="form-label">Secondary Phone Number{% if is_baker %} <span class="text-danger">*</span>{% else %} (Optional){% endif %}</label>
+                            {{ user_form.secondary_phone_number }}
+                            {% if user_form.secondary_phone_number.errors %}
+                            <div class="text-danger small mt-1">{{ user_form.secondary_phone_number.errors }}</div>
+                            {% endif %}
                         </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Default Delivery Address</label>
+                        {{ user_form.default_address }}
                     </div>
 
                     <!-- Baker Specific Details -->

@@ -197,6 +197,15 @@
                             {% endif %}
                         </div>
 
+                        <!-- Secondary Phone Number -->
+                        <div class="col-md-12">
+                            <label class="form-label" id="lblSecondaryPhone">Secondary Phone Number (Optional)</label>
+                            <input type="tel" name="secondary_phone_number" id="id_secondary_phone_number" class="form-control" placeholder="Enter secondary phone number" value="{{ form.secondary_phone_number.value|default:'' }}">
+                            {% if form.secondary_phone_number.errors %}
+                            <div class="text-danger small mt-1">{{ form.secondary_phone_number.errors }}</div>
+                            {% endif %}
+                        </div>
+
                         <!-- Password -->
                         <div class="col-md-6">
                             <label class="form-label">Password</label>
@@ -360,11 +369,17 @@
 
         function toggleBakerFields() {
             const checkedRadio = document.querySelector('input[name="role"]:checked');
+            const lblSecPhone = document.getElementById('lblSecondaryPhone');
+            const inputSecPhone = document.getElementById('id_secondary_phone_number');
             if (checkedRadio && checkedRadio.value === 'baker') {
                 bakerFields.style.display = 'block';
                 bakerFields.style.animation = 'fadeIn 0.5s ease-out';
+                if (lblSecPhone) lblSecPhone.innerHTML = 'Secondary Phone Number <span class="text-danger">*</span>';
+                if (inputSecPhone) inputSecPhone.setAttribute('required', 'required');
             } else {
                 bakerFields.style.display = 'none';
+                if (lblSecPhone) lblSecPhone.innerHTML = 'Secondary Phone Number (Optional)';
+                if (inputSecPhone) inputSecPhone.removeAttribute('required');
             }
             updateSubmitButton();
         }

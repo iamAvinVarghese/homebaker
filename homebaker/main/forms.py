@@ -25,6 +25,11 @@ class RegistrationForm(UserCreationForm):
         'placeholder': 'Enter phone number',
         'id': 'id_phone_number'
     }))
+    secondary_phone_number = forms.CharField(max_length=15, required=False, widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'Enter secondary phone number (optional)',
+        'id': 'id_secondary_phone_number'
+    }))
     # OTP is now sent via email after registration - no OTP field here
     role = forms.ChoiceField(
         choices=[('customer', 'Customer'), ('baker', 'Baker')],
@@ -146,6 +151,7 @@ class BakerRegistrationForm(RegistrationForm):
             address = cleaned_data.get('address')
             city = cleaned_data.get('city')
             pincode = cleaned_data.get('pincode')
+            secondary_phone = cleaned_data.get('secondary_phone_number')
             
             if not shop_name:
                 self.add_error('shop_name', 'Shop name is required for bakers.')
@@ -155,6 +161,8 @@ class BakerRegistrationForm(RegistrationForm):
                 self.add_error('city', 'City is required for bakers.')
             if not pincode:
                 self.add_error('pincode', 'Pincode is required for bakers.')
+            if not secondary_phone:
+                self.add_error('secondary_phone_number', 'Secondary phone number is required for bakers.')
             
             # FSSAI Field Validation (Presence only - AI verification done via AJAX before registration)
             license_number = cleaned_data.get('license_number')
@@ -378,6 +386,11 @@ class UserProfileForm(forms.ModelForm):
         'class': 'form-control',
         'placeholder': 'Email Address'
     }))
+    secondary_phone_number = forms.CharField(max_length=15, required=False, widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'placeholder': 'Secondary Phone Number',
+        'id': 'id_secondary_phone_number'
+    }))
     default_address = forms.CharField(required=False, widget=forms.Textarea(attrs={
         'class': 'form-control',
         'rows': '3',
@@ -392,16 +405,26 @@ class UserProfileForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.instance and hasattr(self.instance, 'profile'):
             self.fields['default_address'].initial = self.instance.profile.default_address
+            self.fields['secondary_phone_number'].initial = self.instance.profile.secondary_phone_number
             # Add profile picture field manually since it's on the profile model, not User
             self.fields['profile_picture'] = forms.ImageField(
                 required=False,
                 widget=forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'})
             )
+            
+    def clean(self):
+        cleaned_data = super().clean()
+        if self.instance and hasattr(self.instance, 'profile') and self.instance.profile.role == 'baker':
+            secondary_phone = cleaned_data.get('secondary_phone_number')
+            if not secondary_phone:
+                self.add_error('secondary_phone_number', 'Secondary phone number is required for bakers.')
+        return cleaned_data
     
     def save(self, commit=True):
         user = super().save(commit=commit)
         if hasattr(user, 'profile'):
             user.profile.default_address = self.cleaned_data['default_address']
+            user.profile.secondary_phone_number = self.cleaned_data.get('secondary_phone_number', '')
             print(f"DEBUG: cleaned_data keys: {self.cleaned_data.keys()}")
             print(f"DEBUG: profile_picture data: {self.cleaned_data.get('profile_picture')}")
             if self.cleaned_data.get('profile_picture'):
