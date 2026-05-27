@@ -400,6 +400,34 @@
     .lx-d1 { animation-delay: 0.1s; }
     .lx-d2 { animation-delay: 0.2s; }
     .lx-d3 { animation-delay: 0.3s; }
+
+    /* ===== AI CAKE DESIGNER MOBILE ADAPTABILITY ===== */
+    @media (max-width: 768px) {
+        .ai-page-wrapper {
+            padding: 2.5rem 0 4rem;
+        }
+        .ai-hero {
+            margin-bottom: 2rem;
+        }
+        .ai-form-card {
+            padding: 1.5rem !important;
+            border-radius: 20px !important;
+        }
+        .result-details {
+            padding: 1.5rem !important;
+        }
+        .ai-hero h1 {
+            font-size: clamp(2.5rem, 8vw, 3.5rem) !important;
+        }
+        .ai-hero p {
+            font-size: 0.95rem;
+            padding: 0 10px;
+        }
+        .btn-generate {
+            font-size: 1rem;
+            padding: 0.85rem 1.5rem;
+        }
+    }
 </style>
 
 <div class="ai-page-wrapper">
