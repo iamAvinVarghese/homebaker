@@ -78,18 +78,7 @@
         .gold-text {
             font-weight: 800;
             letter-spacing: 2px;
-            background: linear-gradient(
-                90deg,
-                #c8963e 0%,
-                #f5d97a 20%,
-                #fff5c0 38%,
-                #ebd197 50%,
-                #fff5c0 62%,
-                #f5d97a 80%,
-                #c8963e 100%
-            );
-            background-size: 300% auto;
-            animation: shimmer-slide 3s linear infinite, luxury-halo 2.8s ease-in-out infinite;
+            color: #ebd197;
             position: relative;
         }
 
@@ -141,6 +130,18 @@
         div.gold-text:not(.gold-num):not(.fw-extra-bold), 
         a.gold-text:not(.dropdown-item):not(.gold-num):not(.fw-extra-bold) {
             font-family: 'Great Vibes', cursive !important;
+            background: linear-gradient(
+                90deg,
+                #c8963e 0%,
+                #f5d97a 20%,
+                #fff5c0 38%,
+                #ebd197 50%,
+                #fff5c0 62%,
+                #f5d97a 80%,
+                #c8963e 100%
+            ) !important;
+            background-size: 300% auto !important;
+            animation: shimmer-slide 3s linear infinite, luxury-halo 2.8s ease-in-out infinite !important;
             -webkit-background-clip: text !important;
             -webkit-text-fill-color: transparent !important;
             background-clip: text !important;
